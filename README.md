@@ -56,17 +56,15 @@ This app will be used to scan products (barcode or ingredients list) for harmful
 
 * "home" Screen where user can have access to scan a product from here or navigate to any other screen, also shows list of recent scans
    * This is linked to user story #1
-   * ...
 * user "profile" screen where they can adjust their preferences (add or remove allergies, or ingredients they wouldn't like to have)
    * This is linked to user story #2
-   * ...
 
 * Screen with nearby grocery stores and shows if the stock in each store includes an item from the user's shopping cart
     * This is linked to user story #4
 
-
 * "shopping cart/list" for products the user adds themselves, or products that were recommended to the user and they selected the option to add it to their cart
     * This is linked to user story #5
+
 
 ### 3. Navigation
 
@@ -102,12 +100,10 @@ This app will be used to scan products (barcode or ingredients list) for harmful
 ### Models
 [Add table of models]
 ### Networking
-    - Request to Open Food API (https://world.openfoodfacts.org/) in "Home" screen after receiving the image from the user
+   - Request to Open Food API (https://world.openfoodfacts.org/) in "Home" screen after receiving the image from the user
         - This will tell us what product the user has scanned and more health information about it
 
-    - Request to Open Food API again for the purpose of allowing users to add items to their shopping list through search/filtering items within the Open Food database
+   - Request to Open Food API again for the purpose of allowing users to add items to their shopping list through search/filtering items within the Open Food database
 
-    - Request to Walmart, Walgreens or Google places API to get the closest grocery stores within the Map view 
+   - Request to Walmart, Walgreens or Google places API to get the closest grocery stores within the Map view 
   
-- [Create basic snippets for each Parse network request]
-- [OPTIONAL: List endpoints if using existing API such as Yelp]
