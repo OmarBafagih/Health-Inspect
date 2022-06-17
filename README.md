@@ -1,4 +1,4 @@
-# Scan-ing
+# Health Inspect
 
 ## Table of Contents
 1. [Overview](#Overview)
