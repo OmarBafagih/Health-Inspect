@@ -102,12 +102,12 @@ This app will be used to scan products (barcode or ingredients list) for harmful
 ### Models
 [Add table of models]
 ### Networking
-- Request to Open Food API (https://world.openfoodfacts.org/) in "Home" screen after receiving the image from the user
-    - This will tell us what product the user has scanned and more health information about it
+    - Request to Open Food API (https://world.openfoodfacts.org/) in "Home" screen after receiving the image from the user
+        - This will tell us what product the user has scanned and more health information about it
 
-- Request to Open Food API again for the purpose of allowing users to add items to their shopping list through search/filtering items within the Open Food database
+    - Request to Open Food API again for the purpose of allowing users to add items to their shopping list through search/filtering items within the Open Food database
 
-- Request to Walmart, Walgreens or Google places API to get the closest grocery stores within the Map view 
-    - 
+    - Request to Walmart, Walgreens or Google places API to get the closest grocery stores within the Map view 
+  
 - [Create basic snippets for each Parse network request]
 - [OPTIONAL: List endpoints if using existing API such as Yelp]
