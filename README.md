@@ -38,7 +38,7 @@ This app will be used to scan products (barcode or ingredients list) for harmful
 3. Send request to open food API to suggest alternative products if the User's prouct is harmful
 
 
-4. Find the suggested items in nearby grocery stores using some API (Walmart, walgreens, etc)
+4. The user gets notified to pickup items in their shopping cart while in a grocery store location (possibly a stretch feature)
 
 
 5. The user can add any of the suggested items to their shopping list/cart
@@ -49,7 +49,12 @@ This app will be used to scan products (barcode or ingredients list) for harmful
 
 **Optional Nice-to-have Stories**
 
- 1. The user gets notified to pickup items in their shopping cart while in a grocery store location (possibly a stretch feature)
+ 1. Find the suggested items in nearby grocery stores using some API (Walmart, walgreens, etc)
+ 3. Push notify the user when they are <1 mile away from a grocery store and remind them to buy a product on their shopping list
+ 4. Help place order for the suggested alternative on insta cart (https://docs.instacart.com/connect/api/fulfillment/overview)
+ 5. User can scan items using camera or search for item via text and we can cache some items. This can be interesting problem to solve since we'll need to figure out what kind of items to cache for performance.
+ 6. Filtering and sorting for suggested items
+ 7. Preset user profiles (For example: vegan, gluten free, etc)
  
 
 ### 2. Screen Archetypes
