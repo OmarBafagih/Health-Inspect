@@ -1,5 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
+
+    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+        <item name="colorPrimary">#e67d20</item>
+        <item name="colorPrimaryDark">#ff1b49</item>
+        <item name="colorAccent">#fff</item>
+        <item name="android:statusBarColor">#e67d20</item>
+    </style>
     <style name="Theme.HealthInspector" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
