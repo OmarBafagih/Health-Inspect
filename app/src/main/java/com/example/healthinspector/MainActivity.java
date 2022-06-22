@@ -12,6 +12,7 @@ import com.example.healthinspector.Fragments.CartFragment;
 import com.example.healthinspector.Fragments.HomeFragment;
 import com.example.healthinspector.Fragments.SearchFragment;
 import com.example.healthinspector.Fragments.UserProfileFragment;
+import com.example.healthinspector.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -19,52 +20,57 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static final String TAG = "TimelineActivity";
-
-    private BottomNavigationView bottomNavigationView;
-    private ImageView cartImageView;
-
+    //view binder
+    private ActivityMainBinding binding;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        //getting reference to xml elements
-        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        cartImageView = (ImageView) findViewById(R.id.ivCart);
+        //using view binding to reduce boilerplate code
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+
+        //creating fragments to navigate to
+        final UserProfileFragment userProfileFragment = new UserProfileFragment();
+        final HomeFragment homeFragment = new HomeFragment();
+        final SearchFragment searchFragment = new SearchFragment();
 
 
         //bottom navigation view item listener
-        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+        binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     //navigate to profile fragment
                     case R.id.miProfile:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new UserProfileFragment()).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
                         return true;
                     //navigate to home fragment
                     case R.id.miHome:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
                         return true;
                     //navigate to search fragment
                     case R.id.miSearch:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SearchFragment()).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, searchFragment).commit();
                         return true;
                 }
                 return false;
             }
         });
+
         //setting the selected item for the nav bar as defaulting to the "home" page
-        bottomNavigationView.setSelectedItemId(R.id.miHome);
+        binding.bottomNavigation.setSelectedItemId(R.id.miHome);
 
 
         //onClick listener for cart icon within toolbar
-        cartImageView.setOnClickListener(new View.OnClickListener() {
+        binding.cartImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //navigate to the cart fragment
+                binding.cartImageView.setSelected(true);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CartFragment()).commit();
 
             }
