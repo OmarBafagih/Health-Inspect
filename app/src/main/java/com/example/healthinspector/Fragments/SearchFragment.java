@@ -68,20 +68,17 @@ public class SearchFragment extends Fragment {
         binding.scanIconImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 //request for User's camera permissions
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     //camera permissions are already granted, navigate to the scan fragment
                     //replace the current fragment with the scan fragment (navigates to scan fragment)
                     fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
-
                 }
                 else {
                     //launch the request to the user, since permissions have not been granted yet
                     requestPermissionLauncher.launch(Manifest.permission.CAMERA);
                 }
-
             }
         });
     }

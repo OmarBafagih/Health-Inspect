@@ -18,6 +18,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
@@ -26,11 +33,16 @@ import com.example.healthinspector.databinding.FragmentScanBinding;
 import com.example.healthinspector.databinding.FragmentUserProfileBinding;
 import com.google.zxing.Result;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class ScanFragment extends Fragment {
 
     private FragmentScanBinding binding;
     private CodeScanner codeScannerView;
+    private final String URL = "https://world.openfoodfacts.org/api/v2/product/";
+    private static final String TAG = "ScanFragment";
     @Override
     public void onStart() {
         super.onStart();
@@ -66,11 +78,30 @@ public class ScanFragment extends Fragment {
                         //barcode is stored in result
                         //making request to OpenFoodFacts API here
                         Toast.makeText(getContext(), result.getText(), Toast.LENGTH_SHORT).show();
+                        // Instantiate the RequestQueue.
+                        RequestQueue queue = Volley.newRequestQueue(getContext());
+                        // Request a JSON response from OpenFoodFacts API
+                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, URL + result.getText(), null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    Log.i(TAG, response.getJSONObject("product").getString("product_name"));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.e(TAG, "error finding product", error);
+                            }
+                        });
+                        // Add the request to the RequestQueue.
+                        queue.add(objectRequest);
                     }
                 });
             }
         });
-
         return view;
     }
 
