@@ -72,8 +72,6 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(TAG, "onClick Signup button");
 
                //go to "user profile" fragment where user can add their allergies/ingredients etc...
-                
-
             }
         });
 

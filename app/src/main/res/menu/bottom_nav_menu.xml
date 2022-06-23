@@ -23,7 +23,7 @@
         android:id="@+id/miSearch"
         android:enabled="true"
         android:icon="@drawable/menu_search_config"
-        android:title="Post"
+        android:title="Search"
         app:showAsAction="ifRoom">
     </item>
 

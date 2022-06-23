@@ -11,18 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.healthinspector.R;
-import com.example.healthinspector.databinding.FragmentSearchBinding;
+import com.example.healthinspector.databinding.FragmentScanBinding;
+import com.example.healthinspector.databinding.FragmentUserProfileBinding;
 
 
-public class SearchFragment extends Fragment {
+public class ScanFragment extends Fragment {
 
-    private FragmentSearchBinding binding;
+    private FragmentScanBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        binding = FragmentSearchBinding.inflate(inflater, container, false);
+        binding = FragmentScanBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         return view;
     }
@@ -30,7 +31,10 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
     }
+
 
     @Override
     public void onDestroyView() {
