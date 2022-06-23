@@ -1,4 +1,4 @@
-package com.example.healthinspector;
+package com.example.healthinspector.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,44 +10,46 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.healthinspector.R;
+import com.example.healthinspector.databinding.ActivityLoginBinding;
+import com.example.healthinspector.databinding.ActivityMainBinding;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.parse.SignUpCallback;
 
 public class LoginActivity extends AppCompatActivity {
 
 
     public static final String TAG = "LoginActivity";
-    private Button btnLogin, btnSignup;
-    private EditText editTextUsername, editTextPassword;
+    //view binder
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+
+        //using view binding to reduce boilerplate code
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
 
         //if the user was already previously logged in
         if(ParseUser.getCurrentUser() != null){
             navigateToHome();
         }
 
-        //getting references to XML elements
-        editTextUsername = (EditText) findViewById(R.id.etUsername);
-        editTextPassword = (EditText) findViewById(R.id.etPassword);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
-        btnSignup = (Button) findViewById(R.id.btnSignup);
 
         //creating on click listeners for login and signup buttons
         //Login button onClick listener
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "onClick Login button");
 
                 //collect the inputted text from the input fields
-                String username = editTextUsername.getText().toString();
-                String password = editTextPassword.getText().toString();
+                String username = binding.etUsername.getText().toString();
+                String password = binding.etPassword.getText().toString();
 
                 //simple input checking
                 if(username.isEmpty()){
@@ -64,13 +66,13 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //Login button onClick listener
-        btnSignup.setOnClickListener(new View.OnClickListener() {
+        binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "onClick Signup button");
 
                //go to "user profile" fragment where user can add their allergies/ingredients etc...
-
+                
 
             }
         });
