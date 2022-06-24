@@ -52,108 +52,85 @@ public class ScanFragment extends Fragment {
 
     private FragmentScanBinding binding;
     private CodeScanner codeScannerView;
-    private final String URL = "https://world.openfoodfacts.org/api/v2/product/";
     private static final String TAG = "ScanFragment";
     private HashMap<Integer, String> novaGroups = new HashMap<>();
+    private String novaGroup;
     @Override
     public void onStart() {
         super.onStart();
-        //initialize Hashmap with novagroups
         novaGroups.put(1,"unprocessed or minimally processed food");
         novaGroups.put(2,"includes processed culinary ingredient");
         novaGroups.put(3,"processed food");
         novaGroups.put(4,"ultra processed food or drink product");
+        novaGroup = "";
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-        // Inflate the layout for this fragment
         binding = FragmentScanBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         final Activity activity = getActivity();
         CodeScannerView scannerView = binding.scannerView;
         codeScannerView = new CodeScanner(getActivity(), scannerView);
 
-        //resets the scannerView to look for a new barcode
         scannerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 codeScannerView.startPreview();
             }
         });
-        //if the camera permissions were granted, check the CodeScanner view for a barcode
-        //initialize CodeScanner view
         codeScannerView.setDecodeCallback(new DecodeCallback() {
             @Override
             public void onDecoded(@NonNull final Result result) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //barcode is stored in result
-                        //making request to OpenFoodFacts API here
                         Toast.makeText(getContext(), result.getText(), Toast.LENGTH_SHORT).show();
-                        // Instantiate the RequestQueue.
                         RequestQueue queue = Volley.newRequestQueue(getContext());
-                        // Request a JSON response from OpenFoodFacts API
-                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, "https://world.openfoodfacts.org/api/v2/product/7622210449283", null, new Response.Listener<JSONObject>() {
+                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, getString(R.string.URL) + result.getText(), null, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                //Log.i(TAG, response.toString());
                                 try {
-                                    //URL + result.getText()
-                                    //getting desired details from obtained product
+                                    String productName = response.getJSONObject(getString(R.string.product)).getString(getString(R.string.product_name));
 
-                                    //getting product name
-                                    String productName = response.getJSONObject("product").getString("product_name");
-                                    //getting "nutriscore_grade"
-                                    String healthInspectorScore = response.getJSONObject("product").getString("nutriscore_grade");
-                                    //getting the list of ingredients
-                                    ArrayList<String> ingredients = new ArrayList<>(Arrays.asList(response.getJSONObject("product").getString("ingredients_text_en").split(" ,")));
+                                    String healthInspectorScore = response.getJSONObject(getString(R.string.product)).getString(getString(R.string.nutriscore_grade));
+
+                                    ArrayList<String> ingredients = new ArrayList<>(Arrays.asList(response.getJSONObject(getString(R.string.product)).getString(getString(R.string.ingredients_list)).split(" ,")));
                                     ingredients.set(ingredients.size()-1, ingredients.get(ingredients.size()-1).replace(".", ""));
-                                    //getting the ingredients analysis
-                                    JSONArray ingredientsAnalysisJSON = response.getJSONObject("product").getJSONArray("ingredients_analysis_tags");
+
+                                    JSONArray ingredientsAnalysisJSON = response.getJSONObject(getString(R.string.product)).getJSONArray(getString(R.string.ingredients_analysis));
                                     ArrayList<String> ingredientsAnalysis = new ArrayList<>();
-                                    //convert JSONarray to String arraylist
+
                                     for (int i = 0; i < ingredientsAnalysisJSON.length(); i++){
                                         ingredientsAnalysis.add(ingredientsAnalysisJSON.getString(i));
                                     }
-                                    //parsing the string to remove the "en:" prefix
                                     for(int i = 0; i < ingredientsAnalysis.size(); i++){
-                                        String analysis = "";
-                                        for(int x = 3; x < ingredientsAnalysis.get(i).length(); x++){
-                                            analysis += ingredientsAnalysis.get(i).charAt(x);
-                                        }
-                                        ingredientsAnalysis.set(i, analysis);
+                                        ingredientsAnalysis.set(i, ingredientsAnalysis.get(i).substring(3).replace("-", " "));
                                     }
-                                    //getting novaGroup of product
-                                    int novaGroupNumber = response.getJSONObject("product").getInt("nova_group");
-                                    String novaGroup = novaGroups.get(novaGroupNumber);
-                                    //  Log.i(TAG, novaGroup);
+                                    if(response.getJSONObject(getString(R.string.product)).has(getString(R.string.nova_group))){
+                                        int novaGroupNumber = response.getJSONObject(getString(R.string.product)).getInt(getString(R.string.nova_group));
+                                        novaGroup = novaGroups.get(novaGroupNumber);
+                                    }
 
-                                    //getting "nutrient_levels" for warning
                                     ArrayList<String> nutrientLevels = new ArrayList<>();
-                                    JSONObject nutrientLevelsJSON = response.getJSONObject("product").getJSONObject("nutrient_levels");
+                                    JSONObject nutrientLevelsJSON = response.getJSONObject(getString(R.string.product)).getJSONObject(getString(R.string.nutrient_levels));
                                     Iterator iterator =  nutrientLevelsJSON.keys();
                                     while (iterator.hasNext()){
                                         String key = iterator.next().toString();
                                         nutrientLevels.add(key + ": " + nutrientLevelsJSON.getString(key));
                                     }
-
-                                    //getting "additives_original_tags"
-
-                                    //send to next screen and populate views
-                                    //creating a scannedProduct object to wrap with Parceler and put pas to the next fragment
                                     ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels);
-                                    //creating fragment transaction and passing the object into the bundle which is then passed into the fragment as an argument
+
                                     FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
                                     ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
                                     Bundle bundle = new Bundle();
-                                    bundle.putParcelable("scannedProduct", Parcels.wrap(scannedProduct));
+                                    bundle.putParcelable(getString(R.string.scannedProduct), Parcels.wrap(scannedProduct));
                                     productDetailsFragment.setArguments(bundle);
+
                                     fragmentTransaction.replace(R.id.fragment_container, productDetailsFragment);
                                     fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
@@ -167,7 +144,6 @@ public class ScanFragment extends Fragment {
                                 Log.e(TAG, "error finding product", error);
                             }
                         });
-                        // Add the request to the RequestQueue.
                         queue.add(objectRequest);
                     }
                 });

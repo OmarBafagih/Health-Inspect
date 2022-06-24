@@ -37,7 +37,7 @@ public class ProductDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
-        ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable("scannedProduct"));
+        ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(getString(R.string.scannedProduct)));
     }
 
     @Override
