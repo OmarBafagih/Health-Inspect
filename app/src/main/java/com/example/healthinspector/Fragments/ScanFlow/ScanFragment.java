@@ -11,7 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,7 @@ import com.google.zxing.Result;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -135,12 +138,25 @@ public class ScanFragment extends Fragment {
                                     JSONObject nutrientLevelsJSON = response.getJSONObject("product").getJSONObject("nutrient_levels");
                                     Iterator iterator =  nutrientLevelsJSON.keys();
                                     while (iterator.hasNext()){
-                                        nutrientLevels.add(nutrientLevelsJSON.getString(iterator.next().toString()));
+                                        String key = iterator.next().toString();
+                                        nutrientLevels.add(key + ": " + nutrientLevelsJSON.getString(key));
                                     }
+
+                                    //getting "additives_original_tags"
+
                                     //send to next screen and populate views
-                                    //creating a scannedProduct object for to wrap with
+                                    //creating a scannedProduct object to wrap with Parceler and put pas to the next fragment
                                     ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels);
-                                    
+                                    //creating fragment transaction and passing the object into the bundle which is then passed into the fragment as an argument
+                                    FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                    ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
+                                    Bundle bundle = new Bundle();
+                                    bundle.putParcelable("scannedProduct", Parcels.wrap(scannedProduct));
+                                    productDetailsFragment.setArguments(bundle);
+                                    fragmentTransaction.replace(R.id.fragment_container, productDetailsFragment);
+                                    fragmentTransaction.addToBackStack(null);
+                                    fragmentTransaction.commit();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }

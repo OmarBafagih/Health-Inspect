@@ -2,10 +2,11 @@ package com.example.healthinspector.Models;
 
 import org.parceler.Parcel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 @Parcel
-public class ScannedProduct {
+public class ScannedProduct implements Serializable {
 
     private String productName;
     private String healthInspectorScore;
