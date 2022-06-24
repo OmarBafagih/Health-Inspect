@@ -1,4 +1,4 @@
-package com.example.healthinspector.Fragments;
+package com.example.healthinspector.Fragments.ScanFlow;
 
 import android.Manifest;
 import android.app.Activity;
@@ -28,13 +28,21 @@ import com.android.volley.toolbox.Volley;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentScanBinding;
 import com.example.healthinspector.databinding.FragmentUserProfileBinding;
 import com.google.zxing.Result;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class ScanFragment extends Fragment {
@@ -43,9 +51,15 @@ public class ScanFragment extends Fragment {
     private CodeScanner codeScannerView;
     private final String URL = "https://world.openfoodfacts.org/api/v2/product/";
     private static final String TAG = "ScanFragment";
+    private HashMap<Integer, String> novaGroups = new HashMap<>();
     @Override
     public void onStart() {
         super.onStart();
+        //initialize Hashmap with novagroups
+        novaGroups.put(1,"unprocessed or minimally processed food");
+        novaGroups.put(2,"includes processed culinary ingredient");
+        novaGroups.put(3,"processed food");
+        novaGroups.put(4,"ultra processed food or drink product");
     }
 
     @Override
@@ -81,11 +95,52 @@ public class ScanFragment extends Fragment {
                         // Instantiate the RequestQueue.
                         RequestQueue queue = Volley.newRequestQueue(getContext());
                         // Request a JSON response from OpenFoodFacts API
-                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, URL + result.getText(), null, new Response.Listener<JSONObject>() {
+                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, "https://world.openfoodfacts.org/api/v2/product/7622210449283", null, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
+                                //Log.i(TAG, response.toString());
                                 try {
-                                    Log.i(TAG, response.getJSONObject("product").getString("product_name"));
+                                    //URL + result.getText()
+                                    //getting desired details from obtained product
+
+                                    //getting product name
+                                    String productName = response.getJSONObject("product").getString("product_name");
+                                    //getting "nutriscore_grade"
+                                    String healthInspectorScore = response.getJSONObject("product").getString("nutriscore_grade");
+                                    //getting the list of ingredients
+                                    ArrayList<String> ingredients = new ArrayList<>(Arrays.asList(response.getJSONObject("product").getString("ingredients_text_en").split(" ,")));
+                                    ingredients.set(ingredients.size()-1, ingredients.get(ingredients.size()-1).replace(".", ""));
+                                    //getting the ingredients analysis
+                                    JSONArray ingredientsAnalysisJSON = response.getJSONObject("product").getJSONArray("ingredients_analysis_tags");
+                                    ArrayList<String> ingredientsAnalysis = new ArrayList<>();
+                                    //convert JSONarray to String arraylist
+                                    for (int i = 0; i < ingredientsAnalysisJSON.length(); i++){
+                                        ingredientsAnalysis.add(ingredientsAnalysisJSON.getString(i));
+                                    }
+                                    //parsing the string to remove the "en:" prefix
+                                    for(int i = 0; i < ingredientsAnalysis.size(); i++){
+                                        String analysis = "";
+                                        for(int x = 3; x < ingredientsAnalysis.get(i).length(); x++){
+                                            analysis += ingredientsAnalysis.get(i).charAt(x);
+                                        }
+                                        ingredientsAnalysis.set(i, analysis);
+                                    }
+                                    //getting novaGroup of product
+                                    int novaGroupNumber = response.getJSONObject("product").getInt("nova_group");
+                                    String novaGroup = novaGroups.get(novaGroupNumber);
+                                    //  Log.i(TAG, novaGroup);
+
+                                    //getting "nutrient_levels" for warning
+                                    ArrayList<String> nutrientLevels = new ArrayList<>();
+                                    JSONObject nutrientLevelsJSON = response.getJSONObject("product").getJSONObject("nutrient_levels");
+                                    Iterator iterator =  nutrientLevelsJSON.keys();
+                                    while (iterator.hasNext()){
+                                        nutrientLevels.add(nutrientLevelsJSON.getString(iterator.next().toString()));
+                                    }
+                                    //send to next screen and populate views
+                                    //creating a scannedProduct object for to wrap with
+                                    ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels);
+                                    
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
