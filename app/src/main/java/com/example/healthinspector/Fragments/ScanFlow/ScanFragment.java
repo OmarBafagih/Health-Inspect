@@ -138,6 +138,7 @@ public class ScanFragment extends Fragment {
                             @Override
                             public void onErrorResponse(VolleyError error) {
                                 Log.e(TAG, "error finding product", error);
+                                Toast.makeText(requireContext(), "error finding product with barcode: " + result.getText(), Toast.LENGTH_SHORT).show();
                             }
                         });
                         queue.add(objectRequest);
