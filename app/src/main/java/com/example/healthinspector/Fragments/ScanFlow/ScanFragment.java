@@ -122,7 +122,9 @@ public class ScanFragment extends Fragment {
                                         String key = iterator.next().toString();
                                         nutrientLevels.add(key + ": " + nutrientLevelsJSON.getString(key));
                                     }
-                                    ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels);
+
+                                    String imageUrl = response.getJSONObject(Constants.product).getString(Constants.productImage);
+                                    ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl);
 
                                     FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

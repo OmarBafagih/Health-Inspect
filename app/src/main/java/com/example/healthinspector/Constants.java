@@ -10,5 +10,5 @@ public class Constants {
     public static final String ingredientsAnalysis = "ingredients_analysis_tags";
     public static final String novaGroup = "nova_group";
     public static final String nutrientLevels = "nutrient_levels";
-
+    public static final String productImage = "image_front_small_url";
 }
