@@ -5,5 +5,98 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.ScanFlow.ProductDetailsFragment">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/productBreakdownTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="0dp"
+            android:text="Product Breakdown"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/healthInspectorScoreTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/productBreakdownTextView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="-1dp"
+            android:text="Health Inspector Rating"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/healthInspectorScoreTextView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="86dp" />
+
+        <TextView
+            android:id="@+id/harmfulIngredientsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ratingBar"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="0dp"
+            android:text="Harmful Ingredients"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/additivesListView"
+            android:layout_width="match_parent"
+            android:layout_height="156dp"
+            android:layout_below="@+id/harmfulIngredientsTextView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="-1dp" />
+
+        <TextView
+            android:id="@+id/warningsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/additivesListView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="54dp"
+            android:layout_marginEnd="0dp"
+            android:text="Warnings"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/warningsListView"
+            android:layout_width="match_parent"
+            android:layout_height="156dp"
+            android:layout_below="@+id/warningsTextView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="1dp" />
+
+        <Button
+            android:id="@+id/btnRecommendations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/warningsListView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="117dp"
+            android:text="Recommendations" />
+
+
+    </RelativeLayout>
 
 </FrameLayout>
