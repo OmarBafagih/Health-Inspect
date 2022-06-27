@@ -46,5 +46,9 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1' // for logging API calls to LogCat
     //code-scanner library
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
-
+    //Library for making API requests (Volley)
+    implementation 'com.android.volley:volley:1.2.1'
+    //parceler
+    implementation 'org.parceler:parceler-api:1.1.12'
+    annotationProcessor 'org.parceler:parceler:1.1.12'
 }
