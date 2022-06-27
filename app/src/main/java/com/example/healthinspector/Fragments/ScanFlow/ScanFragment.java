@@ -81,7 +81,7 @@ public class ScanFragment extends Fragment {
                     public void run() {
                         Toast.makeText(requireContext(), result.getText(), Toast.LENGTH_SHORT).show();
                         RequestQueue queue = Volley.newRequestQueue(getContext());
-                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, Constants.PRODUCT_REQUEST_URL + "0857777004232", null, new Response.Listener<JSONObject>() {
+                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, Constants.PRODUCT_REQUEST_URL + result.getText(), null, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
