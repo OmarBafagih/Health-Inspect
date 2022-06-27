@@ -1,14 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragments.ScanFlow.ProductDetailsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/productBreakdownTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="0dp"
+            android:text="Product Breakdown"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/healthInspectorScoreTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/productImageView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="42dp"
+            android:layout_marginEnd="0dp"
+            android:text="Health Inspector Rating"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            style="@style/foodRatingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/healthInspectorScoreTextView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="153dp"
+            android:isIndicator="true" />
+
+        <TextView
+            android:id="@+id/harmfulIngredientsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ratingBar"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="-1dp"
+            android:text="Harmful Ingredients"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/additivesListView"
+            android:layout_width="match_parent"
+            android:layout_height="156dp"
+            android:layout_below="@+id/harmfulIngredientsTextView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="-2dp" />
+
+        <TextView
+            android:id="@+id/warningsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/additivesListView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="-3dp"
+            android:text="Warnings"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <ListView
+            android:id="@+id/warningsListView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btnRecommendations"
+            android:layout_below="@+id/warningsTextView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="5dp" />
+
+        <Button
+            android:id="@+id/btnRecommendations"
+            android:layout_width="210dp"
+            android:layout_height="56dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="102dp"
+            android:layout_marginEnd="99dp"
+            android:layout_marginBottom="19dp"
+            android:text="Recommendations" />
+
+        <TextView
+            android:id="@+id/productNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/productBreakdownTextView"
+            android:layout_marginTop="39dp"
+            android:layout_marginEnd="50dp"
+            android:layout_toStartOf="@+id/productImageView"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/productImageView"
+            android:layout_width="68dp"
+            android:layout_height="74dp"
+            android:layout_below="@+id/productBreakdownTextView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="19dp"
+            android:layout_marginEnd="172dp"
+            tools:src="@tools:sample/avatars" />
+
+
+    </RelativeLayout>
 
 </FrameLayout>

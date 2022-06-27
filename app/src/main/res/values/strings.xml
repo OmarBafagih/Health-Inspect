@@ -2,13 +2,4 @@
     <string name="app_name">HealthInspector</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="scannedProduct">scannedProduct</string>
-    <string name="URL">https://world.openfoodfacts.org/api/v2/product/</string>
-    <string name="product">product</string>
-    <string name="product_name">product_name</string>
-    <string name="nutriscore_grade">nutriscore_grade</string>
-    <string name="ingredients_list">ingredients_text_en"</string>
-    <string name="ingredients_analysis">ingredients_analysis_tags</string>
-    <string name="nova_group">nova_group</string>
-    <string name="nutrient_levels">nutrient_levels</string>
 </resources>
