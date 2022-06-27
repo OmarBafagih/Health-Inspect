@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.healthinspector.Constants;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentProductDetailsBinding;
@@ -36,7 +37,8 @@ public class ProductDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
-        ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(getString(R.string.scannedProduct)));
+        ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(Constants.scannedProduct));
+
     }
 
     @Override
