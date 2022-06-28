@@ -13,5 +13,6 @@ public class Constants {
     public static final String NOVA_GROUP = "nova_group";
     public static final String NUTRIENT_LEVELS = "nutrient_levels";
     public static final String PRODUCT_IMAGE = "image_front_small_url";
-    public static final JSONObject additives = new JSONObject();
+    public static final String ALLERGENS = "allergens";
+    public static final String ADDITIVES = "additives_tags";
 }

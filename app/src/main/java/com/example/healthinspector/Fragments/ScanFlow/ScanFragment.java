@@ -125,7 +125,20 @@ public class ScanFragment extends Fragment {
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.PRODUCT_IMAGE)){
                                         imageUrl = response.getJSONObject(Constants.PRODUCT).getString(Constants.PRODUCT_IMAGE);
                                     }
-                                    ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl);
+
+                                    ArrayList<String> additives = new ArrayList<>();
+                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.ALLERGENS)){
+                                        JSONArray additivesJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.ADDITIVES);
+                                        for (int i = 0; i < additivesJSON.length(); i++){
+                                            ingredientsAnalysis.add(additivesJSON.getString(i));
+                                        }
+                                    }
+                                    ArrayList<String> allergens = new ArrayList<>();
+                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.ALLERGENS)){
+                                       allergens = new ArrayList<>(Arrays.asList(response.getJSONObject(Constants.PRODUCT).getString(Constants.ALLERGENS).split(",")));
+                                    }
+
+                                    ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl , additives, allergens);
 
                                     FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -182,5 +195,16 @@ public class ScanFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+
+    public JSONObject loadAdditives(){
+
+        return null;
+    }
+
+    public JSONObject loadAllergens(){
+
+        return null;
+    }
+
 
 }
