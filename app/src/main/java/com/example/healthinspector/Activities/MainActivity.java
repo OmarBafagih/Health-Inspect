@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         final UserProfileFragment userProfileFragment = new UserProfileFragment();
         final HomeFragment homeFragment = new HomeFragment();
-        final SearchFragment searchFragment = new SearchFragment(HomeFragment.class.getSimpleName());
+        final SearchFragment searchFragment = new SearchFragment();
 
         binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override

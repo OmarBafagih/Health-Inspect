@@ -134,7 +134,7 @@ public class ScanFragment extends Fragment {
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.ADDITIVES)){
                                         JSONArray additivesJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.ADDITIVES);
                                         for (int i = 0; i < additivesJSON.length(); i++){
-                                            ingredientsAnalysis.add(additivesJSON.getString(i));
+                                            additives.add(additivesJSON.getString(i));
                                         }
                                     }
                                     ArrayList<String> allergens = new ArrayList<>();

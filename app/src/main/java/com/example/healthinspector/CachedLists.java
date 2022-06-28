@@ -5,39 +5,43 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 public class CachedLists{
 
     private static CachedLists cachedLists = null;
-    private JSONObject additives = null;
-    private JSONObject allergens = null;
+    private HashMap<String, String> additives = null;
+    private HashMap<String, String> allergens = null;
 
-    private CachedLists(Context context) throws JSONException {
+    private CachedLists(Context context) throws JSONException, JsonProcessingException {
         additives = loadJSONObject(context, "additives.json");
         allergens = loadJSONObject(context, "allergens.json");
 
     }
-    public static CachedLists getInstance(Context context) throws JSONException {
+    public static CachedLists getInstance(Context context) throws JSONException, JsonProcessingException {
         if (cachedLists == null){
             cachedLists = new CachedLists(context);
         }
         return cachedLists;
     }
 
-    public JSONObject getAdditives() {
+    public HashMap<String, String> getAdditives() {
         return additives;
     }
 
-    public JSONObject getAllergens() {
+    public HashMap<String, String> getAllergens() {
         return allergens;
     }
 
-    public JSONObject loadJSONObject(Context context, String fileName) throws JSONException {
+    public HashMap<String,String> loadJSONObject(Context context, String fileName) throws JSONException, JsonProcessingException {
         String json = "";
         try {
             InputStream is = context.getAssets().open(fileName);
@@ -50,7 +54,9 @@ public class CachedLists{
             ex.printStackTrace();
             return null;
         }
-        return new JSONObject(json);
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        return objectMapper.readValue(json, HashMap.class);
     }
 
 }

@@ -32,11 +32,6 @@ public class SearchFragment extends Fragment {
     private static final String TAG = "SearchFragment";
     private String lastFragment;
 
-    public SearchFragment(String lastFragment) {
-        super();
-        this.lastFragment = lastFragment;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,12 +76,6 @@ public class SearchFragment extends Fragment {
                 }
             }
         });
-
-        if(lastFragment != HomeFragment.class.getSimpleName()){
-
-        }
-
-
 
     }
 
