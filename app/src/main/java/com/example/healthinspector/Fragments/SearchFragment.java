@@ -30,6 +30,12 @@ public class SearchFragment extends Fragment {
     private FragmentManager fragmentManager;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private static final String TAG = "SearchFragment";
+    private String lastFragment;
+
+    public SearchFragment(String lastFragment) {
+        super();
+        this.lastFragment = lastFragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,17 +47,12 @@ public class SearchFragment extends Fragment {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
-
         //launches a popup to request for User's camera permissions
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
-                //the camera permissions have been granted, navigate to the scan fragment
-                //replace the current fragment with the scan fragment (navigates to scan fragment)
                 fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
             } else {
-                //user did not allow Camera permissions
-
                 Toast.makeText(getContext(), "Cannot scan barcode without camera permissions", Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "User denied permission");
 
@@ -64,7 +65,6 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //onCLick listener for scan icon imageview
         binding.scanIconImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +81,13 @@ public class SearchFragment extends Fragment {
                 }
             }
         });
+
+        if(lastFragment != HomeFragment.class.getSimpleName()){
+
+        }
+
+
+
     }
 
     @Override

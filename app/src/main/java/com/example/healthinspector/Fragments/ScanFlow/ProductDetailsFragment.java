@@ -5,15 +5,19 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import com.bumptech.glide.Glide;
+import com.example.healthinspector.Activities.MainActivity;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.Models.ScannedProduct;
+import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentProductDetailsBinding;
 
 import org.parceler.Parcels;
@@ -66,6 +70,7 @@ public class ProductDetailsFragment extends Fragment {
         ArrayAdapter warningsAdapter = new ArrayAdapter<String>(requireContext(),
                android.R.layout.simple_list_item_1,scannedProduct.getNutrientLevels());
         binding.warningsListView.setAdapter(warningsAdapter);
+        
     }
 
     @Override
