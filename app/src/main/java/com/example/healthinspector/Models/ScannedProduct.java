@@ -15,12 +15,14 @@ public class ScannedProduct implements Serializable {
     private String novaGroup;
     private ArrayList<String> nutrientLevels;
     private String imageUrl;
+    public ArrayList<String> additives;
+    public ArrayList<String> allergens;
 
 
     // empty constructor needed by the Parceler library
     public ScannedProduct(){}
 
-    public ScannedProduct(String productName, String healthInspectorScore, ArrayList<String> ingredients, ArrayList<String> ingredientsAnalysis, String novaGroup, ArrayList<String> nutrientLevels, String imageUrl) {
+    public ScannedProduct(String productName, String healthInspectorScore, ArrayList<String> ingredients, ArrayList<String> ingredientsAnalysis, String novaGroup, ArrayList<String> nutrientLevels, String imageUrl, ArrayList<String> additives, ArrayList<String> allergens) {
         this.productName = productName;
         this.healthInspectorScore = healthInspectorScore;
         this.ingredients = ingredients;
@@ -28,6 +30,8 @@ public class ScannedProduct implements Serializable {
         this.novaGroup = novaGroup;
         this.nutrientLevels = nutrientLevels;
         this.imageUrl = imageUrl;
+        this.additives = additives;
+        this.allergens = allergens;
     }
 
     public String getProductName() {
