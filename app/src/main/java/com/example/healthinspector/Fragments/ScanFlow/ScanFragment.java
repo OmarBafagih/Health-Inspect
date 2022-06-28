@@ -23,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.example.healthinspector.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
@@ -127,7 +128,7 @@ public class ScanFragment extends Fragment {
                                     }
 
                                     ArrayList<String> additives = new ArrayList<>();
-                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.ALLERGENS)){
+                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.ADDITIVES)){
                                         JSONArray additivesJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.ADDITIVES);
                                         for (int i = 0; i < additivesJSON.length(); i++){
                                             ingredientsAnalysis.add(additivesJSON.getString(i));
@@ -137,7 +138,7 @@ public class ScanFragment extends Fragment {
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.ALLERGENS)){
                                        allergens = new ArrayList<>(Arrays.asList(response.getJSONObject(Constants.PRODUCT).getString(Constants.ALLERGENS).split(",")));
                                     }
-
+                                   
                                     ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl , additives, allergens);
 
                                     FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
@@ -195,16 +196,4 @@ public class ScanFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
-    public JSONObject loadAdditives(){
-
-        return null;
-    }
-
-    public JSONObject loadAllergens(){
-
-        return null;
-    }
-
-
 }
