@@ -90,33 +90,41 @@ public class ScanFragment extends Fragment {
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.NUTRISCORE_GRADE)){
                                         healthInspectorScore = response.getJSONObject(Constants.PRODUCT).getString(Constants.NUTRISCORE_GRADE);
                                     }
+                                    ArrayList<String> ingredients = new ArrayList<>();
+                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.INGREDIENTS_LIST)){
+                                        ingredients = new ArrayList<>(Arrays.asList(response.getJSONObject(Constants.PRODUCT).getString(Constants.INGREDIENTS_LIST).split(" ,")));
+                                        ingredients.set(ingredients.size()-1, ingredients.get(ingredients.size()-1).replace(".", ""));
+                                    }
 
-                                    ArrayList<String> ingredients = new ArrayList<>(Arrays.asList(response.getJSONObject(Constants.PRODUCT).getString(Constants.INGREDIENTS_LIST).split(" ,")));
-                                    ingredients.set(ingredients.size()-1, ingredients.get(ingredients.size()-1).replace(".", ""));
-
-                                    JSONArray ingredientsAnalysisJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.INGREDIENTS_ANALYSIS);
                                     ArrayList<String> ingredientsAnalysis = new ArrayList<>();
+                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.INGREDIENTS_ANALYSIS)){
+                                        JSONArray ingredientsAnalysisJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.INGREDIENTS_ANALYSIS);
+                                        for (int i = 0; i < ingredientsAnalysisJSON.length(); i++){
+                                            ingredientsAnalysis.add(ingredientsAnalysisJSON.getString(i));
+                                        }
+                                        for(int i = 0; i < ingredientsAnalysis.size(); i++){
+                                            ingredientsAnalysis.set(i, ingredientsAnalysis.get(i).substring(3).replace("-", " "));
+                                        }
+                                    }
 
-                                    for (int i = 0; i < ingredientsAnalysisJSON.length(); i++){
-                                        ingredientsAnalysis.add(ingredientsAnalysisJSON.getString(i));
-                                    }
-                                    for(int i = 0; i < ingredientsAnalysis.size(); i++){
-                                        ingredientsAnalysis.set(i, ingredientsAnalysis.get(i).substring(3).replace("-", " "));
-                                    }
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.NOVA_GROUP)){
                                         int novaGroupNumber = response.getJSONObject(Constants.PRODUCT).getInt(Constants.NOVA_GROUP);
                                         novaGroup = novaGroups.get(novaGroupNumber);
                                     }
 
                                     ArrayList<String> nutrientLevels = new ArrayList<>();
-                                    JSONObject nutrientLevelsJSON = response.getJSONObject(Constants.PRODUCT).getJSONObject(Constants.NUTRIENT_LEVELS);
-                                    Iterator iterator =  nutrientLevelsJSON.keys();
-                                    while (iterator.hasNext()){
-                                        String key = iterator.next().toString();
-                                        nutrientLevels.add(key + ": " + nutrientLevelsJSON.getString(key));
+                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.NUTRIENT_LEVELS)){
+                                        JSONObject nutrientLevelsJSON = response.getJSONObject(Constants.PRODUCT).getJSONObject(Constants.NUTRIENT_LEVELS);
+                                        Iterator iterator =  nutrientLevelsJSON.keys();
+                                        while (iterator.hasNext()){
+                                            String key = iterator.next().toString();
+                                            nutrientLevels.add(key + ": " + nutrientLevelsJSON.getString(key));
+                                        }
                                     }
-
-                                    String imageUrl = response.getJSONObject(Constants.PRODUCT).getString(Constants.PRODUCT_IMAGE);
+                                    String imageUrl = "";
+                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.PRODUCT_IMAGE)){
+                                        imageUrl = response.getJSONObject(Constants.PRODUCT).getString(Constants.PRODUCT_IMAGE);
+                                    }
                                     ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl);
 
                                     FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
