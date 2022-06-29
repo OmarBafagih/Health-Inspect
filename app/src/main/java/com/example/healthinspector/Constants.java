@@ -15,4 +15,6 @@ public class Constants {
     public static final String PRODUCT_IMAGE = "image_front_small_url";
     public static final String ALLERGENS = "allergens";
     public static final String ADDITIVES = "additives_tags";
+    public static final String ADDITIVES_FILE_NAME = "additives.json";
+    public static final String ALLERGENS_FILE_NAME = "allergens.json";
 }

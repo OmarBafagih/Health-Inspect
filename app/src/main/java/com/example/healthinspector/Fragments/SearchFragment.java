@@ -45,6 +45,7 @@ public class SearchFragment extends Fragment {
         //launches a popup to request for User's camera permissions
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
+                //permissions are granted, navigate to scanFragment
                 fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
             } else {
@@ -65,8 +66,7 @@ public class SearchFragment extends Fragment {
             public void onClick(View v) {
                 //request for User's camera permissions
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    //camera permissions are already granted, navigate to the scan fragment
-                    //replace the current fragment with the scan fragment (navigates to scan fragment)
+                    //camera permissions are already granted
                     fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
                 }
@@ -76,7 +76,6 @@ public class SearchFragment extends Fragment {
                 }
             }
         });
-
     }
 
     @Override

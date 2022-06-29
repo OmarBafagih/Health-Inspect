@@ -39,7 +39,6 @@ public class LoginActivity extends AppCompatActivity {
             navigateToHome();
         }
 
-
         //creating on click listeners for login and signup buttons
         //Login button onClick listener
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -48,15 +47,15 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i(TAG, "onClick Login button");
 
                 //collect the inputted text from the input fields
-                String username = binding.etUsername.getText().toString();
-                String password = binding.etPassword.getText().toString();
+                String username = binding.usernameEditText.getText().toString();
+                String password = binding.passwordEditText.getText().toString();
 
                 //simple input checking
                 if(username.isEmpty()){
                     Toast.makeText(LoginActivity.this, "Please enter your username", Toast.LENGTH_SHORT).show();
                 }
                 else if(password.isEmpty()){
-                    Toast.makeText(LoginActivity.this, "please enter your password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Please enter your password", Toast.LENGTH_SHORT).show();
                 }
                 else{
                     loginUser(username, password);
