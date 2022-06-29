@@ -85,7 +85,7 @@ public class ProductDetailsFragment extends Fragment {
 
         ArrayList<String> additivesInProduct;
         try {
-            allAdditives = CachedLists.getInstance(requireContext()).getAdditives();
+            allAdditives = CachedLists.getInstance().getAdditives(requireContext());
             if(scannedProduct.getAdditives().size() >= 1){
                 additivesInProduct = new ArrayList<>();
                 for(int i = 0; i < scannedProduct.getAdditives().size(); i++){
@@ -100,8 +100,6 @@ public class ProductDetailsFragment extends Fragment {
         } catch (JSONException | JsonProcessingException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override

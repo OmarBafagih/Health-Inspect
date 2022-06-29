@@ -35,7 +35,7 @@
         <!-- Edit text provided to user to
              enter email, username or phone no.-->
         <EditText
-            android:id="@+id/etUsername"
+            android:id="@+id/usernameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"
@@ -48,7 +48,7 @@
         <!-- Edit text provided to write
               password (according to instagram UI)-->
         <EditText
-            android:id="@+id/etPassword"
+            android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="14sp"

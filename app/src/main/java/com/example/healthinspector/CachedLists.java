@@ -21,23 +21,26 @@ public class CachedLists{
     private HashMap<String, String> additives = null;
     private HashMap<String, String> allergens = null;
 
-    private CachedLists(Context context) throws JSONException, JsonProcessingException {
-        additives = loadJSONObject(context, "additives.json");
-        allergens = loadJSONObject(context, "allergens.json");
-
+    private CachedLists() throws JSONException, JsonProcessingException {
     }
-    public static CachedLists getInstance(Context context) throws JSONException, JsonProcessingException {
+    public static CachedLists getInstance() throws JSONException, JsonProcessingException {
         if (cachedLists == null){
-            cachedLists = new CachedLists(context);
+            cachedLists = new CachedLists();
         }
         return cachedLists;
     }
 
-    public HashMap<String, String> getAdditives() {
+    public HashMap<String, String> getAdditives(Context context) throws JSONException, JsonProcessingException {
+        if(additives == null){
+            additives = loadJSONObject(context, Constants.ADDITIVES_FILE_NAME);
+        }
         return additives;
     }
 
-    public HashMap<String, String> getAllergens() {
+    public HashMap<String, String> getAllergens(Context context) throws JSONException, JsonProcessingException {
+        if(allergens == null){
+            allergens = loadJSONObject(context, Constants.ALLERGENS_FILE_NAME);
+        }
         return allergens;
     }
 

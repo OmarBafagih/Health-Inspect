@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
     private static String lastFragment = "";
+    private UserProfileFragment userProfileFragment;
+    private HomeFragment homeFragment;
+    private SearchFragment searchFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,24 +34,29 @@ public class MainActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        final UserProfileFragment userProfileFragment = new UserProfileFragment();
-        final HomeFragment homeFragment = new HomeFragment();
-        final SearchFragment searchFragment = new SearchFragment();
-
         binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     //navigate to profile fragment
                     case R.id.miProfile:
+                        if(userProfileFragment == null) {
+                            userProfileFragment = new UserProfileFragment();
+                        }
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
                         return true;
                     //navigate to home fragment
                     case R.id.miHome:
+                        if(homeFragment == null) {
+                            homeFragment = new HomeFragment();
+                        }
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
                         return true;
                     //navigate to search fragment
                     case R.id.miSearch:
+                        if(searchFragment == null){
+                            searchFragment = new SearchFragment();
+                        }
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, searchFragment).commit();
                         return true;
                 }
@@ -59,24 +67,15 @@ public class MainActivity extends AppCompatActivity {
         //setting the selected item for the nav bar as defaulting to the "home" page
         binding.bottomNavigation.setSelectedItemId(R.id.miHome);
 
-
-        //onClick listener for cart icon within toolbar
         binding.cartImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "In OnClick listener for cart iv");
-
-                //set the cart icon to be filled
                 binding.cartImageView.setImageResource(R.drawable.cart_icon_filled);
-
                 //navigate to the cart fragment
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CartFragment()).commit();
-
             }
         });
-
-
-
     }
 
 }
