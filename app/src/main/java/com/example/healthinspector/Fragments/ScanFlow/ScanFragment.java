@@ -47,18 +47,13 @@ public class ScanFragment extends Fragment {
     private FragmentScanBinding binding;
     private CodeScanner codeScannerView;
     private static final String TAG = "ScanFragment";
-    private HashMap<Integer, String> novaGroups = new HashMap<>();
+    private HashMap<Integer, String> novaGroups = null;
     private String novaGroup;
 
 
     @Override
     public void onStart() {
         super.onStart();
-        novaGroups.put(1,"unprocessed or minimally processed food");
-        novaGroups.put(2,"includes processed culinary ingredient");
-        novaGroups.put(3,"processed food");
-        novaGroups.put(4,"ultra processed food or drink product");
-        novaGroup = "";
     }
 
     @Override
@@ -112,6 +107,12 @@ public class ScanFragment extends Fragment {
                                     }
 
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.NOVA_GROUP)){
+                                        novaGroups = new HashMap<>();
+                                        novaGroups.put(1,"unprocessed or minimally processed food");
+                                        novaGroups.put(2,"includes processed culinary ingredient");
+                                        novaGroups.put(3,"processed food");
+                                        novaGroups.put(4,"ultra processed food or drink product");
+                                        novaGroup = "";
                                         int novaGroupNumber = response.getJSONObject(Constants.PRODUCT).getInt(Constants.NOVA_GROUP);
                                         novaGroup = novaGroups.get(novaGroupNumber);
                                     }
