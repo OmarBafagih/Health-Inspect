@@ -23,18 +23,20 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userWarningsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="218dp"
+        android:layout_height="222dp"
         android:layout_above="@+id/addWarningImageView"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="0dp"
-        android:layout_marginBottom="29dp" />
+        android:layout_marginBottom="10dp" />
 
     <Button
         android:id="@+id/btnDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginStart="162dp"
         android:layout_marginEnd="162dp"
         android:layout_marginBottom="21dp"
         android:text="Done" />
@@ -64,24 +66,26 @@
 
     <ImageView
         android:id="@+id/addAllergyImageView"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_above="@+id/userWarningsPromptTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="185dp"
+        android:layout_marginStart="186dp"
         android:layout_marginEnd="186dp"
-        android:layout_marginBottom="15dp"
-        android:src="@drawable/add_icon" />
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/add_icon_2" />
 
     <ImageView
         android:id="@+id/addWarningImageView"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_above="@+id/btnDone"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="191dp"
-        android:layout_marginBottom="19dp"
-        android:src="@drawable/add_icon" />
+        android:layout_marginStart="186dp"
+        android:layout_marginEnd="186dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/add_icon_2" />
 
 </RelativeLayout>
