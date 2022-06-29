@@ -66,7 +66,6 @@ public class ProductDetailsFragment extends Fragment {
         productRatings.put("D", 2);
         productRatings.put("E", 1);
         productRatings.put("", 0);
-        Log.i(TAG, scannedProduct.getHealthInspectorScore());
         binding.ratingBar.setRating(productRatings.get(scannedProduct.getHealthInspectorScore().toUpperCase(Locale.ROOT)));
 
         ArrayAdapter warningsAdapter = new ArrayAdapter<String>(requireContext(),

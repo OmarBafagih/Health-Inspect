@@ -2,19 +2,25 @@ package com.example.healthinspector.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.healthinspector.Constants;
 import com.example.healthinspector.Fragments.CartFragment;
 import com.example.healthinspector.Fragments.HomeFragment;
+import com.example.healthinspector.Fragments.ScanFlow.ProductDetailsFragment;
 import com.example.healthinspector.Fragments.SearchFragment;
 import com.example.healthinspector.Fragments.UserProfileFragment;
 import com.example.healthinspector.R;
+import com.example.healthinspector.SearchFragmentSwitch;
 import com.example.healthinspector.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
+
+import org.parceler.Parcels;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,7 +63,15 @@ public class MainActivity extends AppCompatActivity {
                         if(searchFragment == null){
                             searchFragment = new SearchFragment();
                         }
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, searchFragment).commit();
+                        FragmentTransaction fragmentTransaction =  getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Constants.PREVIOUS_FRAGMENT, SearchFragmentSwitch.MAIN_ACTIVITY);
+                        searchFragment.setArguments(bundle);
+                        fragmentTransaction.replace(R.id.fragment_container, searchFragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
                         return true;
                 }
                 return false;

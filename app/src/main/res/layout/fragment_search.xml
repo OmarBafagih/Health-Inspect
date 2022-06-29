@@ -6,30 +6,72 @@
         android:layout_height="match_parent"
         tools:context=".Fragments.SearchFragment">
 
-        <ImageView
-            android:id="@+id/scanIconImageView"
-            android:layout_width="57dp"
-            android:layout_height="44dp"
-            android:layout_above="@+id/scanPromptTextView"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="176dp"
-            android:layout_marginEnd="177dp"
-            android:layout_marginBottom="5dp"
-            android:src="@drawable/camera_icon"></ImageView>
+    <ImageView
+        android:id="@+id/scanIconImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_above="@+id/scanPromptTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="173dp"
+        android:layout_marginEnd="180dp"
+        android:layout_marginBottom="0dp"
+        android:src="@drawable/camera_icon"
+        android:visibility="gone"
+        tools:visibility="visible"></ImageView>
 
-        <TextView
-            android:id="@+id/scanPromptTextView"
-            android:layout_width="120dp"
-            android:layout_height="33dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="143dp"
-            android:layout_marginEnd="148dp"
-            android:layout_marginBottom="20dp"
-            android:text="Scan Barcode"
-            android:textAlignment="center" />
+    <TextView
+        android:id="@+id/scanPromptTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="143dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginBottom="16dp"
+        android:text="Scan Barcode"
+        android:textAlignment="center"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
-    </RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchItemsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="534dp"
+        android:layout_above="@+id/searchPromptTextView"
+        android:layout_below="@+id/editTextTextPersonName"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="17dp" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="40dp"
+        android:background="@drawable/background_edit_text"
+        android:drawableRight="@drawable/search_icon_edittext"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <TextView
+        android:id="@+id/searchPromptTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/scanIconImageView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="31dp" />
+
+</RelativeLayout>
 

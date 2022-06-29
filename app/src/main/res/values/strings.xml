@@ -2,4 +2,7 @@
     <string name="app_name">HealthInspector</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="search_products_prompt">Click any product to add it to your shopping cart</string>
+    <string name="search_allergy_prompt">Click any ingredient to add it to your allergy warnings</string>
+    <string name="search_additives_prompt">Click any ingredient to add it your additive warnings</string>
 </resources>
