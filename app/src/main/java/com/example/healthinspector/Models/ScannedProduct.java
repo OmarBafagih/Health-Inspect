@@ -61,4 +61,12 @@ public class ScannedProduct implements Serializable {
     public String getImageUrl() {
         return imageUrl;
     }
+
+    public ArrayList<String> getAdditives() {
+        return additives;
+    }
+
+    public ArrayList<String> getAllergens() {
+        return allergens;
+    }
 }

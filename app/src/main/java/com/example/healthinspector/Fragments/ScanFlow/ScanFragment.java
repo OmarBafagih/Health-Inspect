@@ -23,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
+import com.example.healthinspector.Activities.MainActivity;
 import com.example.healthinspector.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.Models.ScannedProduct;
@@ -48,6 +49,8 @@ public class ScanFragment extends Fragment {
     private static final String TAG = "ScanFragment";
     private HashMap<Integer, String> novaGroups = new HashMap<>();
     private String novaGroup;
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -131,14 +134,14 @@ public class ScanFragment extends Fragment {
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.ADDITIVES)){
                                         JSONArray additivesJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.ADDITIVES);
                                         for (int i = 0; i < additivesJSON.length(); i++){
-                                            ingredientsAnalysis.add(additivesJSON.getString(i));
+                                            additives.add(additivesJSON.getString(i));
                                         }
                                     }
                                     ArrayList<String> allergens = new ArrayList<>();
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.ALLERGENS)){
                                        allergens = new ArrayList<>(Arrays.asList(response.getJSONObject(Constants.PRODUCT).getString(Constants.ALLERGENS).split(",")));
                                     }
-                                   
+
                                     ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl , additives, allergens);
 
                                     FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();

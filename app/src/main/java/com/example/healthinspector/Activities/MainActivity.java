@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.example.healthinspector.Fragments.CartFragment;
 import com.example.healthinspector.Fragments.HomeFragment;
@@ -15,7 +14,6 @@ import com.example.healthinspector.Fragments.SearchFragment;
 import com.example.healthinspector.Fragments.UserProfileFragment;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.ActivityMainBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
@@ -23,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
-
+    private static String lastFragment = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,13 +31,10 @@ public class MainActivity extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
-        //creating fragments to navigate to
         final UserProfileFragment userProfileFragment = new UserProfileFragment();
         final HomeFragment homeFragment = new HomeFragment();
         final SearchFragment searchFragment = new SearchFragment();
 
-
-        //bottom navigation view item listener
         binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -83,4 +78,5 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 }
