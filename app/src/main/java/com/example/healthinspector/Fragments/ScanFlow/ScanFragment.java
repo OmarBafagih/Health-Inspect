@@ -64,7 +64,7 @@ public class ScanFragment extends Fragment {
         View view = binding.getRoot();
         final Activity activity = getActivity();
         CodeScannerView scannerView = binding.scannerView;
-        codeScannerView = new CodeScanner(getActivity(), scannerView);
+        codeScannerView = new CodeScanner(activity, scannerView);
 
         scannerView.setOnClickListener(new View.OnClickListener() {
             @Override

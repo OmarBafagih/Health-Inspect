@@ -1,5 +1,5 @@
 package com.example.healthinspector;
 
 public enum SearchFragmentSwitch {
-    USER_PROFILE, ALLERGENS, ADDITIVES
+    ALLERGEN_SEARCH, ADDITIVE_SEARCH, MAIN_ACTIVITY
 }

@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>{
+public class itemAdapter extends RecyclerView.Adapter<itemAdapter.ViewHolder>{
     private Context context;
     private List<String> searchItems;
     private SearchFragmentSwitch searchFragmentSwitch;
 
-    public SearchAdapter(Context context, List<String> searchItems, SearchFragmentSwitch searchFragmentSwitch){
+    public itemAdapter(Context context, List<String> searchItems, SearchFragmentSwitch searchFragmentSwitch){
         this.context = context;
         this.searchItems = searchItems;
         this.searchFragmentSwitch = searchFragmentSwitch;
@@ -59,7 +59,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
         public void bind(String item) {
             //if the user is wanting to search through additives
-            if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVES)){
+            if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
                 searchItemImageView.setImageResource(R.drawable.additives_icon);
             }
             else{

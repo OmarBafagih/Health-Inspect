@@ -18,8 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.healthinspector.Constants;
 import com.example.healthinspector.Fragments.ScanFlow.ScanFragment;
 import com.example.healthinspector.R;
+import com.example.healthinspector.SearchFragmentSwitch;
 import com.example.healthinspector.databinding.FragmentSearchBinding;
 
 
@@ -33,15 +35,27 @@ public class SearchFragment extends Fragment {
     private String lastFragment;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Bundle bundle = getArguments();
+        SearchFragmentSwitch searchFragmentSwitch = (SearchFragmentSwitch) bundle.get(Constants.PREVIOUS_FRAGMENT);
+
+        if(searchFragmentSwitch.equals(SearchFragmentSwitch.MAIN_ACTIVITY)){
+            binding.scanIconImageView.setVisibility(View.VISIBLE);
+            binding.scanPromptTextView.setVisibility(View.VISIBLE);
+            binding.searchPromptTextView.setText(R.string.search_products_prompt);
+        }
+        else if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
+            binding.searchPromptTextView.setText(R.string.search_additives_prompt);
+        }
+        else{
+            binding.searchPromptTextView.setText(R.string.search_allergy_prompt);
+        }
 
         //initializing the scanFragment
         scanFragment = new ScanFragment();
         // Inflate the layout for this fragment
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-
         //launches a popup to request for User's camera permissions
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
@@ -54,7 +68,6 @@ public class SearchFragment extends Fragment {
 
             }
         });
-
         return view;
     }
 
