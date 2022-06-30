@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-public class itemAdapter extends RecyclerView.Adapter<itemAdapter.ViewHolder>{
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     private Context context;
     private List<String> searchItems;
     private SearchFragmentSwitch searchFragmentSwitch;
 
-    public itemAdapter(Context context, List<String> searchItems, SearchFragmentSwitch searchFragmentSwitch){
+    public ItemAdapter(Context context, List<String> searchItems, SearchFragmentSwitch searchFragmentSwitch){
         this.context = context;
         this.searchItems = searchItems;
         this.searchFragmentSwitch = searchFragmentSwitch;
@@ -65,6 +65,7 @@ public class itemAdapter extends RecyclerView.Adapter<itemAdapter.ViewHolder>{
             else{
                 searchItemImageView.setImageResource(R.drawable.ingredients_icon);
             }
+            searchItemTextView.setText(item);
         }
     }
 
