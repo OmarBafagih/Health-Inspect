@@ -97,6 +97,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+
+
+
     public void navigateToHome(){
         Intent i = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(i);

@@ -38,6 +38,19 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle bundle = getArguments();
         SearchFragmentSwitch searchFragmentSwitch = (SearchFragmentSwitch) bundle.get(Constants.PREVIOUS_FRAGMENT);
+
+        if(searchFragmentSwitch.equals(SearchFragmentSwitch.MAIN_ACTIVITY)){
+            binding.scanIconImageView.setVisibility(View.VISIBLE);
+            binding.scanPromptTextView.setVisibility(View.VISIBLE);
+            binding.searchPromptTextView.setText(R.string.search_products_prompt);
+        }
+        else if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
+            binding.searchPromptTextView.setText(R.string.search_additives_prompt);
+        }
+        else{
+            binding.searchPromptTextView.setText(R.string.search_allergy_prompt);
+        }
+
         //initializing the scanFragment
         scanFragment = new ScanFragment();
         // Inflate the layout for this fragment
@@ -52,22 +65,9 @@ public class SearchFragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Cannot scan barcode without camera permissions", Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "User denied permission");
+
             }
         });
-
-        if(searchFragmentSwitch.equals(SearchFragmentSwitch.MAIN_ACTIVITY)){
-            binding.scanIconImageView.setVisibility(View.VISIBLE);
-            binding.scanPromptTextView.setVisibility(View.VISIBLE);
-            binding.orPromptTextView.setVisibility(View.VISIBLE);
-            binding.searchPromptTextView.setText(R.string.search_products_prompt);
-        }
-        else if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
-            binding.searchPromptTextView.setText(R.string.search_additives_prompt);
-        }
-        else{
-            binding.searchPromptTextView.setText(R.string.search_allergy_prompt);
-        }
-
         return view;
     }
 
