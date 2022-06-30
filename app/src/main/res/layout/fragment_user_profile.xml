@@ -45,18 +45,19 @@
         android:id="@+id/userAllergiesPromptTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/btnLogout"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="0dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="-1dp"
         android:background="#FFFFFF"
         android:backgroundTint="#9DF1EA"
         android:text="Your Allergies"
         android:textAlignment="center" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/userAllergiesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="251dp"
         android:layout_above="@+id/addAllergyImageView"
@@ -87,5 +88,16 @@
         android:layout_marginEnd="186dp"
         android:layout_marginBottom="10dp"
         android:src="@drawable/add_icon_2" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="17dp"
+        android:text="Log out" />
+
 
 </RelativeLayout>
