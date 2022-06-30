@@ -5,6 +5,7 @@
     android:id="@+id/searchItemRlativeLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="7dp"
     android:background="@drawable/item_background">
 
 

@@ -63,12 +63,12 @@ public class MainActivity extends AppCompatActivity {
                         if(searchFragment == null){
                             searchFragment = new SearchFragment();
                         }
-                        FragmentTransaction fragmentTransaction =  getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constants.PREVIOUS_FRAGMENT, SearchFragmentSwitch.MAIN_ACTIVITY);
+                        bundle.putSerializable(Constants.SEARCH_FRAGMENT_ENUM, SearchFragmentSwitch.MAIN_ACTIVITY);
                         searchFragment.setArguments(bundle);
+
                         fragmentTransaction.replace(R.id.fragment_container, searchFragment);
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();

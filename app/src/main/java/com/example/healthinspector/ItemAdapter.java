@@ -8,17 +8,28 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class itemAdapter extends RecyclerView.Adapter<itemAdapter.ViewHolder>{
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     private Context context;
     private List<String> searchItems;
     private SearchFragmentSwitch searchFragmentSwitch;
+    private ArrayList<String> addedItems;
 
-    public itemAdapter(Context context, List<String> searchItems, SearchFragmentSwitch searchFragmentSwitch){
+    public ItemAdapter(){
+        this.context = null;
+        this.searchItems = null;
+        this.searchFragmentSwitch = null;
+        this.addedItems = new ArrayList<>();
+    }
+
+    public ItemAdapter(Context context, List<String> searchItems, SearchFragmentSwitch searchFragmentSwitch){
         this.context = context;
         this.searchItems = searchItems;
         this.searchFragmentSwitch = searchFragmentSwitch;
+        this.addedItems = new ArrayList<>();
     }
 
     @NonNull
@@ -38,7 +49,10 @@ public class itemAdapter extends RecyclerView.Adapter<itemAdapter.ViewHolder>{
     public int getItemCount() {
         return searchItems.size();
     }
+    public ArrayList<String> getAddedItems(){return this.addedItems;}
+
     public void clear(){
+        addedItems.clear();
         searchItems.clear();
         notifyDataSetChanged();
     }
@@ -56,15 +70,25 @@ public class itemAdapter extends RecyclerView.Adapter<itemAdapter.ViewHolder>{
             searchItemTextView = itemView.findViewById(R.id.itemTextView);
             searchItemImageView = itemView.findViewById(R.id.itemImageView);
         }
-
+        //nice
         public void bind(String item) {
+            searchItemTextView.setText(item);
             //if the user is wanting to search through additives
-            if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
+            if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH) || searchFragmentSwitch.equals(SearchFragmentSwitch.USER_WARNINGS)){
                 searchItemImageView.setImageResource(R.drawable.additives_icon);
             }
             else{
                 searchItemImageView.setImageResource(R.drawable.ingredients_icon);
             }
+            if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH) || searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
+                searchItemTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        addedItems.add(item);
+                    }
+                });
+            }
+
         }
     }
 

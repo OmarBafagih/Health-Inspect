@@ -17,5 +17,5 @@ public class Constants {
     public static final String ADDITIVES = "additives_tags";
     public static final String ADDITIVES_FILE_NAME = "additives.json";
     public static final String ALLERGENS_FILE_NAME = "allergens.json";
-    public static final String PREVIOUS_FRAGMENT = "previousFragment";
+    public static final String SEARCH_FRAGMENT_ENUM = "searchFragmentEnum";
 }
