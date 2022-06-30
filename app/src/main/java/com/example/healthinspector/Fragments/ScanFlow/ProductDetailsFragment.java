@@ -40,7 +40,7 @@ public class ProductDetailsFragment extends Fragment {
     private FragmentProductDetailsBinding binding;
     private static final String TAG = "ProductDetailsFragment";
     private HashMap<String, String> allAdditives = null;
-
+    private HashMap<String, Integer> productRatings = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,26 +59,15 @@ public class ProductDetailsFragment extends Fragment {
         binding.productNameTextView.setText(scannedProduct.getProductName());
         Glide.with(requireContext()).load(scannedProduct.getImageUrl()).into(binding.productImageView);
 
-        switch (scannedProduct.getHealthInspectorScore().toUpperCase(Locale.ROOT)){
-            case "A":
-                binding.ratingBar.setRating(5);
-                break;
-            case "B":
-                binding.ratingBar.setRating(4);
-                break;
-            case "C":
-                binding.ratingBar.setRating(3);
-                break;
-            case "D":
-                binding.ratingBar.setRating(2);
-                break;
-            case "E":
-                binding.ratingBar.setRating(1);
-                break;
-            default:
-                binding.ratingBar.setRating(0);
-                break;
-        }
+        productRatings = new HashMap<>();
+        productRatings.put("A", 5);
+        productRatings.put("B", 4);
+        productRatings.put("C", 3);
+        productRatings.put("D", 2);
+        productRatings.put("E", 1);
+        productRatings.put("", 0);
+        binding.ratingBar.setRating(productRatings.get(scannedProduct.getHealthInspectorScore().toUpperCase(Locale.ROOT)));
+
         ArrayAdapter warningsAdapter = new ArrayAdapter<String>(requireContext(),
                android.R.layout.simple_list_item_1,scannedProduct.getNutrientLevels());
         binding.warningsListView.setAdapter(warningsAdapter);
@@ -86,11 +75,11 @@ public class ProductDetailsFragment extends Fragment {
         ArrayList<String> additivesInProduct;
         try {
             allAdditives = CachedLists.getInstance().getAdditives(requireContext());
-            if(scannedProduct.getAdditives().size() >= 1){
+            if(scannedProduct.getProductAdditives().size() >= 1){
                 additivesInProduct = new ArrayList<>();
-                for(int i = 0; i < scannedProduct.getAdditives().size(); i++){
-                    if(allAdditives.containsKey(scannedProduct.getAdditives().get(i))){
-                        additivesInProduct.add(allAdditives.get(scannedProduct.getAdditives().get(i)));
+                for(int i = 0; i < scannedProduct.getProductAdditives().size(); i++){
+                    if(allAdditives.containsKey(scannedProduct.getProductAdditives().get(i))){
+                        additivesInProduct.add(allAdditives.get(scannedProduct.getProductAdditives().get(i)));
                     }
                 }
                 ArrayAdapter harmfulIngredientsAdapter = new ArrayAdapter<String>(requireContext(),

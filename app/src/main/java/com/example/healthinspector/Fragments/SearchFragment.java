@@ -40,9 +40,7 @@ public class SearchFragment extends Fragment {
     private static final String TAG = "SearchFragment";
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //initializing the scanFragment
         scanFragment = new ScanFragment();
         // Inflate the layout for this fragment

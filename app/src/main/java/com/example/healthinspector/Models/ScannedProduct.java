@@ -62,7 +62,7 @@ public class ScannedProduct implements Serializable {
         return imageUrl;
     }
 
-    public ArrayList<String> getAdditives() {
+    public ArrayList<String> getProductAdditives() {
         return additives;
     }
 
