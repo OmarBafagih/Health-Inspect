@@ -52,7 +52,6 @@ public class SearchFragment extends Fragment {
             } else {
                 Toast.makeText(getContext(), "Cannot scan barcode without camera permissions", Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "User denied permission");
-
             }
         });
 
