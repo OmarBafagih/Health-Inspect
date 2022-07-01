@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.example.healthinspector.databinding.FragmentUserProfileBinding;
 import com.parse.ParseUser;
 
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 
 public class UserProfileFragment extends Fragment {
@@ -85,13 +87,13 @@ public class UserProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
-        ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get("userAllergies");
+        ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES);
         ItemAdapter allergiesAdapter = new ItemAdapter(requireContext(), userAllergies, SearchFragmentSwitch.USER_ALLERGIES);
         binding.userAllergiesRecyclerView.setAdapter(allergiesAdapter);
         LinearLayoutManager linearLayoutManagerAllergies = new LinearLayoutManager(getContext());
         binding.userAllergiesRecyclerView.setLayoutManager(linearLayoutManagerAllergies);
 
-        ArrayList<String> userWarnings = (ArrayList) ParseUser.getCurrentUser().get("userWarningIngredients");
+        ArrayList<String> userWarnings = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS);
         ItemAdapter warningsAdapter = new ItemAdapter(requireContext(), userWarnings, SearchFragmentSwitch.USER_WARNINGS);
         binding.userWarningsRecyclerView.setAdapter(warningsAdapter);
         LinearLayoutManager linearLayoutManagerWarnings = new LinearLayoutManager(getContext());
