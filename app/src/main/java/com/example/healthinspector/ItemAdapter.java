@@ -94,9 +94,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
                         notifyItemChanged(selected_position);
                         selected_position = getAdapterPosition();
                         notifyItemChanged(selected_position);
-
                         addedItem = item;
-                        Log.i("ADAPTER", addedItem.toString());
                     }
                 });
             }

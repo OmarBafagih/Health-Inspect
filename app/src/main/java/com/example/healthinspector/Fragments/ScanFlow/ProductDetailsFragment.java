@@ -72,20 +72,12 @@ public class ProductDetailsFragment extends Fragment {
                android.R.layout.simple_list_item_1,scannedProduct.getNutrientLevels());
         binding.warningsListView.setAdapter(warningsAdapter);
 
-        ArrayList<String> additivesInProduct;
         try {
-            allAdditives = CachedLists.getInstance().getAdditives(requireContext());
-            if(scannedProduct.getProductAdditives().size() >= 1){
-                additivesInProduct = new ArrayList<>();
-                for(int i = 0; i < scannedProduct.getProductAdditives().size(); i++){
-                    if(allAdditives.containsKey(scannedProduct.getProductAdditives().get(i))){
-                        additivesInProduct.add(allAdditives.get(scannedProduct.getProductAdditives().get(i)));
-                    }
-                }
-                ArrayAdapter harmfulIngredientsAdapter = new ArrayAdapter<String>(requireContext(),
-                        android.R.layout.simple_list_item_1,additivesInProduct);
-                binding.additivesListView.setAdapter(harmfulIngredientsAdapter);
-            }
+
+            ArrayAdapter harmfulIngredientsAdapter = new ArrayAdapter<String>(requireContext(),
+                    android.R.layout.simple_list_item_1,CachedLists.getInstance().additivesInProduct(scannedProduct.getProductAdditives(), requireContext()));
+            binding.additivesListView.setAdapter(harmfulIngredientsAdapter);
+
         } catch (JSONException | JsonProcessingException e) {
             e.printStackTrace();
         }

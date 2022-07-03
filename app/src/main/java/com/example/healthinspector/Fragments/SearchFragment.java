@@ -113,11 +113,7 @@ public class SearchFragment extends Fragment {
                             userWarnings.add(finalItemAdapter.getAddedItem());
                             ParseUser user = ParseUser.getCurrentUser();
                             user.put(Constants.PARSE_USER_WARNINGS, userWarnings);
-                            try {
-                                user.save();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            user.saveInBackground();
                             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
                         }
                     });
@@ -143,11 +139,8 @@ public class SearchFragment extends Fragment {
                             userAllergies.add(finalItemAdapter.getAddedItem());
                             ParseUser user = ParseUser.getCurrentUser();
                             user.put(Constants.PARSE_USER_ALLERGIES, userAllergies);
-                            try {
-                                user.save();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
+                            user.saveInBackground();
+
                             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
                         }
                     });
