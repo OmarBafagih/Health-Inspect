@@ -1,7 +1,6 @@
 package com.example.healthinspector.Fragments;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -9,19 +8,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -32,17 +28,14 @@ import com.example.healthinspector.Constants;
 import com.example.healthinspector.Fragments.ScanFlow.ScanFragment;
 import com.example.healthinspector.ItemAdapter;
 import com.example.healthinspector.R;
-import com.example.healthinspector.SearchFragmentSwitch;
+import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Locale;
 
 
 public class SearchFragment extends Fragment {
@@ -54,6 +47,7 @@ public class SearchFragment extends Fragment {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private static final String TAG = "SearchFragment";
     private ItemAdapter itemAdapter;
+    private FragmentSwitch signupSwitch;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,7 +58,10 @@ public class SearchFragment extends Fragment {
         View view = binding.getRoot();
 
         Bundle bundle = getArguments();
-        SearchFragmentSwitch searchFragmentSwitch = (SearchFragmentSwitch) bundle.getSerializable(Constants.SEARCH_FRAGMENT_ENUM);
+        FragmentSwitch fragmentSwitch = (FragmentSwitch) bundle.getSerializable(Constants.FRAGMENT_SWITCH);
+        if(bundle.containsKey(Constants.SIGN_UP_FLOW)){
+            signupSwitch = (FragmentSwitch) bundle.get(Constants.SIGN_UP_FLOW);
+        }
 
         //launches a popup to request for User's camera permissions
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -80,13 +77,13 @@ public class SearchFragment extends Fragment {
         });
 
 
-        if(searchFragmentSwitch.equals(SearchFragmentSwitch.MAIN_ACTIVITY)){
+        if(fragmentSwitch.equals(FragmentSwitch.MAIN_ACTIVITY)){
             binding.scanIconImageView.setVisibility(View.VISIBLE);
             binding.scanPromptTextView.setVisibility(View.VISIBLE);
             binding.orPromptTextView.setVisibility(View.VISIBLE);
             binding.searchPromptTextView.setText(R.string.search_products_prompt);
         }
-        else if(!searchFragmentSwitch.equals(SearchFragmentSwitch.USER_WARNINGS) && !searchFragmentSwitch.equals(SearchFragmentSwitch.USER_ALLERGIES)){
+        else if(!fragmentSwitch.equals(FragmentSwitch.USER_WARNINGS) && !fragmentSwitch.equals(FragmentSwitch.USER_ALLERGIES)){
             userProfileFragment = new UserProfileFragment();
             //setting what was the text view prompt to resemble a button for users to confirm
             RelativeLayout.LayoutParams promptParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -97,11 +94,11 @@ public class SearchFragment extends Fragment {
             binding.searchPromptTextView.setBackground(requireContext().getDrawable(R.drawable.textview_button_style));
             binding.searchPromptTextView.setText(R.string.search_ingredients_prompt);
 
-            if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
+            if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
                 try {
                     ArrayList<String> userWarnings = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS);
                     itemAdapter = new ItemAdapter(requireContext(),
-                            CachedLists.getInstance().itemsNotInUser(userWarnings, requireContext(), SearchFragmentSwitch.ADDITIVE_SEARCH), SearchFragmentSwitch.ADDITIVE_SEARCH);
+                            CachedLists.getInstance().itemsNotInUser(userWarnings, requireContext(), FragmentSwitch.ADDITIVE_SEARCH), FragmentSwitch.ADDITIVE_SEARCH);
                     binding.searchItemsRecyclerView.setAdapter(itemAdapter);
                     ItemAdapter finalItemAdapter = itemAdapter;
 
@@ -113,7 +110,21 @@ public class SearchFragment extends Fragment {
                             ParseUser user = ParseUser.getCurrentUser();
                             user.put(Constants.PARSE_USER_WARNINGS, userWarnings);
                             user.saveInBackground();
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
+                            //if the user is still in the sign up flow, navigate back to the user profile with a bundle indicating this
+                            if(signupSwitch.equals(FragmentSwitch.SIGN_UP)){
+                                UserProfileFragment userProfileFragment = new UserProfileFragment();
+                                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
+                                userProfileFragment.setArguments(bundle);
+                                fragmentTransaction.replace(R.id.fragment_container, userProfileFragment);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                            }
+                            else{
+                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
+                            }
                         }
                     });
 
@@ -131,7 +142,7 @@ public class SearchFragment extends Fragment {
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         try {
                             filter(binding.editTextSearch.getText().toString(),
-                                    CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS), requireContext(), SearchFragmentSwitch.ADDITIVE_SEARCH));
+                                    CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS), requireContext(), FragmentSwitch.ADDITIVE_SEARCH));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (JsonProcessingException e) {
@@ -143,11 +154,11 @@ public class SearchFragment extends Fragment {
                     }
                 });
             }
-            else if(searchFragmentSwitch.equals(SearchFragmentSwitch.ALLERGEN_SEARCH)){
+            else if(fragmentSwitch.equals(FragmentSwitch.ALLERGEN_SEARCH)){
                 try {
                     ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES);
                     itemAdapter = new ItemAdapter(requireContext(),
-                            CachedLists.getInstance().itemsNotInUser(userAllergies, requireContext(), SearchFragmentSwitch.ALLERGEN_SEARCH), SearchFragmentSwitch.ALLERGEN_SEARCH);
+                            CachedLists.getInstance().itemsNotInUser(userAllergies, requireContext(), FragmentSwitch.ALLERGEN_SEARCH), FragmentSwitch.ALLERGEN_SEARCH);
                     binding.searchItemsRecyclerView.setAdapter(itemAdapter);
 
                     ItemAdapter finalItemAdapter = itemAdapter;
@@ -159,7 +170,20 @@ public class SearchFragment extends Fragment {
                             user.put(Constants.PARSE_USER_ALLERGIES, userAllergies);
                             user.saveInBackground();
 
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
+                            if(signupSwitch.equals(FragmentSwitch.SIGN_UP)){
+                                UserProfileFragment userProfileFragment = new UserProfileFragment();
+                                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
+                                userProfileFragment.setArguments(bundle);
+                                fragmentTransaction.replace(R.id.fragment_container, userProfileFragment);
+                                fragmentTransaction.addToBackStack(null);
+                                fragmentTransaction.commit();
+                            }
+                            else{
+                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
+                            }
                         }
                     });
 
@@ -178,7 +202,7 @@ public class SearchFragment extends Fragment {
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
                         try {
                             filter(binding.editTextSearch.getText().toString(),
-                                    CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES), requireContext(), SearchFragmentSwitch.ALLERGEN_SEARCH));
+                                    CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES), requireContext(), FragmentSwitch.ALLERGEN_SEARCH));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (JsonProcessingException e) {
@@ -216,7 +240,7 @@ public class SearchFragment extends Fragment {
             }
         });
     }
-    
+
     private void filter(String text, ArrayList<String> items) throws JSONException, JsonProcessingException {
         // creating a new array list to filter our data.
         ArrayList<String> filteredList = new ArrayList<>();

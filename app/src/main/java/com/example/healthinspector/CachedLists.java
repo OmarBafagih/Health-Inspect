@@ -1,15 +1,11 @@
 package com.example.healthinspector;
 
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,8 +73,8 @@ public class CachedLists{
         return additivesInProduct;
     }
 
-    public ArrayList<String> itemsNotInUser(ArrayList<String> items, Context context, SearchFragmentSwitch s) throws JSONException, JsonProcessingException {
-        if(s.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
+    public ArrayList<String> itemsNotInUser(ArrayList<String> items, Context context, FragmentSwitch s) throws JSONException, JsonProcessingException {
+        if(s.equals(FragmentSwitch.ADDITIVE_SEARCH)){
             Collection<String> values = this.getInstance().getAdditives(context).values();
             ArrayList<String> additivesNotInUser = new ArrayList<>(values);
             additivesNotInUser.removeAll(items);

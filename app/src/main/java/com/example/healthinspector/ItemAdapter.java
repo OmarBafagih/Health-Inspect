@@ -1,7 +1,6 @@
 package com.example.healthinspector;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +16,14 @@ import java.util.List;
 public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
     private Context context;
     private List<String> searchItems;
-    private SearchFragmentSwitch searchFragmentSwitch;
+    private FragmentSwitch fragmentSwitch;
     private String addedItem;
     private int selected_position = -1;
 
-    public ItemAdapter(Context context, List<String> searchItems, SearchFragmentSwitch searchFragmentSwitch){
+    public ItemAdapter(Context context, List<String> searchItems, FragmentSwitch fragmentSwitch){
         this.context = context;
         this.searchItems = searchItems;
-        this.searchFragmentSwitch = searchFragmentSwitch;
+        this.fragmentSwitch = fragmentSwitch;
         this.addedItem = "";
     }
 
@@ -79,13 +78,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder>{
         public void bind(String item) {
             searchItemTextView.setText(item);
             //if the user is wanting to search through additives
-            if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH) || searchFragmentSwitch.equals(SearchFragmentSwitch.USER_WARNINGS)){
+            if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH) || fragmentSwitch.equals(FragmentSwitch.USER_WARNINGS)){
                 searchItemImageView.setImageResource(R.drawable.additives_icon);
             }
             else{
                 searchItemImageView.setImageResource(R.drawable.ingredients_icon);
             }
-            if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH) || searchFragmentSwitch.equals(SearchFragmentSwitch.ALLERGEN_SEARCH)){
+            if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH) || fragmentSwitch.equals(FragmentSwitch.ALLERGEN_SEARCH)){
                 searchItemRelativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
