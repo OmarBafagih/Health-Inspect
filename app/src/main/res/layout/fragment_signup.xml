@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Fragments.SignupFragment"
+    android:background="@color/white">
+
+    <EditText
+        android:id="@+id/usernameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="211dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/background_edit_text"
+        android:hint="Phone number, email or username"
+        android:padding="12dp"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey"
+        android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/usernameEditText"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/background_edit_text"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:padding="12dp"
+        android:singleLine="true"
+        android:textColor="@color/black"
+        android:textColorHint="@color/grey"
+        android:textSize="14sp" />
+
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="156dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="128dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginBottom="223dp"
+        android:text="Next Step" />
+
+</RelativeLayout>

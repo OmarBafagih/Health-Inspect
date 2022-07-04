@@ -1,6 +1,5 @@
 package com.example.healthinspector.Fragments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,36 +11,49 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.healthinspector.Activities.LoginActivity;
+import com.example.healthinspector.Activities.MainActivity;
+import com.example.healthinspector.Activities.SignupActivity;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.ItemAdapter;
 import com.example.healthinspector.R;
-import com.example.healthinspector.SearchFragmentSwitch;
-import com.example.healthinspector.databinding.FragmentSearchBinding;
+import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.databinding.FragmentUserProfileBinding;
 import com.google.android.material.snackbar.Snackbar;
-import com.parse.ParseException;
 import com.parse.ParseUser;
 
-import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 
 public class UserProfileFragment extends Fragment {
 
     private FragmentUserProfileBinding binding;
     private SearchFragment searchFragment;
-
+    private FragmentSwitch fragmentSwitch;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = FragmentUserProfileBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+
+        //if the user is currently in signup flow, configure the done button
+        if(getArguments() != null){
+            Bundle bundle = getArguments();
+            fragmentSwitch = (FragmentSwitch) bundle.getSerializable(Constants.SIGN_UP_FLOW);
+            if(fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
+                binding.btnDone.setVisibility(View.VISIBLE);
+                binding.btnDone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(requireContext(), MainActivity.class);
+                        startActivity(i);
+                    }
+                });
+            }
+        }
 
         binding.btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,7 +72,10 @@ public class UserProfileFragment extends Fragment {
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(Constants.SEARCH_FRAGMENT_ENUM, SearchFragmentSwitch.ADDITIVE_SEARCH);
+                if(fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
+                    bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
+                }
+                bundle.putSerializable(Constants.FRAGMENT_SWITCH, FragmentSwitch.ADDITIVE_SEARCH);
                 searchFragment.setArguments(bundle);
                 fragmentTransaction.replace(R.id.fragment_container, searchFragment);
                 fragmentTransaction.addToBackStack(null);
@@ -75,7 +90,10 @@ public class UserProfileFragment extends Fragment {
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(Constants.SEARCH_FRAGMENT_ENUM, SearchFragmentSwitch.ALLERGEN_SEARCH);
+                if(fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
+                    bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
+                }
+                bundle.putSerializable(Constants.FRAGMENT_SWITCH, FragmentSwitch.ALLERGEN_SEARCH);
                 searchFragment.setArguments(bundle);
                 fragmentTransaction.replace(R.id.fragment_container, searchFragment);
                 fragmentTransaction.addToBackStack(null);
@@ -91,7 +109,7 @@ public class UserProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES);
-        ItemAdapter allergiesAdapter = new ItemAdapter(requireContext(), userAllergies, SearchFragmentSwitch.USER_ALLERGIES);
+        ItemAdapter allergiesAdapter = new ItemAdapter(requireContext(), userAllergies, FragmentSwitch.USER_ALLERGIES);
         binding.userAllergiesRecyclerView.setAdapter(allergiesAdapter);
         LinearLayoutManager linearLayoutManagerAllergies = new LinearLayoutManager(getContext());
         binding.userAllergiesRecyclerView.setLayoutManager(linearLayoutManagerAllergies);
@@ -129,7 +147,7 @@ public class UserProfileFragment extends Fragment {
         }).attachToRecyclerView(binding.userAllergiesRecyclerView);
 
         ArrayList<String> userWarnings = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS);
-        ItemAdapter warningsAdapter = new ItemAdapter(requireContext(), userWarnings, SearchFragmentSwitch.USER_WARNINGS);
+        ItemAdapter warningsAdapter = new ItemAdapter(requireContext(), userWarnings, FragmentSwitch.USER_WARNINGS);
         binding.userWarningsRecyclerView.setAdapter(warningsAdapter);
         LinearLayoutManager linearLayoutManagerWarnings = new LinearLayoutManager(getContext());
         binding.userWarningsRecyclerView.setLayoutManager(linearLayoutManagerWarnings);

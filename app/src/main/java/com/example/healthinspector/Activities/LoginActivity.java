@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.healthinspector.Fragments.SearchFragment;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.ActivityLoginBinding;
 import com.example.healthinspector.databinding.ActivityMainBinding;
@@ -17,9 +18,9 @@ import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SignUpCallback;
 
 public class LoginActivity extends AppCompatActivity {
-
 
     public static final String TAG = "LoginActivity";
     //view binder
@@ -28,7 +29,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //using view binding to reduce boilerplate code
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
@@ -39,8 +39,6 @@ public class LoginActivity extends AppCompatActivity {
             navigateToHome();
         }
 
-        //creating on click listeners for login and signup buttons
-        //Login button onClick listener
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,22 +58,17 @@ public class LoginActivity extends AppCompatActivity {
                 else{
                     loginUser(username, password);
                 }
-
             }
         });
 
-        //Login button onClick listener
         binding.btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick Signup button");
-
-               //go to "user profile" fragment where user can add their allergies/ingredients etc...
+                //navigate to signup activity
+                Intent i = new Intent(LoginActivity.this, SignupActivity.class);
+                startActivity(i);
             }
         });
-
-
-
     }
 
     private void loginUser(String username, String password) {
@@ -94,11 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
-
     }
-
-
-
 
     public void navigateToHome(){
         Intent i = new Intent(LoginActivity.this, MainActivity.class);
