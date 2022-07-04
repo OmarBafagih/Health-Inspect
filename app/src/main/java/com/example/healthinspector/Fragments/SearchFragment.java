@@ -1,6 +1,7 @@
 package com.example.healthinspector.Fragments;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -98,11 +99,9 @@ public class SearchFragment extends Fragment {
 
             if(searchFragmentSwitch.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
                 try {
-                    Collection<String> values = CachedLists.getInstance().getAdditives(requireContext()).values();
-                    ArrayList<String> allAdditives = new ArrayList<>(values);
                     ArrayList<String> userWarnings = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS);
-                    allAdditives.removeAll(userWarnings);
-                    itemAdapter = new ItemAdapter(requireContext(), allAdditives, SearchFragmentSwitch.ADDITIVE_SEARCH);
+                    itemAdapter = new ItemAdapter(requireContext(),
+                            CachedLists.getInstance().itemsNotInUser(userWarnings, requireContext(), SearchFragmentSwitch.ADDITIVE_SEARCH), SearchFragmentSwitch.ADDITIVE_SEARCH);
                     binding.searchItemsRecyclerView.setAdapter(itemAdapter);
                     ItemAdapter finalItemAdapter = itemAdapter;
 
@@ -123,19 +122,38 @@ public class SearchFragment extends Fragment {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
+                //creating TextWatcher for edit text to act as a search bar
+                binding.editTextSearch.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        try {
+                            filter(binding.editTextSearch.getText().toString(),
+                                    CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS), requireContext(), SearchFragmentSwitch.ADDITIVE_SEARCH));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                });
             }
             else if(searchFragmentSwitch.equals(SearchFragmentSwitch.ALLERGEN_SEARCH)){
                 try {
-                    Collection<String> values = CachedLists.getInstance().getAllergens(requireContext()).values();
-                    ArrayList<String> allAllergens = new ArrayList<>(values);
-                    itemAdapter = new ItemAdapter(requireContext(), allAllergens, SearchFragmentSwitch.ALLERGEN_SEARCH);
+                    ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES);
+                    itemAdapter = new ItemAdapter(requireContext(),
+                            CachedLists.getInstance().itemsNotInUser(userAllergies, requireContext(), SearchFragmentSwitch.ALLERGEN_SEARCH), SearchFragmentSwitch.ALLERGEN_SEARCH);
                     binding.searchItemsRecyclerView.setAdapter(itemAdapter);
 
                     ItemAdapter finalItemAdapter = itemAdapter;
                     binding.searchPromptTextView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES);
                             userAllergies.add(finalItemAdapter.getAddedItem());
                             ParseUser user = ParseUser.getCurrentUser();
                             user.put(Constants.PARSE_USER_ALLERGIES, userAllergies);
@@ -150,31 +168,29 @@ public class SearchFragment extends Fragment {
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
+
+                //creating TextWatcher for edit text to act as a search bar
+                binding.editTextSearch.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        try {
+                            filter(binding.editTextSearch.getText().toString(),
+                                    CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES), requireContext(), SearchFragmentSwitch.ALLERGEN_SEARCH));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                    }
+                });
             }
 
-            //creating TextWatcher for edit text to act as a search bar
-            binding.editTextSearch.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                }
-
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    try {
-                        filter(binding.editTextSearch.getText().toString());
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void afterTextChanged(Editable s) {
-
-                }
-            });
             LinearLayoutManager linearLayoutManagerAllergies = new LinearLayoutManager(getContext());
             binding.searchItemsRecyclerView.setLayoutManager(linearLayoutManagerAllergies);
         }
@@ -200,22 +216,17 @@ public class SearchFragment extends Fragment {
             }
         });
     }
-
-
-    private void filter(String text) throws JSONException, JsonProcessingException {
+    
+    private void filter(String text, ArrayList<String> items) throws JSONException, JsonProcessingException {
         // creating a new array list to filter our data.
         ArrayList<String> filteredList = new ArrayList<>();
-        Collection<String> values = CachedLists.getInstance().getAllergens(requireContext()).values();
-        ArrayList<String> allAllergens = new ArrayList<>(values);
-
-        for (String item : allAllergens) {
+        for (String item : items) {
             if (item.toUpperCase().contains(text.toUpperCase())) {
                 filteredList.add(item);
             }
         }
         if (filteredList.isEmpty()) {
-
-            Toast.makeText(requireContext(), "No Data Found..", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "No item found", Toast.LENGTH_SHORT).show();
         } else {
             itemAdapter.filterList(filteredList);
         }
