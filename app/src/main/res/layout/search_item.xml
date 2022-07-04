@@ -2,11 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/searchItemRlativeLayout"
+    android:id="@+id/searchItemRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="7dp"
-    android:background="@drawable/item_background">
+    android:background="@drawable/item_style_config"
+    android:clickable="true"
+    >
 
 
     <TextView

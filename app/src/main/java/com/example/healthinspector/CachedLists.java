@@ -13,6 +13,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class CachedLists{
@@ -60,6 +62,34 @@ public class CachedLists{
         ObjectMapper objectMapper = new ObjectMapper();
 
         return objectMapper.readValue(json, HashMap.class);
+    }
+
+    public ArrayList<String> additivesInProduct(ArrayList<String> productAdditiveTags, Context context) throws JSONException, JsonProcessingException {
+        ArrayList<String> additivesInProduct = new ArrayList<>();
+        if(productAdditiveTags.size() == 0){
+            return additivesInProduct;
+        }
+        for(int i = 0; i < productAdditiveTags.size(); i++){
+            if(getAdditives(context).containsKey(productAdditiveTags.get(i))){
+                additivesInProduct.add(getAdditives(context).get(productAdditiveTags.get(i)));
+            }
+        }
+        return additivesInProduct;
+    }
+
+    public ArrayList<String> itemsNotInUser(ArrayList<String> items, Context context, SearchFragmentSwitch s) throws JSONException, JsonProcessingException {
+        if(s.equals(SearchFragmentSwitch.ADDITIVE_SEARCH)){
+            Collection<String> values = this.getInstance().getAdditives(context).values();
+            ArrayList<String> additivesNotInUser = new ArrayList<>(values);
+            additivesNotInUser.removeAll(items);
+            return additivesNotInUser;
+        }
+        else{
+            Collection<String> values = this.getInstance().getAllergens(context).values();
+            ArrayList<String> allergiesNotInUser = new ArrayList<>(values);
+            allergiesNotInUser.removeAll(items);
+            return allergiesNotInUser;
+        }
     }
 
 }
