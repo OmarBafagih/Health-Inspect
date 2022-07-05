@@ -21,4 +21,5 @@ public class Constants {
     public static final String PARSE_USER_ALLERGIES = "userAllergies";
     public static final String PARSE_USER_WARNINGS = "userWarningIngredients";
     public static final String SIGN_UP_FLOW = "signUpFlow";
+    public static final String CATEGORIES = "categories_tags";
 }
