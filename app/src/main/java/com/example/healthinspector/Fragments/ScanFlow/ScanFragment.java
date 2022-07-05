@@ -142,8 +142,17 @@ public class ScanFragment extends Fragment {
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.ALLERGENS)){
                                        allergens = new ArrayList<>(Arrays.asList(response.getJSONObject(Constants.PRODUCT).getString(Constants.ALLERGENS).split(",")));
                                     }
-
-                                    ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl , additives, allergens);
+                                    ArrayList<String> categories = new ArrayList<>();
+                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.CATEGORIES)){
+                                        JSONArray categoriesJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.CATEGORIES);
+                                        for (int i = 0; i < categoriesJSON.length(); i++){
+                                            categories.add(categoriesJSON.getString(i));
+                                        }
+                                        for(int i = 0; i < categories.size(); i++){
+                                            categories.set(i, categories.get(i).substring(3));
+                                        }
+                                    }
+                                    ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl , additives, allergens, categories);
 
                                     FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

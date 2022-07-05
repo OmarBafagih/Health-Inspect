@@ -5,4 +5,5 @@
     <string name="search_ingredients_prompt">Confirm Selection</string>
     <string name="search_allergy_prompt">Click any ingredient to add it to your allergy warnings</string>
     <string name="search_additives_prompt">Click any ingredient to add it your additive warnings</string>
+    <string name="no_recommendations">Sorry, we don\'t have any healthier alternatives for this product</string>
 </resources>
