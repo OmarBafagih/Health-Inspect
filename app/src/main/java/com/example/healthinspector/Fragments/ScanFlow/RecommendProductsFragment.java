@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -63,11 +64,11 @@ public class RecommendProductsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(Constants.SCANNED_PRODUCT));
-        ArrayList<RecommendedProduct> recommendedProducts = new ArrayList<>();
-        getRecommendedProducts(recommendedProducts, scannedProduct);
+        getRecommendedProducts(scannedProduct);
     }
 
-    public void getRecommendedProducts(ArrayList<RecommendedProduct> recommendedProducts, ScannedProduct scannedProduct){
+    public void getRecommendedProducts(ScannedProduct scannedProduct){
+        ArrayList<RecommendedProduct> recommendedProducts = new ArrayList<>();
         String url = "";
         url += URL_REQUEST_PRODUCTS;
         //limiting the categories to 4, since 5 is too much and most of the time won't give back results
@@ -79,7 +80,7 @@ public class RecommendProductsFragment extends Fragment {
             url+= category;
         }
 
-        String healthyProductParams = "&tagtype_" + (categoriesCount) + "=nutrition_grades&tag_contains_" + (categoriesCount) + "=contains&tag_" + (categoriesCount) + "=B&additives=without&ingredients_from_palm_oil=without&json=true";
+        String healthyProductParams = "&tagtype_" + (categoriesCount) + "=nutrition_grades&tag_contains_" + (categoriesCount) + "=contains&tag_" + (categoriesCount) + "=A&additives=without&ingredients_from_palm_oil=without&json=true";
         url += healthyProductParams;
         //new volley request to get product recommendations
         RequestQueue queue = Volley.newRequestQueue(requireContext());
@@ -133,6 +134,7 @@ public class RecommendProductsFragment extends Fragment {
                             }
                             recommendedProducts.add(new RecommendedProduct(keywords, brand, productName));
                         }
+                        loadRecommendationsIntoView(recommendedProducts);
                     }
                 },
                 new Response.ErrorListener() {
@@ -149,7 +151,12 @@ public class RecommendProductsFragment extends Fragment {
                 return params;
             }
         };
+        recommendedProductsRequest.setRetryPolicy(new DefaultRetryPolicy(7000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(recommendedProductsRequest);
+    }
+
+    public void loadRecommendationsIntoView(ArrayList<RecommendedProduct> recommendedProducts){
+        //load products into recycler view
     }
 
     public void returnToProductDetails(ScannedProduct scannedProduct){
@@ -166,5 +173,4 @@ public class RecommendProductsFragment extends Fragment {
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
     }
-
 }
