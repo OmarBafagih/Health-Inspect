@@ -22,13 +22,13 @@
 
     <TextView
         android:id="@+id/cartItemNameTextView"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="2dp"
+        android:layout_toStartOf="@+id/addtoCartImageView"
         android:layout_toEndOf="@+id/cartItemImageView"
         tools:text="placeholder" />
 
@@ -36,13 +36,25 @@
         android:id="@+id/cartItemFactsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/cartItemNameTextView"
+        android:layout_below="@+id/addtoCartImageView"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="0dp"
         android:layout_marginEnd="10dp"
         android:layout_toEndOf="@+id/cartItemImageView"
         android:lines="3"
         android:maxLines="3"
         tools:text="placeholder" />
+
+    <ImageView
+        android:id="@+id/addtoCartImageView"
+        android:layout_width="38dp"
+        android:layout_height="37dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="10dp"
+        tools:srcCompat="@drawable/add_icon_2" />
+
 </RelativeLayout>

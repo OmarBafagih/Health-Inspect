@@ -25,6 +25,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.healthinspector.Adapters.CartItemAdapter;
 import com.example.healthinspector.Adapters.ItemAdapter;
+import com.example.healthinspector.Cart;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Models.RecommendedProduct;
@@ -32,6 +33,9 @@ import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentProductDetailsBinding;
 import com.example.healthinspector.databinding.FragmentRecommendProductsBinding;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.json.JSONArray;
@@ -155,7 +159,13 @@ public class RecommendProductsFragment extends Fragment {
                             recommendedProducts.add(new RecommendedProduct(keywords, brand, productName, imageUrl, nutrientLevels));
                         }
                         binding.progressBar.setVisibility(View.GONE);
-                        loadRecommendationsIntoView(recommendedProducts);
+                        try {
+                            loadRecommendationsIntoView(recommendedProducts);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -176,9 +186,20 @@ public class RecommendProductsFragment extends Fragment {
         queue.add(recommendedProductsRequest);
     }
 
-    public void loadRecommendationsIntoView(ArrayList<RecommendedProduct> recommendedProducts){
+    public void loadRecommendationsIntoView(ArrayList<RecommendedProduct> recommendedProducts) throws ParseException, JSONException {
         //load products into recycler view
-        CartItemAdapter recommendationsAdapter = new CartItemAdapter(requireContext(), recommendedProducts);
+        ParseQuery<Cart> parseQuery = ParseQuery.getQuery(Cart.class);
+        Cart userCart = parseQuery.get(ParseUser.getCurrentUser().getParseObject(Constants.CART).getObjectId());
+        //removing any recommended items that are already in the user's cart
+        for(int i = 0; i < userCart.getCartItems().length(); i++){
+            for(int x = 0; x < recommendedProducts.size(); x++) {
+                if (userCart.getCartItems().getJSONObject(i).getString(Constants.PRODUCT_NAME).equals(recommendedProducts.get(x).getProductName())){
+                    recommendedProducts.remove(x);
+                }
+            }
+        }
+
+        CartItemAdapter recommendationsAdapter = new CartItemAdapter(requireContext(), recommendedProducts, FragmentSwitch.RECOMMENDATIONS);
         binding.recommendedProductsRecyclerView.setAdapter(recommendationsAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
         binding.recommendedProductsRecyclerView.setLayoutManager(linearLayoutManager);

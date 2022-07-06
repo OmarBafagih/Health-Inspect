@@ -3,6 +3,7 @@ package com.example.healthinspector;
 import android.app.Application;
 
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 import java.security.KeyPairGenerator;
 
@@ -11,6 +12,7 @@ public class ParseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        ParseObject.registerSubclass(Cart.class);
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId(getString(R.string.parse_application_id))
                 .clientKey(getString(R.string.parse_client_key))
