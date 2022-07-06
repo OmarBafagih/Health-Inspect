@@ -38,6 +38,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
 
     private static final String TAG = "ProductRecommendationsAdapter";
     public static final String SAVED = "item added to cart";
+    public static final String REMOVED = "item removed from cart";
+
 
     public CartItemAdapter(Context context, List<RecommendedProduct> recommendedProducts, FragmentSwitch fragmentSwitch){
         this.context = context;
@@ -170,6 +172,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                             userCart.setCartItems(updatedCart);
                         }
                     }
+                    Toast.makeText(context, REMOVED, Toast.LENGTH_SHORT).show();
                     userCart.saveInBackground();
                 } catch (ParseException | JSONException e) {
                     e.printStackTrace();
