@@ -40,9 +40,11 @@ public class MainActivity extends AppCompatActivity {
         binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                binding.bottomNavigation.getMenu().setGroupCheckable(0, true, true);
                 switch (item.getItemId()){
                     //navigate to profile fragment
                     case R.id.miProfile:
+                        binding.cartImageView.setImageResource(R.drawable.cart_icon);
                         if(userProfileFragment == null) {
                             userProfileFragment = new UserProfileFragment();
                         }
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     //navigate to home fragment
                     case R.id.miHome:
+                        binding.cartImageView.setImageResource(R.drawable.cart_icon);
                         if(homeFragment == null) {
                             homeFragment = new HomeFragment();
                         }
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     //navigate to search fragment
                     case R.id.miSearch:
+                        binding.cartImageView.setImageResource(R.drawable.cart_icon);
                         if(searchFragment == null){
                             searchFragment = new SearchFragment();
                         }
@@ -70,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                         return true;
+                    case R.id.cartImageView:
+
                 }
                 return false;
             }
@@ -81,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         binding.cartImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "In OnClick listener for cart iv");
+                binding.bottomNavigation.getMenu().setGroupCheckable(0, false, true);
                 binding.cartImageView.setImageResource(R.drawable.cart_icon_filled);
                 //navigate to the cart fragment
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CartFragment()).commit();

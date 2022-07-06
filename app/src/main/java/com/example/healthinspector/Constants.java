@@ -22,4 +22,11 @@ public class Constants {
     public static final String PARSE_USER_WARNINGS = "userWarningIngredients";
     public static final String SIGN_UP_FLOW = "signUpFlow";
     public static final String CATEGORIES = "categories_tags";
+    //for cart items
+    public static final String CART = "cart";
+    public static final String KEYWORDS = "keywords";
+    public static final String BRAND = "brand";
+    public static final String IS_IN_CART = "isInCart";
+    public static final String PRODUCT_IMAGE_URL = "product_image_url";
+
 }
