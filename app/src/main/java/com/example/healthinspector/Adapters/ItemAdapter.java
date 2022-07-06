@@ -1,4 +1,4 @@
-package com.example.healthinspector;
+package com.example.healthinspector.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.healthinspector.FragmentSwitch;
+import com.example.healthinspector.R;
 
 import java.util.ArrayList;
 import java.util.List;
