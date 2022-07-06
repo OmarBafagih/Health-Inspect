@@ -187,7 +187,6 @@ public class RecommendProductsFragment extends Fragment {
     }
 
     public void loadRecommendationsIntoView(ArrayList<RecommendedProduct> recommendedProducts) throws ParseException, JSONException {
-        //load products into recycler view
         ParseQuery<Cart> parseQuery = ParseQuery.getQuery(Cart.class);
         Cart userCart = parseQuery.get(ParseUser.getCurrentUser().getParseObject(Constants.CART).getObjectId());
         //removing any recommended items that are already in the user's cart

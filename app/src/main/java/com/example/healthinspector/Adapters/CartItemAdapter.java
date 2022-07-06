@@ -112,6 +112,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
             });
 
         }
+
         public void addOrRemoveFromCart(RecommendedProduct recommendedProduct){
             //creating new json object to save to cart JsonArray
             JSONObject newCartItem = new JSONObject();
@@ -177,6 +178,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                 } catch (ParseException | JSONException e) {
                     e.printStackTrace();
                 }
+                recommendedProducts.remove(recommendedProduct);
+                notifyDataSetChanged();
             }
         }
     }
