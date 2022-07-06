@@ -9,7 +9,6 @@ public class RecommendedProduct {
     private String keyWords;
     private String brand;
     private String productName;
-    private boolean inCart;
     private String productImageUrl;
     private ArrayList<String> nutrientLevels;
 
@@ -21,14 +20,12 @@ public class RecommendedProduct {
         this.brand = brand;
         this.productName = productName;
         this.productImageUrl = url;
-        this.inCart = false;
         this.nutrientLevels = nutrientLevels;
     }
 
     public String getKeyWords() {return keyWords;}
     public String getBrand() {return brand;}
     public String getProductName() {return productName;}
-    public boolean isInCart() {return inCart;}
     public String getProductImageUrl() {return productImageUrl;}
     public ArrayList<String> getNutrientLevels() {return nutrientLevels;}
 }
