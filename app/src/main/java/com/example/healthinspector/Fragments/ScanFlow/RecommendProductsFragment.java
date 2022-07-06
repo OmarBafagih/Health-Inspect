@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,12 +23,16 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.healthinspector.Adapters.CartItemAdapter;
+import com.example.healthinspector.Adapters.ItemAdapter;
 import com.example.healthinspector.Constants;
+import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentProductDetailsBinding;
 import com.example.healthinspector.databinding.FragmentRecommendProductsBinding;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +41,7 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -105,7 +111,8 @@ public class RecommendProductsFragment extends Fragment {
                             String productName = "";
                             String brand = "";
                             String keywords = "";
-
+                            String imageUrl = "";
+                            ArrayList<String> nutrientLevels = new ArrayList<>();
                             try {
                                 productName = response.getJSONArray(PRODUCTS).getJSONObject(i).getString(Constants.PRODUCT_NAME);
 
@@ -129,11 +136,25 @@ public class RecommendProductsFragment extends Fragment {
                                     keywordsBuilder.append(" ");
                                 }
                                 keywords = keywordsBuilder.toString();
+
+                                if(response.getJSONArray(PRODUCTS).getJSONObject(i).has(Constants.PRODUCT_IMAGE)){
+                                    imageUrl = response.getJSONArray(PRODUCTS).getJSONObject(i).getString(Constants.PRODUCT_IMAGE);
+                                }
+
+                                if(response.getJSONArray(PRODUCTS).getJSONObject(i).has(Constants.NUTRIENT_LEVELS)){
+                                    JSONObject nutrientLevelsJSON = response.getJSONArray(PRODUCTS).getJSONObject(i).getJSONObject(Constants.NUTRIENT_LEVELS);
+                                    Iterator iterator =  nutrientLevelsJSON.keys();
+                                    while (iterator.hasNext()){
+                                        String key = iterator.next().toString();
+                                        nutrientLevels.add(key + ": " + nutrientLevelsJSON.getString(key));
+                                    }
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            recommendedProducts.add(new RecommendedProduct(keywords, brand, productName));
+                            recommendedProducts.add(new RecommendedProduct(keywords, brand, productName, imageUrl, nutrientLevels));
                         }
+                        binding.progressBar.setVisibility(View.GONE);
                         loadRecommendationsIntoView(recommendedProducts);
                     }
                 },
@@ -157,6 +178,10 @@ public class RecommendProductsFragment extends Fragment {
 
     public void loadRecommendationsIntoView(ArrayList<RecommendedProduct> recommendedProducts){
         //load products into recycler view
+        CartItemAdapter recommendationsAdapter = new CartItemAdapter(requireContext(), recommendedProducts);
+        binding.recommendedProductsRecyclerView.setAdapter(recommendationsAdapter);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
+        binding.recommendedProductsRecyclerView.setLayoutManager(linearLayoutManager);
     }
 
     public void returnToProductDetails(ScannedProduct scannedProduct){

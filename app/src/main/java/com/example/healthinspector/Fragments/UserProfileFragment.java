@@ -17,9 +17,8 @@ import android.view.ViewGroup;
 
 import com.example.healthinspector.Activities.LoginActivity;
 import com.example.healthinspector.Activities.MainActivity;
-import com.example.healthinspector.Activities.SignupActivity;
 import com.example.healthinspector.Constants;
-import com.example.healthinspector.ItemAdapter;
+import com.example.healthinspector.Adapters.ItemAdapter;
 import com.example.healthinspector.R;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.databinding.FragmentUserProfileBinding;
