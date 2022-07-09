@@ -75,6 +75,7 @@ public class RecommendProductsFragment extends Fragment {
         Bundle bundle = getArguments();
         ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(Constants.SCANNED_PRODUCT));
         getRecommendedProducts(scannedProduct);
+
     }
 
     public void getRecommendedProducts(ScannedProduct scannedProduct){
@@ -182,6 +183,7 @@ public class RecommendProductsFragment extends Fragment {
                 return params;
             }
         };
+        //allowing the Volley request for recommended products to retry after a timeout error
         recommendedProductsRequest.setRetryPolicy(new DefaultRetryPolicy(7000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(recommendedProductsRequest);
     }

@@ -71,8 +71,6 @@ public class SearchFragment extends Fragment {
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
             } else {
                 Toast.makeText(getContext(), "Cannot scan barcode without camera permissions", Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "User denied permission");
-
             }
         });
 
@@ -228,7 +226,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //request for User's camera permissions
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     //camera permissions are already granted
                     fragmentManager = getActivity().getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();

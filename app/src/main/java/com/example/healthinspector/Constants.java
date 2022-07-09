@@ -22,6 +22,13 @@ public class Constants {
     public static final String PARSE_USER_WARNINGS = "userWarningIngredients";
     public static final String SIGN_UP_FLOW = "signUpFlow";
     public static final String CATEGORIES = "categories_tags";
+    public static final String PERMISSIONS_GRANTED = "permissions_granted";
+    public static final String LOCATION_ID =  "locationId";
+    public static final String STORE_NAME =  "storeName";
+    public static final String ADDRESS =  "address";
+    public static final String LATITUDE =  "latitude";
+    public static final String LONGITUDE =  "longitude";
+    public static final String DATA =  "data";
     //for cart items
     public static final String CART = "cart";
     public static final String KEYWORDS = "keywords";
