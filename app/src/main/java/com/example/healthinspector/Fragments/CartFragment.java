@@ -68,7 +68,6 @@ public class CartFragment extends Fragment {
         } catch (ParseException | JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override

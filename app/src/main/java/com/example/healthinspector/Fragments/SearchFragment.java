@@ -109,7 +109,7 @@ public class SearchFragment extends Fragment {
                             user.put(Constants.PARSE_USER_WARNINGS, userWarnings);
                             user.saveInBackground();
                             //if the user is still in the sign up flow, navigate back to the user profile with a bundle indicating this
-                            if(signupSwitch.equals(FragmentSwitch.SIGN_UP)){
+                            if(signupSwitch != null && signupSwitch.equals(FragmentSwitch.SIGN_UP)){
                                 UserProfileFragment userProfileFragment = new UserProfileFragment();
                                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -167,8 +167,7 @@ public class SearchFragment extends Fragment {
                             ParseUser user = ParseUser.getCurrentUser();
                             user.put(Constants.PARSE_USER_ALLERGIES, userAllergies);
                             user.saveInBackground();
-
-                            if(signupSwitch.equals(FragmentSwitch.SIGN_UP)){
+                            if(signupSwitch != null && signupSwitch.equals(FragmentSwitch.SIGN_UP)){
                                 UserProfileFragment userProfileFragment = new UserProfileFragment();
                                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

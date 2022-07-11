@@ -1,22 +1,31 @@
 package com.example.healthinspector.Adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.healthinspector.Cart;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
+import com.example.healthinspector.Fragments.ScanFlow.ProductDetailsFragment;
+import com.example.healthinspector.Fragments.ScanFlow.ProductFinderFragment;
+import com.example.healthinspector.Fragments.ScanFlow.RecommendProductsFragment;
 import com.example.healthinspector.Models.RecommendedProduct;
+import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.parse.FindCallback;
 import com.parse.Parse;
@@ -28,6 +37,7 @@ import com.parse.SaveCallback;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -35,16 +45,23 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     private Context context;
     private List<RecommendedProduct> recommendedProducts;
     private FragmentSwitch fragmentSwitch;
+    private ScannedProduct scannedProduct;
 
     private static final String TAG = "ProductRecommendationsAdapter";
     public static final String SAVED = "item added to cart";
     public static final String REMOVED = "item removed from cart";
 
-
     public CartItemAdapter(Context context, List<RecommendedProduct> recommendedProducts, FragmentSwitch fragmentSwitch){
         this.context = context;
         this.recommendedProducts = recommendedProducts;
         this.fragmentSwitch = fragmentSwitch;
+    }
+
+    public CartItemAdapter(Context context, List<RecommendedProduct> recommendedProducts, ScannedProduct scannedProduct, FragmentSwitch fragmentSwitch){
+        this.context = context;
+        this.recommendedProducts = recommendedProducts;
+        this.fragmentSwitch = fragmentSwitch;
+        this.scannedProduct = scannedProduct;
     }
 
     @NonNull
@@ -78,12 +95,14 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView cartItemImageView, addToCartImageView;
         TextView cartItemFactsTextView, cartItemNameTextView;
+        RelativeLayout cartItemContainer;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             cartItemImageView = itemView.findViewById(R.id.cartItemImageView);
             cartItemFactsTextView = itemView.findViewById(R.id.cartItemFactsTextView);
             cartItemNameTextView = itemView.findViewById(R.id.cartItemNameTextView);
             addToCartImageView = itemView.findViewById(R.id.addtoCartImageView);
+            cartItemContainer = itemView.findViewById(R.id.cartItemRelativeLayout);
         }
 
         public void bind(RecommendedProduct recommendedProduct) {
@@ -108,6 +127,25 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                    addOrRemoveFromCart(recommendedProduct);
+                }
+            });
+            cartItemContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //send to product finder fragment with product
+                    FragmentManager fragmentManager = ((FragmentActivity) v.getContext()).getSupportFragmentManager();
+                    FragmentTransaction fragmentTransaction =  fragmentManager.beginTransaction();
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+
+                    ProductFinderFragment productFinderFragment = new ProductFinderFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(Constants.RECOMMENDED_PRODUCT, Parcels.wrap(recommendedProduct));
+                    bundle.putParcelable(Constants.SCANNED_PRODUCT, Parcels.wrap(scannedProduct));
+                    productFinderFragment.setArguments(bundle);
+                    fragmentTransaction.replace(R.id.fragment_container, productFinderFragment);
+                    fragmentTransaction.addToBackStack(null);
+                    fragmentTransaction.commit();
+
                 }
             });
 

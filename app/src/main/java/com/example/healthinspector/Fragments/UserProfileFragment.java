@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ public class UserProfileFragment extends Fragment {
 
         //if the user is currently in signup flow, configure the done button
         if(getArguments() != null){
+            Log.i("USERPROFFRAG", "NOT NULL");
             Bundle bundle = getArguments();
             fragmentSwitch = (FragmentSwitch) bundle.getSerializable(Constants.SIGN_UP_FLOW);
             if(fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
@@ -71,9 +73,12 @@ public class UserProfileFragment extends Fragment {
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 Bundle bundle = new Bundle();
-                if(fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
+
+                if(fragmentSwitch != null && fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
                     bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
                 }
+
+
                 bundle.putSerializable(Constants.FRAGMENT_SWITCH, FragmentSwitch.ADDITIVE_SEARCH);
                 searchFragment.setArguments(bundle);
                 fragmentTransaction.replace(R.id.fragment_container, searchFragment);
@@ -89,9 +94,10 @@ public class UserProfileFragment extends Fragment {
                 FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 Bundle bundle = new Bundle();
-                if(fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
+                if(fragmentSwitch != null && fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
                     bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
                 }
+
                 bundle.putSerializable(Constants.FRAGMENT_SWITCH, FragmentSwitch.ALLERGEN_SEARCH);
                 searchFragment.setArguments(bundle);
                 fragmentTransaction.replace(R.id.fragment_container, searchFragment);

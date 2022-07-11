@@ -42,8 +42,6 @@ public class LoginActivity extends AppCompatActivity {
         binding.btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick Login button");
-
                 //collect the inputted text from the input fields
                 String username = binding.usernameEditText.getText().toString();
                 String password = binding.passwordEditText.getText().toString();

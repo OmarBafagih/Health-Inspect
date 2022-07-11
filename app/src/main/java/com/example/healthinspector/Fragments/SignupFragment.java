@@ -62,11 +62,9 @@ public class SignupFragment extends Fragment {
                     public void done(List<ParseUser> usersFound, ParseException e) {
                         // check for errors
                         if (e != null) {
-                            Log.e("", "Issue with getting posts", e);
                             return;
                         }
                         for (ParseUser user : usersFound) {
-                            System.out.println("post");
                             if(user.getUsername().equals(username)){
                                 Toast.makeText(requireContext(), "Username is already taken", Toast.LENGTH_SHORT).show();
                             }

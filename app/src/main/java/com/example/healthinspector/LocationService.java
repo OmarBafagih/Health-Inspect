@@ -10,6 +10,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -64,13 +65,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class LocationService extends Service {
-    LocationManager locationManager;
+    private LocationManager locationManager;
     private Location lastLocation;
     private static final String TAG = "LocationService";
-    private static final String TOAST = "service starting";
-    private static String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
-
-
 
 
     @Override
@@ -81,13 +78,12 @@ public class LocationService extends Service {
     @SuppressLint("MissingPermission")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
         KrogerLocationCacher.getInstance().makeTokenRequest(this.getBaseContext());
+        //delay for token variable to have new value on return
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //delay for token variable to have new value on return
                 if (intent != null) {
                     final String action = intent.getAction();
                     if (action != null) {
@@ -111,17 +107,13 @@ public class LocationService extends Service {
                     }
                 }
             }
-        }, 1000);
+        }, Constants.DELAY_FAST);
 
-
-        // If we get killed, after returning from here, restart
         return START_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // We don't provide binding, so return null
         return null;
     }
-
 }

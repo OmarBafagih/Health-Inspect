@@ -60,6 +60,7 @@ public class RecommendProductsFragment extends Fragment {
     private static final String KEYWORDS = "_keywords";
     private static final String PARAM_KEY = "User-Agent";
     private static final String PARAM_VALUE = "Health Inspect - Android - Version 1.0";
+    private ScannedProduct scannedProduct;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,7 +74,7 @@ public class RecommendProductsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
-        ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(Constants.SCANNED_PRODUCT));
+        scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(Constants.SCANNED_PRODUCT));
         getRecommendedProducts(scannedProduct);
 
     }
@@ -200,7 +201,7 @@ public class RecommendProductsFragment extends Fragment {
             }
         }
 
-        CartItemAdapter recommendationsAdapter = new CartItemAdapter(requireContext(), recommendedProducts, FragmentSwitch.RECOMMENDATIONS);
+        CartItemAdapter recommendationsAdapter = new CartItemAdapter(requireContext(), recommendedProducts, scannedProduct, FragmentSwitch.RECOMMENDATIONS);
         binding.recommendedProductsRecyclerView.setAdapter(recommendationsAdapter);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
         binding.recommendedProductsRecyclerView.setLayoutManager(linearLayoutManager);
@@ -215,9 +216,9 @@ public class RecommendProductsFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.SCANNED_PRODUCT, Parcels.wrap(scannedProduct));
         productDetailsFragment.setArguments(bundle);
-
         fragmentTransaction.replace(R.id.fragment_container, productDetailsFragment);
-        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.remove(this);
         fragmentTransaction.commit();
+
     }
 }

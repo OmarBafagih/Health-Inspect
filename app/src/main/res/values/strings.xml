@@ -6,4 +6,8 @@
     <string name="search_allergy_prompt">Click any ingredient to add it to your allergy warnings</string>
     <string name="search_additives_prompt">Click any ingredient to add it your additive warnings</string>
     <string name="no_recommendations">Sorry, we don\'t have any healthier alternatives for this product</string>
+    <string name="no_nearby_locations">Sorry, there are no nearby Kroger locations</string>
+    <string name="error_finding_locations">Sorry, there was an error finding nearby Kroger locations</string>
+
+
 </resources>
