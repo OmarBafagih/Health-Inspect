@@ -52,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment homeFragment;
     private SearchFragment searchFragment;
     private ActivityResultLauncher<String> requestPermissionLauncher;
-    private static final String LOCATION_PERMISSIONS_TOAST = "Cannot check recommended product stock in nearby stores";
-    private static String[] permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
     @SuppressLint("MissingPermission")
     @Override
@@ -69,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             if (isGranted) {
                 startLocationService();
             } else {
-                Toast.makeText(this, LOCATION_PERMISSIONS_TOAST, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, Constants.LOCATION_PERMISSIONS_TOAST, Toast.LENGTH_SHORT).show();
             }
         });
 

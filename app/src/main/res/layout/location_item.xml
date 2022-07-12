@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/locationRecyclerView"
+    android:id="@+id/locationRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="15dp"
@@ -38,26 +38,25 @@
 
     <TextView
         android:id="@+id/productInStockTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="92dp"
+        android:layout_height="27dp"
         android:layout_below="@+id/locationAddressTextView"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="78dp"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="20dp"
-        android:layout_toStartOf="@+id/stockIndicatorImageView"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="22dp"
         android:text="In Stock?"
         android:textAlignment="viewEnd"
         android:textSize="17sp" />
 
     <ImageView
         android:id="@+id/stockIndicatorImageView"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
         android:layout_below="@+id/locationAddressTextView"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="139dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="18dp"
+        android:layout_toEndOf="@+id/productInStockTextView"
+        android:visibility="visible"
         tools:srcCompat="@drawable/in_stock_icon" />
 
 

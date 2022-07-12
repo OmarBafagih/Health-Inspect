@@ -66,7 +66,7 @@ import okhttp3.Response;
 
 public class LocationService extends Service {
     private LocationManager locationManager;
-    private Location lastLocation;
+    private static Location lastLocation;
     private static final String TAG = "LocationService";
 
 
@@ -78,6 +78,7 @@ public class LocationService extends Service {
     @SuppressLint("MissingPermission")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Context context = this.getBaseContext();
         KrogerLocationCacher.getInstance().makeTokenRequest(this.getBaseContext());
         //delay for token variable to have new value on return
         final Handler handler = new Handler();
@@ -92,13 +93,15 @@ public class LocationService extends Service {
                             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 2, new LocationListener() {
                                 @Override
                                 public void onLocationChanged(Location location) {
+
                                     //Initially make nearbyLocations request and if location difference to the last location is significant, make a new Kroger API request for new nearby locations
                                     if (lastLocation == null) {
                                         lastLocation = location;
                                         KrogerLocationCacher.getInstance().getNearbyKrogerLocations(location.getLatitude(), location.getLongitude(), getBaseContext()).toString();
                                         return;
                                     }
-                                    if (lastLocation.distanceTo(location) > 3000) {
+                                    if (lastLocation.distanceTo(location) > Constants.SIGNIFICANT_LOCATION_CHANGE) {
+                                        KrogerLocationCacher.getInstance().makeTokenRequest(context);
                                         KrogerLocationCacher.getInstance().getNearbyKrogerLocations(location.getLatitude(), location.getLongitude(), getBaseContext()).toString();
                                     }
                                 }
@@ -109,11 +112,17 @@ public class LocationService extends Service {
             }
         }, Constants.DELAY_FAST);
 
+
+
         return START_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public static Location getLastLocation() {
+        return lastLocation;
     }
 }

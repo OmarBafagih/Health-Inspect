@@ -39,4 +39,8 @@ public class Constants {
     public static final String RECOMMENDED_PRODUCT = "recommended_product";
     public static final int DELAY_SLOW = 2500;
     public static final int DELAY_FAST = 1000;
+    public static final int MAX_LOCATIONS = 5;
+    public static final int SIGNIFICANT_LOCATION_CHANGE = 2000;
+    public static final String LOCATION_PERMISSIONS_TOAST = "Cannot check recommended product stock in nearby stores";
+
 }

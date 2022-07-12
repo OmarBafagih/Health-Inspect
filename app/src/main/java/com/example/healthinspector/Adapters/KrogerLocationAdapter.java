@@ -1,16 +1,21 @@
 package com.example.healthinspector.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.healthinspector.Constants;
+import com.example.healthinspector.LocationService;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.R;
 
@@ -55,24 +60,43 @@ public class KrogerLocationAdapter extends RecyclerView.Adapter<KrogerLocationAd
     class ViewHolder extends RecyclerView.ViewHolder{
         private TextView storeNameTextView, locationAddressTextView;
         private ImageView stockIndicatorImageView;
+        private RelativeLayout locationContainer;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             storeNameTextView = itemView.findViewById(R.id.storeNameTextView);
             locationAddressTextView = itemView.findViewById(R.id.locationAddressTextView);
             stockIndicatorImageView = itemView.findViewById(R.id.stockIndicatorImageView);
+            locationContainer = itemView.findViewById(R.id.locationRelativeLayout);
         }
 
         public void bind(JSONObject location) throws JSONException {
             storeNameTextView.setText(location.getString(Constants.STORE_NAME));
             locationAddressTextView.setText(location.getString(Constants.ADDRESS));
-            if(location.getBoolean(Constants.IN_STOCK)){
-                stockIndicatorImageView.setImageResource(R.drawable.in_stock_icon);
+            if(location.has(Constants.IN_STOCK)){
+                Glide.with(context).load(context.getDrawable(R.drawable.in_stock_icon)).into(stockIndicatorImageView);
             }
             else{
-                stockIndicatorImageView.setImageResource(R.drawable.not_in_stock_icon);
+                Glide.with(context).load(context.getDrawable(R.drawable.not_in_stock_icon)).into(stockIndicatorImageView);
             }
+            locationContainer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    String startAddress = (LocationService.getLastLocation().getLatitude()) + "," + (LocationService.getLastLocation().getLongitude());
+                    String destinationAddress = null;
+                    try {
+                        destinationAddress = location.getDouble(Constants.LATITUDE) + "," + location.getDouble(Constants.LONGITUDE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                            Uri.parse("http://maps.google.com/maps?saddr=" + startAddress + "&daddr=" + destinationAddress));
+                    context.startActivity(intent);
+                }
+            });
         }
+
     }
 }
 
