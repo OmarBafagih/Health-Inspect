@@ -35,5 +35,8 @@ public class Constants {
     public static final String BRAND = "brand";
     public static final String IS_IN_CART = "isInCart";
     public static final String PRODUCT_IMAGE_URL = "product_image_url";
-
+    public static final String IN_STOCK = "in_stock";
+    public static final String RECOMMENDED_PRODUCT = "recommended_product";
+    public static final int DELAY_SLOW = 2500;
+    public static final int DELAY_FAST = 1000;
 }

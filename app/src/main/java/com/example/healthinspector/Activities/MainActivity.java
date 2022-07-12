@@ -145,5 +145,4 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(Constants.PERMISSIONS_GRANTED);
         startService(intent);
     }
-
 }

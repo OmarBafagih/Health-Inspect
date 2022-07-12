@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Handler;
 import android.util.Log;
 
@@ -56,7 +57,6 @@ public class KrogerLocationCacher extends Application{
         return krogerLocations;
     }
 
-
     public String makeTokenRequest(Context context){
         OkHttpClient client = new OkHttpClient();
 
@@ -68,7 +68,6 @@ public class KrogerLocationCacher extends Application{
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .addHeader("Authorization", "Basic " + context.getString(R.string.kroger_key))
                 .build();
-
 
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -82,10 +81,8 @@ public class KrogerLocationCacher extends Application{
                     throw new IOException("Unexpected code " + response);
                 }
                 try {
-                    //TOKEN RETRIEVAL SUCCESSFUL
                     JSONObject jsonResponse = new JSONObject(response.body().string());
                     token = jsonResponse.getString(ACCESS_TOKEN);
-                    Log.i(TAG, token);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -93,7 +90,6 @@ public class KrogerLocationCacher extends Application{
         });
         return token;
     }
-
 
     public ArrayList<JSONObject> makeLocationRequest(Double latitude, Double longitude, Context context) {
         ArrayList<JSONObject> locations = new ArrayList<>();
@@ -106,7 +102,6 @@ public class KrogerLocationCacher extends Application{
                 .addHeader("Accept", "application/json")
                 .addHeader("Authorization", "Bearer " + getToken(context))
                 .build();
-
 
         locationsRequestClient.newCall(requestLocations).enqueue(new Callback() {
             @Override
@@ -130,9 +125,12 @@ public class KrogerLocationCacher extends Application{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                Log.i(TAG, jsonResponse.toString());
             }
         });
         return locations;
+    }
+
+    public ArrayList<JSONObject> getKrogerLocations() {
+        return krogerLocations;
     }
 }

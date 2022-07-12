@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/locationRecyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="15dp"
+    android:background="@drawable/item_background">
+
+    <TextView
+        android:id="@+id/storeNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="0dp"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        tools:text="Store name placeholder" />
+
+    <TextView
+        android:id="@+id/locationAddressTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/storeNameTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        tools:text="Placeholder Address" />
+
+    <TextView
+        android:id="@+id/productInStockTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/locationAddressTextView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="78dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="20dp"
+        android:layout_toStartOf="@+id/stockIndicatorImageView"
+        android:text="In Stock?"
+        android:textAlignment="viewEnd"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:id="@+id/stockIndicatorImageView"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/locationAddressTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="139dp"
+        tools:srcCompat="@drawable/in_stock_icon" />
+
+
+</RelativeLayout>
