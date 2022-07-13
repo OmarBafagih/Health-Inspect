@@ -1,9 +1,10 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
-    compileSdk 32
+    compileSdk 31
 
     buildFeatures {
         viewBinding true
@@ -11,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.healthinspector"
-        minSdk 29
+        minSdk 19
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -62,5 +63,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.10.1'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.10.1'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.10.1'
+    //maps and location
     implementation 'com.google.android.gms:play-services-location:20.0.0'
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
 }

@@ -34,6 +34,8 @@ public class KrogerLocationCacher extends Application{
     private String token = null;
     private ArrayList<JSONObject> krogerLocations = null;
     private static final String ACCESS_TOKEN = "access_token";
+    private static final String GEOLOCATION = "geolocation";
+    private static final String NAME = "name";
 
     private KrogerLocationCacher() {}
     public static KrogerLocationCacher getInstance() {
@@ -113,13 +115,18 @@ public class KrogerLocationCacher extends Application{
                 JSONObject jsonResponse = null;
                 try {
                     jsonResponse = new JSONObject(response.body().string());
-                    for(int i = 0; i < jsonResponse.getJSONArray("data").length(); i++){
+                    int limit = jsonResponse.length();
+                    if(limit >= Constants.MAX_LOCATIONS){
+                        limit = Constants.MAX_LOCATIONS;
+                    }
+                    for(int i = 0; i < Integer.min(limit, jsonResponse.length()); i++){
                         JSONObject location = new JSONObject();
-                        location.put(Constants.LOCATION_ID, jsonResponse.getJSONArray(Constants.DATA).getJSONObject(i).getString(Constants.LOCATION_ID));
-                        location.put(Constants.STORE_NAME, jsonResponse.getJSONArray(Constants.DATA).getJSONObject(i).getString("name"));
-                        location.put(Constants.ADDRESS, jsonResponse.getJSONArray(Constants.DATA).getJSONObject(i).getJSONObject(Constants.ADDRESS).getString("addressLine1"));
-                        location.put(Constants.LATITUDE, jsonResponse.getJSONArray(Constants.DATA).getJSONObject(i).getJSONObject("geolocation").getDouble(Constants.LATITUDE));
-                        location.put(Constants.LONGITUDE, jsonResponse.getJSONArray(Constants.DATA).getJSONObject(i).getJSONObject("geolocation").getDouble(Constants.LONGITUDE));
+                        JSONObject data = jsonResponse.getJSONArray(Constants.DATA).getJSONObject(i);
+                        location.put(Constants.LOCATION_ID, data.getString(Constants.LOCATION_ID));
+                        location.put(Constants.STORE_NAME, data.getString(NAME));
+                        location.put(Constants.ADDRESS, data.getJSONObject(Constants.ADDRESS).getString("addressLine1"));
+                        location.put(Constants.LATITUDE, data.getJSONObject(GEOLOCATION).getDouble(Constants.LATITUDE));
+                        location.put(Constants.LONGITUDE, data.getJSONObject(GEOLOCATION).getDouble(Constants.LONGITUDE));
                         locations.add(location);
                     }
                 } catch (JSONException e) {

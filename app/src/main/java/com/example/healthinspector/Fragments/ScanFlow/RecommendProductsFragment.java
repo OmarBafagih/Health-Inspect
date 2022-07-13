@@ -130,16 +130,16 @@ public class RecommendProductsFragment extends Fragment {
                                 JSONArray productKeywords = response.getJSONArray(PRODUCTS).getJSONObject(i).getJSONArray(KEYWORDS);
                                 ArrayList<String> keywordsArray = new ArrayList<>();
                                 int keywordCount = productKeywords.length();
-                                //kroger API filter for product terms cannot be more than 8 words
-                                if(keywordCount > 8){
-                                    keywordCount = 8;
+
+                                if(keywordCount > 3){
+                                    keywordCount = 3;
                                 }
                                 for (int x = 0; x < keywordCount; x++){
                                     keywordsArray.add(productKeywords.getString(x));
                                 }
                                 for(String str : keywordsArray) {
                                     keywordsBuilder.append(str);
-                                    keywordsBuilder.append(" ");
+                                    keywordsBuilder.append("%20");
                                 }
                                 keywords = keywordsBuilder.toString();
 
