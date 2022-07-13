@@ -1,20 +1,14 @@
 package com.example.healthinspector.Fragments;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,33 +18,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.healthinspector.Adapters.CartItemAdapter;
 import com.example.healthinspector.Adapters.KrogerLocationAdapter;
 import com.example.healthinspector.Constants;
-import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.KrogerLocationCacher;
 import com.example.healthinspector.LocationService;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentProductFinderBinding;
-import com.example.healthinspector.databinding.FragmentScanBinding;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -86,7 +71,7 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
         View view = binding.getRoot();
 
         locations = KrogerLocationCacher.getInstance().getKrogerLocations();
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.homeMap);
         mapFragment.getMapAsync(this);
 
         Bundle bundle = getArguments();
