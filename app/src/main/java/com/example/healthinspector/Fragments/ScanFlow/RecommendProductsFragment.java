@@ -61,6 +61,7 @@ public class RecommendProductsFragment extends Fragment {
     private static final String PARAM_KEY = "User-Agent";
     private static final String PARAM_VALUE = "Health Inspect - Android - Version 1.0";
     private ScannedProduct scannedProduct;
+    public static final Integer KEYWORD_LIMIT = 2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -129,12 +130,8 @@ public class RecommendProductsFragment extends Fragment {
                                 StringBuilder keywordsBuilder =new StringBuilder();
                                 JSONArray productKeywords = response.getJSONArray(PRODUCTS).getJSONObject(i).getJSONArray(KEYWORDS);
                                 ArrayList<String> keywordsArray = new ArrayList<>();
-                                int keywordCount = productKeywords.length();
 
-                                if(keywordCount > 3){
-                                    keywordCount = 3;
-                                }
-                                for (int x = 0; x < keywordCount; x++){
+                                for (int x = 0; x < Integer.min(2,productKeywords.length()); x++){
                                     keywordsArray.add(productKeywords.getString(x));
                                 }
                                 for(String str : keywordsArray) {
@@ -217,7 +214,6 @@ public class RecommendProductsFragment extends Fragment {
         bundle.putParcelable(Constants.SCANNED_PRODUCT, Parcels.wrap(scannedProduct));
         productDetailsFragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.fragment_container, productDetailsFragment);
-        fragmentTransaction.remove(this);
         fragmentTransaction.commit();
 
     }
