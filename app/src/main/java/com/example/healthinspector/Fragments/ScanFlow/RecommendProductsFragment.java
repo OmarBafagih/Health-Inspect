@@ -52,8 +52,7 @@ import java.util.Map;
 public class RecommendProductsFragment extends Fragment {
 
     private FragmentRecommendProductsBinding binding;
-    private static final String TAG = "RecommendProductsFragment";
-    private static final String URL_REQUEST_PRODUCTS = "https://us.openfoodfacts.org/cgi/search.pl?action=process";
+    private static final String TAG = "RecProductFragment";
     private static final String PRODUCTS = "products";
     private static final String COUNT = "count";
     private static final String BRAND = "brands";
@@ -83,7 +82,7 @@ public class RecommendProductsFragment extends Fragment {
     public void getRecommendedProducts(ScannedProduct scannedProduct){
         ArrayList<RecommendedProduct> recommendedProducts = new ArrayList<>();
         String url = "";
-        url += URL_REQUEST_PRODUCTS;
+        url += Constants.URL_REQUEST_PRODUCTS;
         //limiting the categories to 4, since 5 is too much and most of the time won't give back results
         int categoriesCount = scannedProduct.getCategories().size();
         if(categoriesCount == 0){returnToProductDetails(scannedProduct);} //if there are no categories, then no recommendations can be made for this scanned product

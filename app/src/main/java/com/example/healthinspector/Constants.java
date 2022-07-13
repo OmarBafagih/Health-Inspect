@@ -42,5 +42,5 @@ public class Constants {
     public static final int MAX_LOCATIONS = 5;
     public static final int SIGNIFICANT_LOCATION_CHANGE = 2000;
     public static final String LOCATION_PERMISSIONS_TOAST = "Cannot check recommended product stock in nearby stores";
-
+    public static final String URL_REQUEST_PRODUCTS = "https://us.openfoodfacts.org/cgi/search.pl?action=process";
 }
