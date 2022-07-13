@@ -87,7 +87,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
         notifyDataSetChanged();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder{
         ImageView cartItemImageView, addToCartImageView;
         TextView cartItemFactsTextView, cartItemNameTextView;
         RelativeLayout cartItemContainer;
@@ -140,9 +140,9 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                     fragmentTransaction.replace(R.id.fragment_container, productFinderFragment);
                     fragmentTransaction.addToBackStack(null);
                     fragmentTransaction.commit();
-
                 }
             });
+
 
         }
 

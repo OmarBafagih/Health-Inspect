@@ -110,8 +110,9 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
             OkHttpClient client = new OkHttpClient();
             Request request = null;
             try {
+                Log.i(TAG, recommendedProduct.getBrand());
                 request = new Request.Builder()
-                        .url("https://api.kroger.com/v1/products?filter.brand=" + "Oreo" + "&filter.term=" + "cookie" + "&filter.fulfillment=ais" + "&filter.locationId=" + locations.get(count).getString(Constants.LOCATION_ID))
+                        .url("https://api.kroger.com/v1/products?filter.brand=" + recommendedProduct.getBrand() + "&filter.term=" + recommendedProduct.getKeyWords() + "&filter.fulfillment=ais" + "&filter.locationId=" + locations.get(count).getString(Constants.LOCATION_ID))
                         .get()
                         .addHeader("Accept", "application/json")
                         .addHeader("Authorization", "Bearer " + KrogerLocationCacher.getInstance().getToken(getContext()))
@@ -129,9 +130,12 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
                     try {
                         JSONObject jsonResponse = new JSONObject(response.body().string());
                         Log.i(TAG, jsonResponse.toString());
-                        if(jsonResponse.getJSONArray(Constants.DATA).length() > 0){
-                            locations.get(count).put(Constants.IN_STOCK, true);
+                        if(jsonResponse.has(Constants.DATA)){
+                            if(jsonResponse.getJSONArray(Constants.DATA).length() > 0){
+                                locations.get(count).put(Constants.IN_STOCK, true);
+                            }
                         }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -150,6 +154,7 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                binding.productFinderProgressBar.setVisibility(View.GONE);
                 //sort the json array by stores that have the item in stock, then by nearest location
                 Location currentLocation = LocationService.getLastLocation();
                 Collections.sort(locations, new Comparator<JSONObject>() {
