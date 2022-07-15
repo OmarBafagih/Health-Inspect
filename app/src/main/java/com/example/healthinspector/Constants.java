@@ -29,7 +29,6 @@ public class Constants {
     public static final String LATITUDE =  "latitude";
     public static final String LONGITUDE =  "longitude";
     public static final String DATA =  "data";
-    //for cart items
     public static final String CART = "cart";
     public static final String KEYWORDS = "keywords";
     public static final String BRAND = "brand";
@@ -41,6 +40,12 @@ public class Constants {
     public static final int DELAY_FAST = 1000;
     public static final int MAX_LOCATIONS = 5;
     public static final int SIGNIFICANT_LOCATION_CHANGE = 2000;
-    public static final String LOCATION_PERMISSIONS_TOAST = "Cannot check recommended product stock in nearby stores";
     public static final String URL_REQUEST_PRODUCTS = "https://us.openfoodfacts.org/cgi/search.pl?action=process";
+    public static final String PARAM_KEY = "User-Agent";
+    public static final String PARAM_VALUE = "Health Inspect - Android - Version 1.0";
+    public static final String PRODUCTS = "products";
+    public static final String COUNT = "count";
+    public static final String AUTHORIZATION = "Authorization";
+    public static final int MAP_PADDING = 100;
+    public static final String CATEGORY_PARAMS = "&tagtype_%d=categories&tag_contains_%d=contains&tag_%d=%s";
 }

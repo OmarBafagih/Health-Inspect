@@ -3,6 +3,15 @@ package com.example.healthinspector.Fragments;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -14,21 +23,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
-
+import com.example.healthinspector.Adapters.ItemAdapter;
 import com.example.healthinspector.CachedLists;
 import com.example.healthinspector.Constants;
-import com.example.healthinspector.Fragments.ScanFlow.ScanFragment;
-import com.example.healthinspector.Adapters.ItemAdapter;
-import com.example.healthinspector.R;
 import com.example.healthinspector.FragmentSwitch;
+import com.example.healthinspector.Fragments.ScanFlow.ScanFragment;
+import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.parse.ParseUser;
@@ -70,16 +70,15 @@ public class SearchFragment extends Fragment {
                 fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
             } else {
-                Toast.makeText(getContext(), "Cannot scan barcode without camera permissions", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.no_camera_permissions), Toast.LENGTH_SHORT).show();
             }
         });
-
 
         if(fragmentSwitch.equals(FragmentSwitch.MAIN_ACTIVITY)){
             binding.scanIconImageView.setVisibility(View.VISIBLE);
             binding.scanPromptTextView.setVisibility(View.VISIBLE);
             binding.orPromptTextView.setVisibility(View.VISIBLE);
-            binding.searchPromptTextView.setText(R.string.search_products_prompt);
+            binding.searchPromptTextView.setText(getString(R.string.search_products_prompt));
         }
         else if(!fragmentSwitch.equals(FragmentSwitch.USER_WARNINGS) && !fragmentSwitch.equals(FragmentSwitch.USER_ALLERGIES)){
             userProfileFragment = new UserProfileFragment();
@@ -87,133 +86,21 @@ public class SearchFragment extends Fragment {
             RelativeLayout.LayoutParams promptParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             promptParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             promptParams.setMargins(30,30,30,30);
+
             binding.searchPromptTextView.setLayoutParams(promptParams);
             binding.searchPromptTextView.setTextSize(18);
             binding.searchPromptTextView.setBackground(requireContext().getDrawable(R.drawable.textview_button_style));
-            binding.searchPromptTextView.setText(R.string.search_ingredients_prompt);
+            binding.searchPromptTextView.setText(getString(R.string.search_ingredients_prompt));
 
             if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
-                try {
-                    ArrayList<String> userWarnings = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS);
-                    itemAdapter = new ItemAdapter(requireContext(),
-                            CachedLists.getInstance().itemsNotInUser(userWarnings, requireContext(), FragmentSwitch.ADDITIVE_SEARCH), FragmentSwitch.ADDITIVE_SEARCH);
-                    binding.searchItemsRecyclerView.setAdapter(itemAdapter);
-                    ItemAdapter finalItemAdapter = itemAdapter;
-
-                    binding.searchPromptTextView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            //save selections to parse database
-                            userWarnings.add(finalItemAdapter.getAddedItem());
-                            ParseUser user = ParseUser.getCurrentUser();
-                            user.put(Constants.PARSE_USER_WARNINGS, userWarnings);
-                            user.saveInBackground();
-                            //if the user is still in the sign up flow, navigate back to the user profile with a bundle indicating this
-                            if(signupSwitch != null && signupSwitch.equals(FragmentSwitch.SIGN_UP)){
-                                UserProfileFragment userProfileFragment = new UserProfileFragment();
-                                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
-                                userProfileFragment.setArguments(bundle);
-                                fragmentTransaction.replace(R.id.fragment_container, userProfileFragment);
-                                fragmentTransaction.addToBackStack(null);
-                                fragmentTransaction.commit();
-                            }
-                            else{
-                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
-                            }
-                        }
-                    });
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-                //creating TextWatcher for edit text to act as a search bar
-                binding.editTextSearch.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        try {
-                            filter(binding.editTextSearch.getText().toString(),
-                                    CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS), requireContext(), FragmentSwitch.ADDITIVE_SEARCH));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
+                setupSearch(Constants.PARSE_USER_WARNINGS, FragmentSwitch.ADDITIVE_SEARCH);
+                setupSearchBarTextWatcher(Constants.PARSE_USER_WARNINGS, FragmentSwitch.ADDITIVE_SEARCH);
             }
             else if(fragmentSwitch.equals(FragmentSwitch.ALLERGEN_SEARCH)){
-                try {
-                    ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES);
-                    itemAdapter = new ItemAdapter(requireContext(),
-                            CachedLists.getInstance().itemsNotInUser(userAllergies, requireContext(), FragmentSwitch.ALLERGEN_SEARCH), FragmentSwitch.ALLERGEN_SEARCH);
-                    binding.searchItemsRecyclerView.setAdapter(itemAdapter);
-
-                    ItemAdapter finalItemAdapter = itemAdapter;
-                    binding.searchPromptTextView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            userAllergies.add(finalItemAdapter.getAddedItem());
-                            ParseUser user = ParseUser.getCurrentUser();
-                            user.put(Constants.PARSE_USER_ALLERGIES, userAllergies);
-                            user.saveInBackground();
-                            if(signupSwitch != null && signupSwitch.equals(FragmentSwitch.SIGN_UP)){
-                                UserProfileFragment userProfileFragment = new UserProfileFragment();
-                                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
-                                userProfileFragment.setArguments(bundle);
-                                fragmentTransaction.replace(R.id.fragment_container, userProfileFragment);
-                                fragmentTransaction.addToBackStack(null);
-                                fragmentTransaction.commit();
-                            }
-                            else{
-                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
-                            }
-                        }
-                    });
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-
-                //creating TextWatcher for edit text to act as a search bar
-                binding.editTextSearch.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                    }
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        try {
-                            filter(binding.editTextSearch.getText().toString(),
-                                    CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES), requireContext(), FragmentSwitch.ALLERGEN_SEARCH));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (JsonProcessingException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                    }
-                });
+               setupSearch(Constants.PARSE_USER_ALLERGIES, FragmentSwitch.ALLERGEN_SEARCH);
+               setupSearchBarTextWatcher(Constants.PARSE_USER_ALLERGIES, FragmentSwitch.ALLERGEN_SEARCH);
             }
-
-            LinearLayoutManager linearLayoutManagerAllergies = new LinearLayoutManager(getContext());
-            binding.searchItemsRecyclerView.setLayoutManager(linearLayoutManagerAllergies);
+            binding.searchItemsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         }
         return view;
     }
@@ -221,20 +108,45 @@ public class SearchFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.scanIconImageView.setOnClickListener(new View.OnClickListener() {
+        binding.scanIconImageView.setOnClickListener(v -> {
+            //request for User's camera permissions
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                //camera permissions are already granted
+                fragmentManager = requireActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
+            }
+            else {
+                //launch the request to the user, since permissions have not been granted yet
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+            }
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+    public void setupSearchBarTextWatcher(String warningType, FragmentSwitch fragmentSwitch){
+        //creating TextWatcher for edit text to act as a search bar
+        binding.editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                //request for User's camera permissions
-                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    //camera permissions are already granted
-                    fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
-                }
-                else {
-                    //launch the request to the user, since permissions have not been granted yet
-                    requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    filter(binding.editTextSearch.getText().toString(),
+                            CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(warningType), requireContext(), fragmentSwitch));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(requireContext(), getString(R.string.error_searching), Toast.LENGTH_SHORT).show();
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    Toast.makeText(requireContext(), getString(R.string.error_searching), Toast.LENGTH_SHORT).show();
                 }
             }
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
     }
 
@@ -247,15 +159,49 @@ public class SearchFragment extends Fragment {
             }
         }
         if (filteredList.isEmpty()) {
-            Toast.makeText(requireContext(), "No item found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.no_item_found), Toast.LENGTH_SHORT).show();
         } else {
             itemAdapter.filterList(filteredList);
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void setupSearch(String parseKey, FragmentSwitch fragmentSwitch){
+        try {
+            ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(parseKey);
+            itemAdapter = new ItemAdapter(requireContext(),
+                    CachedLists.getInstance().itemsNotInUser(userAllergies, requireContext(), fragmentSwitch), fragmentSwitch);
+            binding.searchItemsRecyclerView.setAdapter(itemAdapter);
+
+            ItemAdapter finalItemAdapter = itemAdapter;
+            binding.searchPromptTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    userAllergies.add(finalItemAdapter.getAddedItem());
+                    ParseUser user = ParseUser.getCurrentUser();
+                    user.put(parseKey, userAllergies);
+                    user.saveInBackground();
+                    if(signupSwitch != null && signupSwitch.equals(FragmentSwitch.SIGN_UP)){
+                        UserProfileFragment userProfileFragment = new UserProfileFragment();
+                        FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
+                        userProfileFragment.setArguments(bundle);
+                        fragmentTransaction.replace(R.id.fragment_container, userProfileFragment);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.commit();
+                    }
+                    else{
+                        requireActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
+                    }
+                }
+            });
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+
+        }
     }
 }

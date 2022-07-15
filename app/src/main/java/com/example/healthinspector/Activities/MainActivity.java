@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -47,18 +49,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
-    private static String lastFragment = "";
     private UserProfileFragment userProfileFragment;
     private HomeFragment homeFragment;
     private SearchFragment searchFragment;
     private ActivityResultLauncher<String> requestPermissionLauncher;
 
-    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //using view binding to reduce boilerplate code
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
@@ -67,43 +65,34 @@ public class MainActivity extends AppCompatActivity {
             if (isGranted) {
                 startLocationService();
             } else {
-                Toast.makeText(this, Constants.LOCATION_PERMISSIONS_TOAST, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.location_permissions_toast), Toast.LENGTH_SHORT).show();
             }
         });
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            //camera permissions are already granted
             startLocationService();
         }
         else {
-            //launch the request to the user, since permissions have not been granted yet
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-
         binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 binding.bottomNavigation.getMenu().setGroupCheckable(0, true, true);
+                binding.cartImageView.setImageResource(R.drawable.cart_icon);
                 switch (item.getItemId()){
-                    //navigate to profile fragment
                     case R.id.miProfile:
-                        binding.cartImageView.setImageResource(R.drawable.cart_icon);
                         if(userProfileFragment == null) {
                             userProfileFragment = new UserProfileFragment();
                         }
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, userProfileFragment).commit();
+                        openFragment(userProfileFragment);
                         return true;
-                    //navigate to home fragment
                     case R.id.miHome:
-                        binding.cartImageView.setImageResource(R.drawable.cart_icon);
                         if(homeFragment == null) {
                             homeFragment = new HomeFragment();
                         }
-                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, homeFragment).commit();
+                        openFragment(homeFragment);
                         return true;
-                    //navigate to search fragment
                     case R.id.miSearch:
-                        binding.cartImageView.setImageResource(R.drawable.cart_icon);
                         if(searchFragment == null){
                             searchFragment = new SearchFragment();
                         }
@@ -117,23 +106,21 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                         return true;
-                    case R.id.cartImageView:
 
                 }
+
                 return false;
             }
         });
 
         //setting the selected item for the nav bar as defaulting to the "home" page
         binding.bottomNavigation.setSelectedItemId(R.id.miHome);
-
         binding.cartImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 binding.bottomNavigation.getMenu().setGroupCheckable(0, false, true);
                 binding.cartImageView.setImageResource(R.drawable.cart_icon_filled);
-                //navigate to the cart fragment
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new CartFragment()).commit();
+                openFragment(new CartFragment());
             }
         });
     }
@@ -143,4 +130,24 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(Constants.PERMISSIONS_GRANTED);
         startService(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        if (this.getSupportFragmentManager().getBackStackEntryCount() > 0){
+            this.getSupportFragmentManager().popBackStack();
+        }
+        else{
+            openFragment(new HomeFragment());
+            binding.bottomNavigation.setSelectedItemId(R.id.miHome);
+        }
+    }
+
+    public void openFragment(Fragment fragment){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+
 }

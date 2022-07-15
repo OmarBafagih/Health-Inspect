@@ -29,6 +29,7 @@ import java.util.List;
 
 public class SignupFragment extends Fragment {
     private FragmentSignupBinding binding;
+    private static final String TAG = "SignupFragment";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,23 +51,22 @@ public class SignupFragment extends Fragment {
 
                 //input checking
                 if(username.isEmpty()){
-                    Toast.makeText(requireContext(), "Please enter a valid username", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.enter_valid_username), Toast.LENGTH_SHORT).show();
                 }
                 else if(password.isEmpty()){
-                    Toast.makeText(requireContext(), "Please enter a valid password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.enter_valid_password), Toast.LENGTH_SHORT).show();
                 }
                 // querying users to check for duplicate username
                 ParseQuery<ParseUser> userQuery = ParseQuery.getQuery(ParseUser.class);
                 userQuery.findInBackground(new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> usersFound, ParseException e) {
-                        // check for errors
                         if (e != null) {
                             return;
                         }
                         for (ParseUser user : usersFound) {
                             if(user.getUsername().equals(username)){
-                                Toast.makeText(requireContext(), "Username is already taken", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireContext(), getString(R.string.username_taken), Toast.LENGTH_SHORT).show();
                             }
                         }
                         //username is valid, sign user up
@@ -87,13 +87,15 @@ public class SignupFragment extends Fragment {
         user.signUpInBackground(new SignUpCallback() {
             public void done(ParseException e) {
                 if(e != null){
+                    Log.e(TAG, "Error creating account: " + e);
+                    Toast.makeText(requireContext(), getString(R.string.unsuccessful_account_creation), Toast.LENGTH_LONG).show();
                     return;
                 }
-                Toast.makeText(requireContext(), "Successfully created account and signed in", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.successful_account_creation), Toast.LENGTH_LONG).show();
 
                 //send user to user profile along with bundle
                 UserProfileFragment userProfileFragment = new UserProfileFragment();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
