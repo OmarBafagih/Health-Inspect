@@ -2,6 +2,7 @@ package com.example.healthinspector.Adapters;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,10 +42,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     private List<RecommendedProduct> recommendedProducts;
     private FragmentSwitch fragmentSwitch;
     private ScannedProduct scannedProduct;
-
     private static final String TAG = "ProductRecommendationsAdapter";
-    public static final String SAVED = "item added to cart";
-    public static final String REMOVED = "item removed from cart";
 
     public CartItemAdapter(Context context, List<RecommendedProduct> recommendedProducts, FragmentSwitch fragmentSwitch){
         this.context = context;
@@ -103,14 +101,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
         public void bind(RecommendedProduct recommendedProduct) {
             Glide.with(context).load(recommendedProduct.getProductImageUrl()).placeholder(R.drawable.ingredients_icon).into(cartItemImageView);
             cartItemNameTextView.setText(recommendedProduct.getProductName());
-            String cartItemFacts = "";
-            for(int i = 0; i < recommendedProduct.getNutrientLevels().size(); i++){
-                if(i != recommendedProduct.getNutrientLevels().size()-1){
-                    cartItemFacts += recommendedProduct.getNutrientLevels().get(i) + "\n";
-                    continue;
-                }
-                cartItemFacts += recommendedProduct.getNutrientLevels().get(i);
-            }
+            String cartItemFacts = String.join("\n", recommendedProduct.getNutrientLevels());
             cartItemFactsTextView.setText(cartItemFacts);
             if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS)){
                 addToCartImageView.setImageResource(R.drawable.add_icon_2);
@@ -118,16 +109,12 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
             else{
                 addToCartImageView.setImageResource(R.drawable.delete_icon);
             }
-            addToCartImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                   addOrRemoveFromCart(recommendedProduct);
-                }
-            });
+            addToCartImageView.setOnClickListener(v -> addOrRemoveFromCart(recommendedProduct));
             cartItemContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //send to product finder fragment with product
+
                     FragmentManager fragmentManager = ((FragmentActivity) v.getContext()).getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction =  fragmentManager.beginTransaction();
                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -142,8 +129,6 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                     fragmentTransaction.commit();
                 }
             });
-
-
         }
 
         public void addOrRemoveFromCart(RecommendedProduct recommendedProduct){
@@ -157,7 +142,8 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                 newCartItem.put(Constants.NUTRIENT_LEVELS, recommendedProduct.getNutrientLevels());
 
             } catch (JSONException err) {
-                err.printStackTrace();
+                Toast.makeText(context, context.getString(R.string.error_saving_cart), Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Error creating user's cart " + err);
             }
             //if the recommended product is not in the cart
             if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS)){
@@ -167,14 +153,10 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                     try {
                         Cart userCart = parseQuery.get(ParseUser.getCurrentUser().getParseObject(Constants.CART).getObjectId());
                         userCart.setCartItems(userCart.getCartItems().put(newCartItem));
-                        userCart.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                Toast.makeText(context, SAVED, Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        userCart.saveInBackground(e -> Toast.makeText(context, context.getString(R.string.saved_item), Toast.LENGTH_SHORT).show());
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        Toast.makeText(context, context.getString(R.string.error_saving_cart), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Error saving user's cart " + e);
                     }
                 }
                 else{
@@ -186,7 +168,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                         @Override
                         public void done(ParseException e) {
                             if(e == null){
-                                Toast.makeText(context, SAVED, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(context, context.getString(R.string.saved_item), Toast.LENGTH_SHORT).show();
                                 ParseUser.getCurrentUser().put(Constants.CART, newCart);
                                 ParseUser.getCurrentUser().saveInBackground();
                             }
@@ -206,15 +188,15 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                             userCart.setCartItems(updatedCart);
                         }
                     }
-                    Toast.makeText(context, REMOVED, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.removed_item), Toast.LENGTH_SHORT).show();
                     userCart.saveInBackground();
                 } catch (ParseException | JSONException e) {
-                    e.printStackTrace();
+                    Toast.makeText(context, context.getString(R.string.error_removing_item), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error removing item from user's cart " + e);
                 }
                 recommendedProducts.remove(recommendedProduct);
                 notifyDataSetChanged();
             }
         }
     }
-
 }

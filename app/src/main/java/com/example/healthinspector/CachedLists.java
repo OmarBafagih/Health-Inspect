@@ -66,8 +66,9 @@ public class CachedLists{
             return additivesInProduct;
         }
         for(int i = 0; i < productAdditiveTags.size(); i++){
-            if(getAdditives(context).containsKey(productAdditiveTags.get(i))){
-                additivesInProduct.add(getAdditives(context).get(productAdditiveTags.get(i)));
+            String additiveFromCache = getAdditives(context).get(productAdditiveTags.get(i));
+            if(additiveFromCache != null){
+                additivesInProduct.add(additiveFromCache);
             }
         }
         return additivesInProduct;

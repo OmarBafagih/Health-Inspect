@@ -2,17 +2,16 @@ package com.example.healthinspector.Fragments.ScanFlow;
 
 import android.app.Activity;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,8 +22,6 @@ import com.android.volley.toolbox.Volley;
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
-import com.example.healthinspector.Activities.MainActivity;
-import com.example.healthinspector.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
@@ -49,6 +46,7 @@ public class ScanFragment extends Fragment {
     private static final String TAG = "ScanFragment";
     private HashMap<Integer, String> novaGroups = null;
     private String novaGroup;
+    private static final int PREFIX_LENGTH = 3;
 
 
     @Override
@@ -79,8 +77,8 @@ public class ScanFragment extends Fragment {
                     @Override
                     public void run() {
                         Toast.makeText(requireContext(), result.getText(), Toast.LENGTH_SHORT).show();
-                        RequestQueue queue = Volley.newRequestQueue(getContext());
-                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, Constants.PRODUCT_REQUEST_URL + result.getText(), null, new Response.Listener<JSONObject>() {
+                        RequestQueue queue = Volley.newRequestQueue(requireContext());
+                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, Constants.PRODUCT_REQUEST_URL + "0060410062418", null, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
@@ -146,10 +144,7 @@ public class ScanFragment extends Fragment {
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.CATEGORIES)){
                                         JSONArray categoriesJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.CATEGORIES);
                                         for (int i = 0; i < categoriesJSON.length(); i++){
-                                            categories.add(categoriesJSON.getString(i));
-                                        }
-                                        for(int i = 0; i < categories.size(); i++){
-                                            categories.set(i, categories.get(i).substring(3));
+                                            categories.add(categoriesJSON.getString(i).substring(PREFIX_LENGTH));
                                         }
                                     }
                                     ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl , additives, allergens, categories);

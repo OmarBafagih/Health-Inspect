@@ -8,6 +8,22 @@
     <string name="no_recommendations">Sorry, we don\'t have any healthier alternatives for this product</string>
     <string name="no_nearby_locations">Sorry, there are no nearby Kroger locations</string>
     <string name="error_finding_locations">Sorry, there was an error finding nearby Kroger locations</string>
-
-
+    <string name="error_finding_recommendations">Sorry, there was an error finding your recommendations</string>
+    <string name="undo">undo</string>
+    <string name="no_camera_permissions">Cannot use scanner without camera permissions</string>
+    <string name="error_searching">Sorry, there was an error finding what you were looking for</string>
+    <string name="no_item_found">No item found</string>
+    <string name="enter_valid_username">Please enter a valid username</string>
+    <string name="enter_valid_password">Please enter a valid password</string>
+    <string name="username_taken">The username you entered is already taken</string>
+    <string name="successful_account_creation">Horray! you\'re on your way to a healthier lifestyle</string>
+    <string name="unsuccessful_account_creation">Sorry, something went wrong when we tried to make your account, try again</string>
+    <string name="error_creating_recommendations">Sorry, something went wrong when we tried to make you recommendations</string>
+    <string name="saved_item">item added to cart</string>
+    <string name="removed_item">item removed to cart</string>
+    <string name="error_removing_item">Sorry, there was an error removing this item from your profile</string>
+    <string name="error_saving_cart">Sorry, there was an error saving your cart</string>
+    <string name="error_displaying_cart">Sorry, there was an error showing your cart</string>
+    <string name="location_permissions_toast">Cannot check recommended product stock in nearby stores</string>
+    <string name="error_retrieving_locations">Sorry, we couldn\'t find any nearby Kroger locations</string>
 </resources>

@@ -2,23 +2,14 @@ package com.example.healthinspector;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.Handler;
 import android.util.Log;
-
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -36,6 +27,9 @@ public class KrogerLocationCacher extends Application{
     private static final String ACCESS_TOKEN = "access_token";
     private static final String GEOLOCATION = "geolocation";
     private static final String NAME = "name";
+    private static final String ADDRESS_LINE = "addressLine1";
+    private static final String TOKEN_REQUEST_URL = "https://api.kroger.com/v1/connect/oauth2/token";
+    private static final String LOCATION_REQUEST_URL = "https://api.kroger.com/v1/locations?filter.latLong.near=";
 
     private KrogerLocationCacher() {}
     public static KrogerLocationCacher getInstance() {
@@ -65,10 +59,10 @@ public class KrogerLocationCacher extends Application{
         MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
         RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&scope=product.compact");
         Request request = new Request.Builder()
-                .url("https://api.kroger.com/v1/connect/oauth2/token")
+                .url(TOKEN_REQUEST_URL)
                 .post(body)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .addHeader("Authorization", "Basic " + context.getString(R.string.kroger_key))
+                .addHeader(Constants.AUTHORIZATION, "Basic " + context.getString(R.string.kroger_key))
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -86,7 +80,8 @@ public class KrogerLocationCacher extends Application{
                     JSONObject jsonResponse = new JSONObject(response.body().string());
                     token = jsonResponse.getString(ACCESS_TOKEN);
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Error retrieving Kroger token " + e);
+                    Toast.makeText(context, getString(R.string.error_retrieving_locations), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -95,42 +90,43 @@ public class KrogerLocationCacher extends Application{
 
     public ArrayList<JSONObject> makeLocationRequest(Double latitude, Double longitude, Context context) {
         ArrayList<JSONObject> locations = new ArrayList<>();
-        // create api request to get json locations
         OkHttpClient locationsRequestClient = new OkHttpClient();
 
         Request requestLocations = new Request.Builder()
-                .url("https://api.kroger.com/v1/locations?filter.latLong.near=" + (latitude) + "," + longitude)
+                .url(LOCATION_REQUEST_URL + (latitude) + "," + longitude)
                 .get()
                 .addHeader("Accept", "application/json")
-                .addHeader("Authorization", "Bearer " + getToken(context))
+                .addHeader(Constants.AUTHORIZATION, "Bearer " + getToken(context))
                 .build();
 
         locationsRequestClient.newCall(requestLocations).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "ERROR RETRIEVING LOCATIONS", e);
+                Log.e(TAG, "Error retrieving locations " + e);
+                Toast.makeText(context, getString(R.string.error_retrieving_locations), Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 JSONObject jsonResponse = null;
                 try {
                     jsonResponse = new JSONObject(response.body().string());
-                    int limit = jsonResponse.length();
-                    if(limit >= Constants.MAX_LOCATIONS){
-                        limit = Constants.MAX_LOCATIONS;
-                    }
+                    int limit = Constants.MAX_LOCATIONS;
                     for(int i = 0; i < Integer.min(limit, jsonResponse.length()); i++){
                         JSONObject location = new JSONObject();
-                        JSONObject data = jsonResponse.getJSONArray(Constants.DATA).getJSONObject(i);
-                        location.put(Constants.LOCATION_ID, data.getString(Constants.LOCATION_ID));
-                        location.put(Constants.STORE_NAME, data.getString(NAME));
-                        location.put(Constants.ADDRESS, data.getJSONObject(Constants.ADDRESS).getString("addressLine1"));
-                        location.put(Constants.LATITUDE, data.getJSONObject(GEOLOCATION).getDouble(Constants.LATITUDE));
-                        location.put(Constants.LONGITUDE, data.getJSONObject(GEOLOCATION).getDouble(Constants.LONGITUDE));
-                        locations.add(location);
+                        if(jsonResponse.has(Constants.DATA)){
+                            JSONObject data = jsonResponse.getJSONArray(Constants.DATA).getJSONObject(i);
+                            location.put(Constants.LOCATION_ID, data.getString(Constants.LOCATION_ID));
+                            location.put(Constants.STORE_NAME, data.getString(NAME));
+                            location.put(Constants.ADDRESS, data.getJSONObject(Constants.ADDRESS).getString(ADDRESS_LINE));
+                            location.put(Constants.LATITUDE, data.getJSONObject(GEOLOCATION).getDouble(Constants.LATITUDE));
+                            location.put(Constants.LONGITUDE, data.getJSONObject(GEOLOCATION).getDouble(Constants.LONGITUDE));
+                            locations.add(location);
+                        }
+
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Error storing locations: " + e);
+                    Toast.makeText(context, getString(R.string.error_retrieving_locations), Toast.LENGTH_SHORT).show();
                 }
             }
         });
