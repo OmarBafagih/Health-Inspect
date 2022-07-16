@@ -9,21 +9,17 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewbinding.ViewBinding;
-import androidx.viewbinding.ViewBindings;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.healthinspector.Adapters.CartItemAdapter;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.Models.ScannedProduct;
-import com.example.healthinspector.databinding.FragmentRecommendProductsBinding;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -40,102 +36,102 @@ import java.util.Map;
 public class CreateRecommendations extends Application {
     public static final String TAG = "CreateRecommendations";
     private static final Integer KEYWORD_LIMIT = 2;
-    private static final Integer CATEGORY_LIMIT = 4;
     private static final Integer RECOMMENDED_ITEMS_LIMIT = 7;
     private static final Integer INITIAL_TIMEOUT = 7000;
     private static final Integer MAX_TRIES = 3;
     private static final String BRAND = "brands";
     private static final String KEYWORDS = "_keywords";
+    private static ProgressBar progressBar;
 
-    public static void getRecommendedProducts(ScannedProduct scannedProduct, String url, Context context, FragmentSwitch fragmentSwitch, View v){
+    public static void getRecommendedProducts(ScannedProduct scannedProduct, String url, Context context, FragmentSwitch fragmentSwitch, View v) throws JSONException, JsonProcessingException, ParseException {
+        ArrayList<RecommendedProduct> homeRecommendedProducts = CachedLists.getInstance().getHomeRecommendedProducts();
+        if (homeRecommendedProducts != null && fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)) {
+            loadRecommendationsIntoView(homeRecommendedProducts, fragmentSwitch, v, context, scannedProduct);
+            progressBar = v.findViewById(R.id.homeProgressBar);
+            progressBar.setVisibility(View.GONE);
+            return;
+        }
         ArrayList<RecommendedProduct> recommendedProducts = new ArrayList<>();
         //new volley request to get product recommendations
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest recommendedProductsRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        int count = 0;
+                response -> {
+                    int count = 0;
+                    try {
+                        count = response.getInt(Constants.COUNT);
+                    } catch (JSONException e) {
+                        Toast.makeText(context, context.getString(R.string.error_finding_recommendations), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG,"JSON Exception tying to retrieve recommendedProducts", e);
+                        e.printStackTrace();
+                    }
+                    if (count == 0) {
+                        Toast.makeText(context, context.getString(R.string.error_finding_recommendations), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    for (int i = 0; i < Integer.min(RECOMMENDED_ITEMS_LIMIT, count); i++) {
+                        String productName = "";
+                        String brand = "";
+                        String keywords = "";
+                        String imageUrl = "";
+                        ArrayList<String> nutrientLevels = new ArrayList<>();
                         try {
-                            count = response.getInt(Constants.COUNT);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        //if the response has 0 products, return to details
-                        if(count == 0){
-                            Toast.makeText(context, context.getString(R.string.error_finding_recommendations), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        for(int i = 0; i < Integer.min(RECOMMENDED_ITEMS_LIMIT, count); i++){
-                            String productName = "";
-                            String brand = "";
-                            String keywords = "";
-                            String imageUrl = "";
-                            ArrayList<String> nutrientLevels = new ArrayList<>();
-                            try {
-                                JSONObject recommendedItemJson = response.getJSONArray(Constants.PRODUCTS).getJSONObject(i);
-                                productName = recommendedItemJson.getString(Constants.PRODUCT_NAME);
+                            JSONObject recommendedItemJson = response.getJSONArray(Constants.PRODUCTS).getJSONObject(i);
+                            productName = recommendedItemJson.getString(Constants.PRODUCT_NAME);
 
-                                if(recommendedItemJson.has(BRAND)){
-                                    brand = recommendedItemJson.getString(BRAND);
-                                }
-
-                                StringBuilder keywordsBuilder = new StringBuilder();
-                                JSONArray productKeywords = recommendedItemJson.getJSONArray(KEYWORDS);
-                                for (int x = 0; x < Integer.min(KEYWORD_LIMIT,productKeywords.length()); x++){
-                                    keywordsBuilder.append(productKeywords.getString(x)).append("%20");
-                                }
-                                keywords = keywordsBuilder.toString();
-
-                                imageUrl = recommendedItemJson.getString(Constants.PRODUCT_IMAGE);
-                                if(imageUrl == null){
-                                    imageUrl = "";
-                                }
-                                if(recommendedItemJson.has(Constants.NUTRIENT_LEVELS)){
-                                    JSONObject nutrientLevelsJSON = recommendedItemJson.getJSONObject(Constants.NUTRIENT_LEVELS);
-                                    Iterator iterator =  nutrientLevelsJSON.keys();
-                                    while (iterator.hasNext()){
-                                        String key = iterator.next().toString();
-                                        nutrientLevels.add(key + ": " + nutrientLevelsJSON.getString(key));
-                                    }
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            if (recommendedItemJson.has(BRAND)) {
+                                brand = recommendedItemJson.getString(BRAND);
                             }
-                            recommendedProducts.add(new RecommendedProduct(keywords, brand, productName, imageUrl, nutrientLevels));
-                        }
-                        ProgressBar progressBar;
-                        if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS)){
-                          progressBar = v.findViewById(R.id.progressBar);
-                        }
-                        else{
-                          progressBar = v.findViewById(R.id.homeProgressBar);
-                        }
-                        progressBar.setVisibility(View.GONE);
-                        try {
-                            loadRecommendationsIntoView(recommendedProducts, fragmentSwitch, v, context, scannedProduct);
-                        } catch (ParseException e) {
-                            Log.e(TAG, "ParseException trying to get recommended products " + e);
-                            Toast.makeText(context, context.getString(R.string.error_creating_recommendations), Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
+
+                            StringBuilder keywordsBuilder = new StringBuilder();
+                            JSONArray productKeywords = recommendedItemJson.getJSONArray(KEYWORDS);
+                            for (int x = 0; x < Integer.min(KEYWORD_LIMIT, productKeywords.length()); x++) {
+                                keywordsBuilder.append(productKeywords.getString(x)).append("%20");
+                            }
+                            keywords = keywordsBuilder.toString();
+
+                            imageUrl = recommendedItemJson.getString(Constants.PRODUCT_IMAGE);
+                            if (imageUrl == null) {
+                                imageUrl = "";
+                            }
+                            if (recommendedItemJson.has(Constants.NUTRIENT_LEVELS)) {
+                                JSONObject nutrientLevelsJSON = recommendedItemJson.getJSONObject(Constants.NUTRIENT_LEVELS);
+                                Iterator iterator = nutrientLevelsJSON.keys();
+                                while (iterator.hasNext()) {
+                                    String key = iterator.next().toString();
+                                    nutrientLevels.add(key + ": " + nutrientLevelsJSON.getString(key));
+                                }
+                            }
                         } catch (JSONException e) {
-                            Log.e(TAG, "JSONException trying to get recommended products " + e);
-                            Toast.makeText(context, context.getString(R.string.error_creating_recommendations), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, context.getString(R.string.issue_retrieving_some_information), Toast.LENGTH_SHORT).show();
+                            Log.e(TAG,"JSON Exception tying to retrieve recommendedProducts", e);
                             e.printStackTrace();
                         }
+                        recommendedProducts.add(new RecommendedProduct(keywords, brand, productName, imageUrl, nutrientLevels));
+                    }
+
+                    if (fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS)) {
+                        progressBar = v.findViewById(R.id.progressBar);
+                    } else {
+                        progressBar = v.findViewById(R.id.homeProgressBar);
+                    }
+                    progressBar.setVisibility(View.GONE);
+                    try {
+                        CachedLists.getInstance().setHomeRecommendedProducts(recommendedProducts);
+                        loadRecommendationsIntoView(recommendedProducts, fragmentSwitch, v, context, scannedProduct);
+                    } catch (ParseException | JsonProcessingException  | JSONException e) {
+                        //if there is an exception above, the exception will also get caught here, don't want to toast again
+                        Log.e(TAG, "ParseException trying to get recommended products " + e);
+                        e.printStackTrace();
                     }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, "Error requesting recommendations=> " + error.toString());
-                        Toast.makeText(context, context.getString(R.string.error_finding_recommendations), Toast.LENGTH_SHORT).show();
-                    }
+                error -> {
+                    Log.d(TAG, "Error requesting recommendations=> " + error.toString());
+                    Toast.makeText(context, context.getString(R.string.error_finding_recommendations), Toast.LENGTH_SHORT).show();
                 }
         ) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String>  params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<String, String>();
                 params.put(Constants.PARAM_KEY, Constants.PARAM_VALUE);
                 return params;
             }
@@ -158,13 +154,16 @@ public class CreateRecommendations extends Application {
             }
         }
         RecyclerView recommendedProductsRecyclerView;
+        LinearLayoutManager linearLayoutManager = null;
         if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS)){
             recommendedProductsRecyclerView = v.findViewById(R.id.recommendedProductsRecyclerView);
+            linearLayoutManager = new LinearLayoutManager(context);
         }
         else{
             recommendedProductsRecyclerView = v.findViewById(R.id.homeRecommendationsRecyclerView);
+            linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
         }
-        recommendedProductsRecyclerView.setAdapter(new CartItemAdapter(context, recommendedProducts, scannedProduct, FragmentSwitch.RECOMMENDATIONS));
-        recommendedProductsRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recommendedProductsRecyclerView.setLayoutManager(linearLayoutManager);
+        recommendedProductsRecyclerView.setAdapter(new CartItemAdapter(context, recommendedProducts, scannedProduct, fragmentSwitch));
     }
 }

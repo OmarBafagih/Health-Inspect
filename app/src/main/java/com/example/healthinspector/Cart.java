@@ -1,15 +1,9 @@
 package com.example.healthinspector;
 
 import com.parse.ParseClassName;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.parse.ParseUser;
 
 import org.json.JSONArray;
-import org.parceler.Parcel;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 @ParseClassName("Cart")
 public class Cart extends ParseObject{

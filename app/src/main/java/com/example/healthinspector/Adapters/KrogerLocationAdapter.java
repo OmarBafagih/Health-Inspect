@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.healthinspector.Constants;
+import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.LocationService;
-import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.R;
 
 import org.json.JSONException;
@@ -28,12 +28,19 @@ public class KrogerLocationAdapter extends RecyclerView.Adapter<KrogerLocationAd
 
     private ArrayList<JSONObject> locations;
     private Context context;
+    private static final String MAP_REDIRECT_URL = "http://maps.google.com/maps?saddr=";
+    private FragmentSwitch fragmentSwitch;
+
 
     public KrogerLocationAdapter(Context context, ArrayList<JSONObject> locations){
         this.context = context;
         this.locations = locations;
     }
-
+    public KrogerLocationAdapter(Context context, ArrayList<JSONObject> locations, FragmentSwitch fragmentSwitch){
+        this.context = context;
+        this.locations = locations;
+        this.fragmentSwitch = fragmentSwitch;
+    }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -56,9 +63,8 @@ public class KrogerLocationAdapter extends RecyclerView.Adapter<KrogerLocationAd
         return locations.size();
     }
 
-
     class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView storeNameTextView, locationAddressTextView;
+        private TextView storeNameTextView, locationAddressTextView, stockIndicatorTextView;
         private ImageView stockIndicatorImageView;
         private RelativeLayout locationContainer;
 
@@ -68,6 +74,7 @@ public class KrogerLocationAdapter extends RecyclerView.Adapter<KrogerLocationAd
             locationAddressTextView = itemView.findViewById(R.id.locationAddressTextView);
             stockIndicatorImageView = itemView.findViewById(R.id.stockIndicatorImageView);
             locationContainer = itemView.findViewById(R.id.locationRelativeLayout);
+            stockIndicatorTextView = itemView.findViewById(R.id.productInStockTextView);
         }
 
         public void bind(JSONObject location) throws JSONException {
@@ -79,24 +86,22 @@ public class KrogerLocationAdapter extends RecyclerView.Adapter<KrogerLocationAd
             else{
                 Glide.with(context).load(context.getDrawable(R.drawable.not_in_stock_icon)).into(stockIndicatorImageView);
             }
-            locationContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    String startAddress = (LocationService.getLastLocation().getLatitude()) + "," + (LocationService.getLastLocation().getLongitude());
-                    String destinationAddress = null;
-                    try {
-                        destinationAddress = location.getDouble(Constants.LATITUDE) + "," + location.getDouble(Constants.LONGITUDE);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                            Uri.parse("http://maps.google.com/maps?saddr=" + startAddress + "&daddr=" + destinationAddress));
-                    context.startActivity(intent);
+            if(fragmentSwitch != null && fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)){
+                stockIndicatorImageView.setVisibility(View.GONE);
+                stockIndicatorTextView.setVisibility(View.GONE);
+            }
+            locationContainer.setOnClickListener(view -> {
+                String startAddress = (LocationService.getLastLocation().getLatitude()) + "," + (LocationService.getLastLocation().getLongitude());
+                String destinationAddress = null;
+                try {
+                    destinationAddress = location.getDouble(Constants.LATITUDE) + "," + location.getDouble(Constants.LONGITUDE);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(MAP_REDIRECT_URL + startAddress + "&daddr=" + destinationAddress));
+                context.startActivity(intent);
             });
         }
-
     }
 }
 

@@ -5,8 +5,6 @@ import android.app.Application;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
-import java.security.KeyPairGenerator;
-
 public class ParseApplication extends Application {
     // Initializes Parse SDK as soon as the application is created
     @Override

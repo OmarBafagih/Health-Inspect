@@ -7,11 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -43,6 +43,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     private FragmentSwitch fragmentSwitch;
     private ScannedProduct scannedProduct;
     private static final String TAG = "ProductRecommendationsAdapter";
+    private static final float CARD_ELEVATION = 50;
 
     public CartItemAdapter(Context context, List<RecommendedProduct> recommendedProducts, FragmentSwitch fragmentSwitch){
         this.context = context;
@@ -88,14 +89,14 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder{
         ImageView cartItemImageView, addToCartImageView;
         TextView cartItemFactsTextView, cartItemNameTextView;
-        RelativeLayout cartItemContainer;
+        CardView cartItemContainer;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             cartItemImageView = itemView.findViewById(R.id.cartItemImageView);
             cartItemFactsTextView = itemView.findViewById(R.id.cartItemFactsTextView);
             cartItemNameTextView = itemView.findViewById(R.id.cartItemNameTextView);
             addToCartImageView = itemView.findViewById(R.id.addtoCartImageView);
-            cartItemContainer = itemView.findViewById(R.id.cartItemRelativeLayout);
+            cartItemContainer = itemView.findViewById(R.id.cartItemCardView);
         }
 
         public void bind(RecommendedProduct recommendedProduct) {
@@ -103,8 +104,11 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
             cartItemNameTextView.setText(recommendedProduct.getProductName());
             String cartItemFacts = String.join("\n", recommendedProduct.getNutrientLevels());
             cartItemFactsTextView.setText(cartItemFacts);
-            if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS)){
+            if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS) || fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)){
                 addToCartImageView.setImageResource(R.drawable.add_icon_2);
+                if(fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)){
+                    cartItemContainer.setCardElevation(CARD_ELEVATION);
+                }
             }
             else{
                 addToCartImageView.setImageResource(R.drawable.delete_icon);
@@ -114,7 +118,6 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                     //send to product finder fragment with product
-
                     FragmentManager fragmentManager = ((FragmentActivity) v.getContext()).getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction =  fragmentManager.beginTransaction();
                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -146,7 +149,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                 Log.e(TAG, "Error creating user's cart " + err);
             }
             //if the recommended product is not in the cart
-            if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS)){
+            if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS) || fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)){
                 //if the user's cart has already been initialized
                 if(!ParseUser.getCurrentUser().getParseObject(Constants.CART).equals(null)){
                     ParseQuery<Cart> parseQuery = ParseQuery.getQuery(Cart.class);

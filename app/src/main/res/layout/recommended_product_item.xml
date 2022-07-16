@@ -1,60 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/cartItemRelativeLayout"
+    android:id="@+id/cartItemCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
     android:layout_marginBottom="12dp"
-    android:background="@drawable/item_background">
+    app:cardBackgroundColor="@color/item_background_color"
+    app:cardCornerRadius="30dp">
 
-
-    <ImageView
-        android:id="@+id/cartItemImageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/cartItemNameTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="2dp"
-        android:layout_toStartOf="@+id/addtoCartImageView"
-        android:layout_toEndOf="@+id/cartItemImageView"
-        tools:text="placeholder" />
-
-    <TextView
-        android:id="@+id/cartItemFactsTextView"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addtoCartImageView"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="10dp"
-        android:layout_toEndOf="@+id/cartItemImageView"
-        android:lines="3"
-        android:maxLines="3"
-        tools:text="placeholder" />
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/addtoCartImageView"
-        android:layout_width="38dp"
-        android:layout_height="37dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="10dp"
-        tools:srcCompat="@drawable/add_icon_2" />
+        <ImageView
+            android:id="@+id/cartItemImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            tools:srcCompat="@tools:sample/avatars" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/cartItemNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="2dp"
+            android:layout_toStartOf="@+id/addtoCartImageView"
+            android:layout_toEndOf="@+id/cartItemImageView"
+            tools:text="placeholder" />
+
+        <TextView
+            android:id="@+id/cartItemFactsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addtoCartImageView"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/cartItemImageView"
+            android:lines="3"
+            android:maxLines="3"
+            tools:text="placeholder" />
+
+        <ImageView
+            android:id="@+id/addtoCartImageView"
+            android:layout_width="38dp"
+            android:layout_height="37dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
+            tools:srcCompat="@drawable/add_icon_2" />
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>
