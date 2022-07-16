@@ -11,38 +11,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.example.healthinspector.Adapters.CartItemAdapter;
-import com.example.healthinspector.Cart;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.CreateRecommendations;
 import com.example.healthinspector.FragmentSwitch;
-import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentRecommendProductsBinding;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.parse.ParseException;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 
 public class RecommendProductsFragment extends Fragment {
@@ -75,12 +55,18 @@ public class RecommendProductsFragment extends Fragment {
             url += String.format(Constants.CATEGORY_PARAMS, i, i, i, scannedProduct.getCategories().get(i));
         }
         url += String.format("&tagtype_%d=nutrition_grades&tag_contains_%d=contains&tag_%d=A&additives=without&ingredients_from_palm_oil=without&json=true", categoriesCount, categoriesCount, categoriesCount);
-        CreateRecommendations.getRecommendedProducts(scannedProduct, url, requireContext(), FragmentSwitch.RECOMMENDATIONS, view);
+        try {
+            CreateRecommendations.getRecommendedProducts(scannedProduct, url, requireContext(), FragmentSwitch.RECOMMENDATIONS, view);
+        } catch (JSONException | JsonProcessingException | ParseException e) {
+            //toast already gets called for these exceptions when creatingProductRecommendations, do not want to show the toast twice
+            e.printStackTrace();
+            Log.e(TAG,"JSON Exception tying to retrieve recommendedProducts", e);
+        }
     }
 
     public void returnToProductDetails(ScannedProduct scannedProduct){
         Toast.makeText(requireContext(), getString(R.string.no_recommendations), Toast.LENGTH_SHORT).show();
-        FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction =  requireActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
         ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();

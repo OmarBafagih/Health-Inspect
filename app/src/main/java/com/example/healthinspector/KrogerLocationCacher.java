@@ -126,7 +126,6 @@ public class KrogerLocationCacher extends Application{
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error storing locations: " + e);
-                    Toast.makeText(context, getString(R.string.error_retrieving_locations), Toast.LENGTH_SHORT).show();
                 }
             }
         });

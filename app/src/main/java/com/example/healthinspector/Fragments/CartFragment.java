@@ -1,18 +1,15 @@
 package com.example.healthinspector.Fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.healthinspector.Adapters.CartItemAdapter;
 import com.example.healthinspector.Cart;
 import com.example.healthinspector.Constants;
@@ -20,17 +17,13 @@ import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentCartBinding;
-import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-
 
 public class CartFragment extends Fragment {
 

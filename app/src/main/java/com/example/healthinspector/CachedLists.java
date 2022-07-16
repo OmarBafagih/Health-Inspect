@@ -2,6 +2,7 @@ package com.example.healthinspector;
 
 import android.content.Context;
 
+import com.example.healthinspector.Models.RecommendedProduct;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,9 +19,9 @@ public class CachedLists{
     private static CachedLists cachedLists = null;
     private HashMap<String, String> additives = null;
     private HashMap<String, String> allergens = null;
+    private ArrayList<RecommendedProduct> homeRecommendedProducts = null;
 
-    private CachedLists() throws JSONException, JsonProcessingException {
-    }
+    private CachedLists() throws JSONException, JsonProcessingException {}
     public static CachedLists getInstance() throws JSONException, JsonProcessingException {
         if (cachedLists == null){
             cachedLists = new CachedLists();
@@ -41,7 +42,13 @@ public class CachedLists{
         }
         return allergens;
     }
+    public void setHomeRecommendedProducts(ArrayList<RecommendedProduct> homeRecommendedProducts) {
+        this.homeRecommendedProducts = homeRecommendedProducts;
+    }
 
+    public ArrayList<RecommendedProduct> getHomeRecommendedProducts() {
+        return homeRecommendedProducts;
+    }
     public HashMap<String,String> loadJSONObject(Context context, String fileName) throws JSONException, JsonProcessingException {
         String json = "";
         try {
@@ -55,9 +62,7 @@ public class CachedLists{
             ex.printStackTrace();
             return null;
         }
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.readValue(json, HashMap.class);
+        return new ObjectMapper().readValue(json, HashMap.class);
     }
 
     public ArrayList<String> additivesInProduct(ArrayList<String> productAdditiveTags, Context context) throws JSONException, JsonProcessingException {
@@ -88,5 +93,4 @@ public class CachedLists{
             return allergiesNotInUser;
         }
     }
-
 }

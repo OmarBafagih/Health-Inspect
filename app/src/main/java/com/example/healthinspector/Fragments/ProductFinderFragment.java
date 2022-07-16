@@ -3,7 +3,6 @@ package com.example.healthinspector.Fragments;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -43,8 +41,6 @@ import org.parceler.Parcels;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -78,7 +74,7 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
         if(storedLocations == null || storedLocations.size() == 0){
             Toast.makeText(requireContext(), getString(R.string.no_nearby_locations), Toast.LENGTH_LONG).show();
             //navigate user back to product details fragment and finish this fragment
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
             FragmentTransaction fragmentTransaction =  fragmentManager.beginTransaction();
             fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
             fragmentManager.popBackStack();
@@ -111,31 +107,7 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
         handler.postDelayed(() -> {
             binding.productFinderProgressBar.setVisibility(View.GONE);
             //sort the json array by stores that have the item in stock, then by nearest location
-            Location currentLocation = LocationService.getLastLocation();
-            Collections.sort(locations, (object1, object2) -> {
-                Location location1 = new Location("");
-                Location location2 = new Location("");
-                try {
-                    location1.setLatitude(object1.getDouble(Constants.LATITUDE));
-                    location1.setLongitude(object1.getDouble(Constants.LONGITUDE));
-                    location2.setLatitude(object2.getDouble(Constants.LATITUDE));
-                    location2.setLongitude(object2.getDouble(Constants.LONGITUDE));
-                } catch (JSONException e) {
-                    Log.e(TAG,"Error sorting locations in comparator ", e);
-                    return 0;
-                }
-                if(object1.has(Constants.IN_STOCK) && object2.has(Constants.IN_STOCK)){
-                    //then sort by location
-                    return Float.compare(currentLocation.distanceTo(location1), currentLocation.distanceTo(location2));
-                } else if(object1.has(Constants.IN_STOCK) && !object2.has(Constants.IN_STOCK)){
-                    return -1;
-                } else if(!object1.has(Constants.IN_STOCK) && object2.has(Constants.IN_STOCK)){
-                    return 1;
-                } else{
-                    //only sort by location
-                    return Float.compare(currentLocation.distanceTo(location1), currentLocation.distanceTo(location2));
-                }
-            });
+            LocationService.sortLocations(locations, requireContext());
             binding.locationsRecyclerView.setAdapter(new KrogerLocationAdapter(requireContext(), locations));
             binding.locationsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         }, Constants.DELAY_SLOW);

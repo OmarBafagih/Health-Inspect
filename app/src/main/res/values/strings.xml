@@ -26,4 +26,9 @@
     <string name="error_displaying_cart">Sorry, there was an error showing your cart</string>
     <string name="location_permissions_toast">Cannot check recommended product stock in nearby stores</string>
     <string name="error_retrieving_locations">Sorry, we couldn\'t find any nearby Kroger locations</string>
+    <string name="error_retrieving_nearby_places">Sorry, we\'re having trouble finding nearby grocery stores</string>
+    <string name="issue_retrieving_some_information">Oops! We weren\'t able to load pictures for some products</string>
+    <string name="error_marking_location">Oops! something went wrong when marking nearby locations on the map</string>
+    <string name="enable_locations_prompt">Allow Location permissions to view the closest grocery stores to you and more!</string>
+    <string name="error_finding_product_with_barcode">Sorry, please rescan your barcode or try with another one</string>
 </resources>

@@ -1,24 +1,21 @@
 package com.example.healthinspector.Fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.healthinspector.Activities.LoginActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentSignupBinding;
-import com.example.healthinspector.databinding.FragmentUserProfileBinding;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;

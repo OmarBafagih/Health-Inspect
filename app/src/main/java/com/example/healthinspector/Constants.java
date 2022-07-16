@@ -1,7 +1,5 @@
 package com.example.healthinspector;
 
-import org.json.JSONObject;
-
 public class Constants {
     public static final String PRODUCT_REQUEST_URL = "https://world.openfoodfacts.org/api/v2/product/";
     public static final String SCANNED_PRODUCT = "scannedProduct";
@@ -48,4 +46,6 @@ public class Constants {
     public static final String AUTHORIZATION = "Authorization";
     public static final int MAP_PADDING = 100;
     public static final String CATEGORY_PARAMS = "&tagtype_%d=categories&tag_contains_%d=contains&tag_%d=%s";
+    public static final String LOCATION = "location";
+    public static final String NAME = "name";
 }

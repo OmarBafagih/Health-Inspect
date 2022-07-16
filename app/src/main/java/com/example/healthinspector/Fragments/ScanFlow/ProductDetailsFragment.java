@@ -1,39 +1,29 @@
 package com.example.healthinspector.Fragments.ScanFlow;
 
-import android.nfc.Tag;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.bumptech.glide.Glide;
-import com.example.healthinspector.Activities.MainActivity;
 import com.example.healthinspector.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentProductDetailsBinding;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.parceler.Parcels;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 
 public class ProductDetailsFragment extends Fragment {
@@ -84,7 +74,7 @@ public class ProductDetailsFragment extends Fragment {
         binding.btnRecommendations.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction =  requireActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 
                 RecommendProductsFragment recommendProductsFragment = new RecommendProductsFragment();

@@ -16,7 +16,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.budiyev.android.codescanner.CodeScanner;
@@ -60,7 +59,7 @@ public class ScanFragment extends Fragment {
 
         binding = FragmentScanBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        final Activity activity = getActivity();
+        final Activity activity = requireActivity();
         CodeScannerView scannerView = binding.scannerView;
         codeScannerView = new CodeScanner(activity, scannerView);
 
@@ -78,7 +77,7 @@ public class ScanFragment extends Fragment {
                     public void run() {
                         Toast.makeText(requireContext(), result.getText(), Toast.LENGTH_SHORT).show();
                         RequestQueue queue = Volley.newRequestQueue(requireContext());
-                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, Constants.PRODUCT_REQUEST_URL + "0060410062418", null, new Response.Listener<JSONObject>() {
+                        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, Constants.PRODUCT_REQUEST_URL + result.getText(), null, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
                                 try {
@@ -97,13 +96,9 @@ public class ScanFragment extends Fragment {
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.INGREDIENTS_ANALYSIS)){
                                         JSONArray ingredientsAnalysisJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.INGREDIENTS_ANALYSIS);
                                         for (int i = 0; i < ingredientsAnalysisJSON.length(); i++){
-                                            ingredientsAnalysis.add(ingredientsAnalysisJSON.getString(i));
-                                        }
-                                        for(int i = 0; i < ingredientsAnalysis.size(); i++){
-                                            ingredientsAnalysis.set(i, ingredientsAnalysis.get(i).substring(3).replace("-", " "));
+                                            ingredientsAnalysis.add(ingredientsAnalysisJSON.getString(i).substring(3).replace("-", " "));
                                         }
                                     }
-
                                     if(response.getJSONObject(Constants.PRODUCT).has(Constants.NOVA_GROUP)){
                                         novaGroups = new HashMap<>();
                                         novaGroups.put(1,"unprocessed or minimally processed food");
@@ -141,22 +136,21 @@ public class ScanFragment extends Fragment {
                                        allergens = new ArrayList<>(Arrays.asList(response.getJSONObject(Constants.PRODUCT).getString(Constants.ALLERGENS).split(",")));
                                     }
                                     ArrayList<String> categories = new ArrayList<>();
-                                    if(response.getJSONObject(Constants.PRODUCT).has(Constants.CATEGORIES)){
-                                        JSONArray categoriesJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.CATEGORIES);
-                                        for (int i = 0; i < categoriesJSON.length(); i++){
-                                            categories.add(categoriesJSON.getString(i).substring(PREFIX_LENGTH));
-                                        }
+                                    JSONArray categoriesJSON = response.getJSONObject(Constants.PRODUCT).getJSONArray(Constants.CATEGORIES);
+                                    if(categoriesJSON == null){
+                                       categoriesJSON = new JSONArray();
                                     }
+                                    for (int i = 0; i < categoriesJSON.length(); i++){
+                                        categories.add(categoriesJSON.getString(i).substring(PREFIX_LENGTH));
+                                    }
+
                                     ScannedProduct scannedProduct = new ScannedProduct(productName, healthInspectorScore, ingredients, ingredientsAnalysis, novaGroup, nutrientLevels, imageUrl , additives, allergens, categories);
-
-                                    FragmentTransaction fragmentTransaction =  getActivity().getSupportFragmentManager().beginTransaction();
+                                    FragmentTransaction fragmentTransaction =  requireActivity().getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
                                     ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
                                     Bundle bundle = new Bundle();
                                     bundle.putParcelable(Constants.SCANNED_PRODUCT, Parcels.wrap(scannedProduct));
                                     productDetailsFragment.setArguments(bundle);
-
                                     fragmentTransaction.replace(R.id.fragment_container, productDetailsFragment);
                                     fragmentTransaction.addToBackStack(null);
                                     fragmentTransaction.commit();
@@ -164,13 +158,10 @@ public class ScanFragment extends Fragment {
                                     e.printStackTrace();
                                 }
                             }
-                                }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.e(TAG, "error finding product", error);
-                                Toast.makeText(requireContext(), "error finding product with barcode: " + result.getText(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                            }, error -> {
+                                Log.e(TAG, "error finding product with the given barcode", error);
+                                Toast.makeText(requireContext(), getString(R.string.error_finding_product_with_barcode) + result.getText(), Toast.LENGTH_SHORT).show();
+                            });
                         queue.add(objectRequest);
                     }
                 });

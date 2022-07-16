@@ -1,14 +1,12 @@
 package com.example.healthinspector.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
-import com.example.healthinspector.R;
-import com.example.healthinspector.databinding.ActivityLoginBinding;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.healthinspector.databinding.ActivitySplashScreenBinding;
 
 public class SplashScreenActivity extends AppCompatActivity {

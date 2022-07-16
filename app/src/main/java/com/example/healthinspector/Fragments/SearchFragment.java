@@ -5,11 +5,9 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -67,7 +65,7 @@ public class SearchFragment extends Fragment {
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
                 //permissions are granted, navigate to scanFragment
-                fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager = requireActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, scanFragment).addToBackStack(null).commit();
             } else {
                 Toast.makeText(requireContext(), getString(R.string.no_camera_permissions), Toast.LENGTH_SHORT).show();
