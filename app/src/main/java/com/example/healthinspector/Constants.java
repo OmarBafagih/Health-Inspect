@@ -48,4 +48,7 @@ public class Constants {
     public static final String CATEGORY_PARAMS = "&tagtype_%d=categories&tag_contains_%d=contains&tag_%d=%s";
     public static final String LOCATION = "location";
     public static final String NAME = "name";
+    public static final String CHANNEL_ID = "HealthInspector";
+    public static final String QUIT_ACTION = "close_app";
+
 }

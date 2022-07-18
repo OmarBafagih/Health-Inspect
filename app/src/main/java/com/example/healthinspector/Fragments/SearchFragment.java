@@ -22,7 +22,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.healthinspector.Adapters.ItemAdapter;
-import com.example.healthinspector.CachedLists;
+import com.example.healthinspector.Cache.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Fragments.ScanFlow.ScanFragment;

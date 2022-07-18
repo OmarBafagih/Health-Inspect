@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
-import com.example.healthinspector.LocationService;
+import com.example.healthinspector.Services.LocationService;
 import com.example.healthinspector.R;
 
 import org.json.JSONException;

@@ -1,9 +1,12 @@
-package com.example.healthinspector;
+package com.example.healthinspector.Cache;
 
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.healthinspector.Constants;
+import com.example.healthinspector.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;

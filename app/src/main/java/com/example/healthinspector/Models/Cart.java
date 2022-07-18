@@ -1,4 +1,4 @@
-package com.example.healthinspector;
+package com.example.healthinspector.Models;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
@@ -9,7 +9,6 @@ import org.json.JSONArray;
 public class Cart extends ParseObject{
 
     public static final String ITEMS_KEY = "cartItems";
-    public static final String USER_KEY = "user";
     public Cart(){}
 
     public JSONArray getCartItems(){

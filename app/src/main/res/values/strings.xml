@@ -31,4 +31,9 @@
     <string name="error_marking_location">Oops! something went wrong when marking nearby locations on the map</string>
     <string name="enable_locations_prompt">Allow Location permissions to view the closest grocery stores to you and more!</string>
     <string name="error_finding_product_with_barcode">Sorry, please rescan your barcode or try with another one</string>
+    <string name="notification_title">New grocery stores near you</string>
+    <string name="channel_description">New grocery stores</string>
+    <string name="channel_name">location changed</string>
+    <string name="notification_quit_button">Quit</string>
+    <string name="notification_default_content">app running in background</string>
 </resources>

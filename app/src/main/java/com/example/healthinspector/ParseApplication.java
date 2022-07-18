@@ -2,6 +2,7 @@ package com.example.healthinspector;
 
 import android.app.Application;
 
+import com.example.healthinspector.Models.Cart;
 import com.parse.Parse;
 import com.parse.ParseObject;
 
