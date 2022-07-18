@@ -165,6 +165,7 @@ public class LocationService extends Service {
     public static Location getLastLocation() {
         return lastLocation;
     }
+    public static void setLastLocation(Location location){lastLocation = location;}
 
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

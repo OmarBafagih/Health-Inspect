@@ -2,6 +2,7 @@ package com.example.healthinspector.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,6 @@ public class KrogerLocationAdapter extends RecyclerView.Adapter<KrogerLocationAd
     private Context context;
     private static final String MAP_REDIRECT_URL = "http://maps.google.com/maps?saddr=";
     private FragmentSwitch fragmentSwitch;
-
 
     public KrogerLocationAdapter(Context context, ArrayList<JSONObject> locations){
         this.context = context;

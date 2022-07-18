@@ -142,11 +142,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             fusedLocationClient.getLastLocation().addOnSuccessListener((Activity) requireContext(), location -> {
                 if (location != null) {
                     lastLocation = location;
+                    LocationService.setLastLocation(lastLocation);
                     findNearbyGroceryStores(requireContext(), location, googleMap);
                 }
             });
         }
-
     }
 
     public void findNearbyGroceryStores(Context context, Location location, @NonNull GoogleMap googleMap){

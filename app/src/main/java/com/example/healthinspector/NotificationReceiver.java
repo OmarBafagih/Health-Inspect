@@ -10,9 +10,10 @@ import android.widget.Toast;
 import com.example.healthinspector.Services.LocationService;
 
 public class NotificationReceiver extends BroadcastReceiver {
+    public static final String TAG = "NotificationReceiver";
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i("NotificationReiver", "Location Service Restarted");
+        Log.i(TAG, "Location Service Restarted");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(new Intent(context, LocationService.class));
         } else {

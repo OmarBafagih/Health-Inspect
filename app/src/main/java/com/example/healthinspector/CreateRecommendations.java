@@ -146,8 +146,6 @@ public class CreateRecommendations extends Application {
     public static void loadRecommendationsIntoView(ArrayList<RecommendedProduct> recommendedProducts, FragmentSwitch fragmentSwitch, View v, Context context, ScannedProduct scannedProduct) throws ParseException, JSONException {
         ParseQuery<Cart> cartQuery = ParseQuery.getQuery(Cart.class);
         Cart userCart = cartQuery.get(ParseUser.getCurrentUser().getParseObject(Constants.CART).getObjectId());
-        //cache query
-        //removing any recommended items that are already in the user's cart
         for(int i = 0; i < userCart.getCartItems().length(); i++){
             for(int x = 0; x < recommendedProducts.size(); x++) {
                 if (userCart.getCartItems().getJSONObject(i).getString(Constants.PRODUCT_NAME).equals(recommendedProducts.get(x).getProductName())){
