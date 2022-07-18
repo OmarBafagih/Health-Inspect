@@ -166,7 +166,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     JSONArray nearbyLocations = response.getJSONArray(RESULTS);
                     for(int i = 0; i < nearbyLocations.length(); i++){
                         JSONObject place = createNewLocationObject(nearbyLocations.getJSONObject(i));
-                        builder.include(new LatLng(place.getDouble(Constants.LATITUDE), place.getDouble(Constants.LONGITUDE)));
                         locations.add(place);
                         LatLng storeLocation = new LatLng(locations.get(i).getDouble(Constants.LATITUDE), locations.get(i).getDouble(Constants.LONGITUDE));
                         builder.include(storeLocation);
