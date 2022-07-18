@@ -17,6 +17,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.healthinspector.Adapters.CartItemAdapter;
+import com.example.healthinspector.Cache.CachedLists;
+import com.example.healthinspector.Models.Cart;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -102,8 +104,8 @@ public class CreateRecommendations extends Application {
                                 }
                             }
                         } catch (JSONException e) {
-                            Toast.makeText(context, context.getString(R.string.issue_retrieving_some_information), Toast.LENGTH_SHORT).show();
-                            Log.e(TAG,"JSON Exception tying to retrieve recommendedProducts", e);
+                            //no need to toast here
+                            Log.e(TAG,"JSON Exception tying to retrieve recommendedProducts: " + e);
                             e.printStackTrace();
                         }
                         recommendedProducts.add(new RecommendedProduct(keywords, brand, productName, imageUrl, nutrientLevels));
@@ -144,8 +146,6 @@ public class CreateRecommendations extends Application {
     public static void loadRecommendationsIntoView(ArrayList<RecommendedProduct> recommendedProducts, FragmentSwitch fragmentSwitch, View v, Context context, ScannedProduct scannedProduct) throws ParseException, JSONException {
         ParseQuery<Cart> cartQuery = ParseQuery.getQuery(Cart.class);
         Cart userCart = cartQuery.get(ParseUser.getCurrentUser().getParseObject(Constants.CART).getObjectId());
-        //cache query
-        //removing any recommended items that are already in the user's cart
         for(int i = 0; i < userCart.getCartItems().length(); i++){
             for(int x = 0; x < recommendedProducts.size(); x++) {
                 if (userCart.getCartItems().getJSONObject(i).getString(Constants.PRODUCT_NAME).equals(recommendedProducts.get(x).getProductName())){

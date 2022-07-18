@@ -1,7 +1,11 @@
 package com.example.healthinspector.Activities;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -22,8 +26,8 @@ import com.example.healthinspector.Fragments.CartFragment;
 import com.example.healthinspector.Fragments.HomeFragment;
 import com.example.healthinspector.Fragments.SearchFragment;
 import com.example.healthinspector.Fragments.UserProfileFragment;
-import com.example.healthinspector.LocationService;
 import com.example.healthinspector.R;
+import com.example.healthinspector.Services.LocationService;
 import com.example.healthinspector.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private HomeFragment homeFragment;
     private SearchFragment searchFragment;
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,10 +108,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //adding function to pending intent for quit action button on notification
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //stopping the background service and finishing this activity
+                Intent LocationServiceIntent = new Intent(MainActivity.this, LocationService.class);
+                stopService(LocationServiceIntent);
+                finish();
+            }
+        };
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Constants.QUIT_ACTION);
+        this.registerReceiver(receiver,filter);
+    }
+
     public void startLocationService(){
-        final Intent intent = new Intent(this, LocationService.class);
-        intent.setAction(Constants.PERMISSIONS_GRANTED);
-        startService(intent);
+        LocationService locationService = new LocationService();
+        Intent serviceIntent = new Intent(this, locationService.getClass());
+        serviceIntent.setAction(Constants.PERMISSIONS_GRANTED);
+        if (!isLocationServiceRunning(locationService.getClass())) {
+            startService(serviceIntent);
+        }
     }
 
     @Override
@@ -126,6 +152,16 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    private boolean isLocationServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

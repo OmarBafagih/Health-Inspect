@@ -1,7 +1,9 @@
-package com.example.healthinspector;
+package com.example.healthinspector.Cache;
 
 import android.content.Context;
 
+import com.example.healthinspector.Constants;
+import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

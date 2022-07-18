@@ -20,11 +20,11 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.healthinspector.Adapters.KrogerLocationAdapter;
+import com.example.healthinspector.Cache.KrogerLocationCacher;
 import com.example.healthinspector.Constants;
-import com.example.healthinspector.KrogerLocationCacher;
-import com.example.healthinspector.LocationService;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.R;
+import com.example.healthinspector.Services.LocationService;
 import com.example.healthinspector.databinding.FragmentProductFinderBinding;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

@@ -18,10 +18,10 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.healthinspector.Cart;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Fragments.ProductFinderFragment;
+import com.example.healthinspector.Models.Cart;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
