@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.healthinspector.Activities.LoginActivity;
 import com.example.healthinspector.Activities.MainActivity;
 import com.example.healthinspector.Adapters.ItemAdapter;
+import com.example.healthinspector.Cache.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.R;
@@ -35,6 +36,7 @@ public class UserProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentUserProfileBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        CachedLists.loadMostPopularAdditives(requireContext());
         //if the user is currently in signup flow, configure the done button
         Bundle bundle = getArguments();
         if(bundle != null){
@@ -122,7 +124,6 @@ public class UserProfileFragment extends Fragment {
         if(fragmentSwitch != null && fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
             bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
         }
-
         bundle.putSerializable(Constants.FRAGMENT_SWITCH, fragmentSwitch);
         searchFragment.setArguments(bundle);
         fragmentTransaction.replace(R.id.fragment_container, searchFragment);

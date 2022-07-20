@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.healthinspector.Cache.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Fragments.CartFragment;

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.json.JSONException;
 import org.parceler.Parcels;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -67,7 +68,7 @@ public class ProductDetailsFragment extends Fragment {
             ArrayAdapter harmfulIngredientsAdapter = new ArrayAdapter<String>(requireContext(),
                     android.R.layout.simple_list_item_1,CachedLists.getInstance().additivesInProduct(scannedProduct.getProductAdditives(), requireContext()));
             binding.additivesListView.setAdapter(harmfulIngredientsAdapter);
-        } catch (JSONException | JsonProcessingException e) {
+        } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
 
@@ -76,12 +77,10 @@ public class ProductDetailsFragment extends Fragment {
             public void onClick(View v) {
                 FragmentTransaction fragmentTransaction =  requireActivity().getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
                 RecommendProductsFragment recommendProductsFragment = new RecommendProductsFragment();
                 Bundle bundleSend = new Bundle();
                 bundleSend.putParcelable(Constants.SCANNED_PRODUCT, Parcels.wrap(scannedProduct));
                 recommendProductsFragment.setArguments(bundleSend);
-
                 fragmentTransaction.replace(R.id.fragment_container, recommendProductsFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,14 +27,21 @@ import com.example.healthinspector.Cache.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Fragments.ScanFlow.ScanFragment;
+import com.example.healthinspector.Models.Additive;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 
 public class SearchFragment extends Fragment {
@@ -60,7 +68,6 @@ public class SearchFragment extends Fragment {
         if(bundle.containsKey(Constants.SIGN_UP_FLOW)){
             signupSwitch = (FragmentSwitch) bundle.get(Constants.SIGN_UP_FLOW);
         }
-
         //launches a popup to request for User's camera permissions
         requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
             if (isGranted) {
@@ -84,19 +91,17 @@ public class SearchFragment extends Fragment {
             RelativeLayout.LayoutParams promptParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
             promptParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             promptParams.setMargins(30,30,30,30);
-
             binding.searchPromptTextView.setLayoutParams(promptParams);
             binding.searchPromptTextView.setTextSize(18);
             binding.searchPromptTextView.setBackground(requireContext().getDrawable(R.drawable.textview_button_style));
             binding.searchPromptTextView.setText(getString(R.string.search_ingredients_prompt));
-
             if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
-                setupSearch(Constants.PARSE_USER_WARNINGS, FragmentSwitch.ADDITIVE_SEARCH);
-                setupSearchBarTextWatcher(Constants.PARSE_USER_WARNINGS, FragmentSwitch.ADDITIVE_SEARCH);
+                setupSearch(Constants.PARSE_USER_WARNINGS, fragmentSwitch);
+                setupSearchBarTextWatcher(Constants.PARSE_USER_WARNINGS, fragmentSwitch);
             }
             else if(fragmentSwitch.equals(FragmentSwitch.ALLERGEN_SEARCH)){
-               setupSearch(Constants.PARSE_USER_ALLERGIES, FragmentSwitch.ALLERGEN_SEARCH);
-               setupSearchBarTextWatcher(Constants.PARSE_USER_ALLERGIES, FragmentSwitch.ALLERGEN_SEARCH);
+               setupSearch(Constants.PARSE_USER_ALLERGIES, fragmentSwitch);
+               setupSearchBarTextWatcher(Constants.PARSE_USER_ALLERGIES, fragmentSwitch);
             }
             binding.searchItemsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         }
@@ -134,11 +139,8 @@ public class SearchFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
                     filter(binding.editTextSearch.getText().toString(),
-                            CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(warningType), requireContext(), fragmentSwitch));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(requireContext(), getString(R.string.error_searching), Toast.LENGTH_SHORT).show();
-                } catch (JsonProcessingException e) {
+                            CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(warningType), fragmentSwitch, requireContext()), fragmentSwitch);
+                } catch (JSONException | IOException e) {
                     e.printStackTrace();
                     Toast.makeText(requireContext(), getString(R.string.error_searching), Toast.LENGTH_SHORT).show();
                 }
@@ -148,7 +150,7 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    private void filter(String text, ArrayList<String> items) throws JSONException, JsonProcessingException {
+    private void filter(String text, ArrayList<String> items, FragmentSwitch fragmentSwitch) throws JSONException, JsonProcessingException {
         // creating a new array list to filter our data.
         ArrayList<String> filteredList = new ArrayList<>();
         for (String item : items) {
@@ -167,7 +169,7 @@ public class SearchFragment extends Fragment {
         try {
             ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(parseKey);
             itemAdapter = new ItemAdapter(requireContext(),
-                    CachedLists.getInstance().itemsNotInUser(userAllergies, requireContext(), fragmentSwitch), fragmentSwitch);
+                    CachedLists.getInstance().itemsNotInUser(userAllergies, fragmentSwitch, requireContext()), fragmentSwitch);
             binding.searchItemsRecyclerView.setAdapter(itemAdapter);
 
             ItemAdapter finalItemAdapter = itemAdapter;
@@ -194,12 +196,9 @@ public class SearchFragment extends Fragment {
                     }
                 }
             });
-        } catch (JSONException e) {
+        } catch (JSONException | IOException e) {
             e.printStackTrace();
-
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-
+            Log.e(TAG, "Error setting up search: " + e);
         }
     }
 }
