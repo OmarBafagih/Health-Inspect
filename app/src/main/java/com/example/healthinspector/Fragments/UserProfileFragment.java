@@ -2,6 +2,9 @@ package com.example.healthinspector.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import com.example.healthinspector.databinding.FragmentUserProfileBinding;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.ParseUser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class UserProfileFragment extends Fragment {
@@ -37,6 +41,11 @@ public class UserProfileFragment extends Fragment {
         binding = FragmentUserProfileBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         CachedLists.loadMostPopularAdditives(requireContext());
+        try {
+            CachedLists.setAdditives(CachedLists.readJsonFromFile(requireContext(), Constants.ADDITIVES_FILE_NAME));
+        } catch (IOException e) {
+           e.printStackTrace();
+        }
         //if the user is currently in signup flow, configure the done button
         Bundle bundle = getArguments();
         if(bundle != null){
@@ -58,7 +67,6 @@ public class UserProfileFragment extends Fragment {
         });
 
         binding.addWarningImageView.setOnClickListener(v -> onImageViewClick(FragmentSwitch.ADDITIVE_SEARCH));
-
         binding.addAllergyImageView.setOnClickListener(v -> onImageViewClick(FragmentSwitch.ALLERGEN_SEARCH));
         return view;
     }
@@ -72,17 +80,17 @@ public class UserProfileFragment extends Fragment {
         binding.userAllergiesRecyclerView.setAdapter(allergiesAdapter);
         LinearLayoutManager linearLayoutManagerAllergies = new LinearLayoutManager(requireContext());
         binding.userAllergiesRecyclerView.setLayoutManager(linearLayoutManagerAllergies);
-        setupSwipeToDelete(Constants.PARSE_USER_ALLERGIES, userAllergies, allergiesAdapter, binding.userAllergiesRecyclerView);
+        setupSwipeToDelete(Constants.PARSE_USER_ALLERGIES, userAllergies, allergiesAdapter, binding.userAllergiesRecyclerView, FragmentSwitch.USER_ALLERGIES);
 
         ArrayList<String> userWarnings = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS);
         ItemAdapter additivesAdapter = new ItemAdapter(requireContext(), userWarnings, FragmentSwitch.USER_WARNINGS);
         binding.userWarningsRecyclerView.setAdapter(additivesAdapter);
         LinearLayoutManager linearLayoutManagerWarnings = new LinearLayoutManager(requireContext());
         binding.userWarningsRecyclerView.setLayoutManager(linearLayoutManagerWarnings);
-        setupSwipeToDelete(Constants.PARSE_USER_WARNINGS, userWarnings, additivesAdapter, binding.userWarningsRecyclerView);
+        setupSwipeToDelete(Constants.PARSE_USER_WARNINGS, userWarnings, additivesAdapter, binding.userWarningsRecyclerView, FragmentSwitch.USER_WARNINGS);
     }
 
-    private void setupSwipeToDelete(String warningType, ArrayList<String> userWarnings, ItemAdapter warningsAdapter, RecyclerView recyclerView){
+    private void setupSwipeToDelete(String warningType, ArrayList<String> userWarnings, ItemAdapter warningsAdapter, RecyclerView recyclerView, FragmentSwitch fragmentSwitch){
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -94,24 +102,27 @@ public class UserProfileFragment extends Fragment {
                 int position = viewHolder.getAdapterPosition();
                 userWarnings.remove(viewHolder.getAdapterPosition());
                 warningsAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-
                 //User can undo deletion for a period of time
-                Snackbar.make(recyclerView, deletedWarning, Snackbar.LENGTH_LONG).setAction(getString(R.string.undo), new View.OnClickListener() {
-                    //snack bar onclick "undo"
-                    @Override
-                    public void onClick(View v) {
-                        //add the item back into the user's warning list
-                        userWarnings.add(position, deletedWarning);
-                        //update user on Parse database
-                        ParseUser.getCurrentUser().put(warningType, userWarnings);
-                        ParseUser.getCurrentUser().saveInBackground();
-                        warningsAdapter.notifyItemInserted(position);
-                    }
+                //snack bar onclick "undo"
+                Snackbar.make(recyclerView, deletedWarning, Snackbar.LENGTH_SHORT).setAction(getString(R.string.undo), v -> {
+                    //add the item back into the user's warning list
+                    userWarnings.add(position, deletedWarning);
+                    //update Parse database
+                    SearchFragment.updateAddedItemInDatabase(deletedWarning, fragmentSwitch, 1);
+                    ParseUser.getCurrentUser().put(warningType, userWarnings);
+                    ParseUser.getCurrentUser().saveInBackground();
+                    warningsAdapter.notifyItemInserted(position);
                 }).show();
-                //update user on Parse database after the item has been swiped (deleted)
+                //update Parse database after the SnackBar timer has run out
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        SearchFragment.updateAddedItemInDatabase(deletedWarning, fragmentSwitch, -1);
+                    }
+                }, Snackbar.LENGTH_SHORT);
                 ParseUser.getCurrentUser().put(warningType, userWarnings);
                 ParseUser.getCurrentUser().saveInBackground();
-
             }
         }).attachToRecyclerView(recyclerView);
     }

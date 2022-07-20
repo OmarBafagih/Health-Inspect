@@ -28,7 +28,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.healthinspector.Adapters.KrogerLocationAdapter;
-import com.example.healthinspector.Cache.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.CreateRecommendations;
 import com.example.healthinspector.FragmentSwitch;
@@ -207,21 +206,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         return newLocation;
     }
     public void notifyClosestStore() throws JSONException {
-        JSONObject closestLocationObject = locations.get(0);
-        Location closestLocation = new Location("");
-        closestLocation.setLongitude(closestLocationObject.getDouble(Constants.LONGITUDE));
-        closestLocation.setLatitude(closestLocationObject.getDouble(Constants.LATITUDE));
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), Constants.CHANNEL_ID);
-        NotificationManager mNotificationManager = (NotificationManager) requireActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        PendingIntent pendingQuitIntent = PendingIntent.getBroadcast(requireContext(), (int) System.currentTimeMillis(), new Intent(Constants.QUIT_ACTION), PendingIntent.FLAG_MUTABLE);
-        mNotificationManager.notify(1, builder.setContentTitle(getText(R.string.notification_title))
-                .setContentText(String.format(NOTIFICATION_MESSAGE, closestLocationObject.getString(Constants.STORE_NAME), lastLocation.distanceTo(closestLocation)))
-                .setSmallIcon(R.drawable.health_inspector_logo_1)
-                .addAction(R.drawable.health_inspector_logo_1, getText(R.string.notification_quit_button),
-                        pendingQuitIntent)
-                .setAutoCancel(true)
-                .setOnlyAlertOnce(true)
-                .build());
+        if(locations.size() > 0){
+            JSONObject closestLocationObject = locations.get(0);
+            Location closestLocation = new Location("");
+            closestLocation.setLongitude(closestLocationObject.getDouble(Constants.LONGITUDE));
+            closestLocation.setLatitude(closestLocationObject.getDouble(Constants.LATITUDE));
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), Constants.CHANNEL_ID);
+            NotificationManager mNotificationManager = (NotificationManager) requireActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+            PendingIntent pendingQuitIntent = PendingIntent.getBroadcast(requireContext(), (int) System.currentTimeMillis(), new Intent(Constants.QUIT_ACTION), PendingIntent.FLAG_MUTABLE);
+            mNotificationManager.notify(1, builder.setContentTitle(getText(R.string.notification_title))
+                    .setContentText(String.format(NOTIFICATION_MESSAGE, closestLocationObject.getString(Constants.STORE_NAME), lastLocation.distanceTo(closestLocation)))
+                    .setSmallIcon(R.drawable.health_inspector_logo_1)
+                    .addAction(R.drawable.health_inspector_logo_1, getText(R.string.notification_quit_button),
+                            pendingQuitIntent)
+                    .setAutoCancel(true)
+                    .setOnlyAlertOnce(true)
+                    .build());
+        }
     }
 }
 

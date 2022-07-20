@@ -1,18 +1,13 @@
 package com.example.healthinspector.Cache;
 
 import android.content.Context;
-import android.nfc.Tag;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.healthinspector.Constants;
-import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Models.Additive;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.parse.FindCallback;
-import com.parse.ParseException;
 import com.parse.ParseQuery;
 
 import org.json.JSONException;
@@ -24,11 +19,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 public class CachedLists{
 
@@ -59,6 +53,11 @@ public class CachedLists{
         }
         return allergens;
     }
+
+    public static void setAdditives(HashMap<String, String> additives) {
+        CachedLists.additives = additives;
+    }
+
     public void setHomeRecommendedProducts(ArrayList<RecommendedProduct> homeRecommendedProducts) {
         this.homeRecommendedProducts = homeRecommendedProducts;
     }
@@ -77,14 +76,14 @@ public class CachedLists{
         }
         bufferedReader.close();
         String jsonString = stringBuilder.toString();
-        return new ObjectMapper().readValue(jsonString, HashMap.class);
+        return new ObjectMapper().readValue(jsonString, LinkedHashMap.class);
     }
 
     public static void loadMostPopularAdditives(Context context){
         File file = new File(context.getFilesDir(),Constants.ADDITIVES_FILE_NAME);
         ParseQuery<Additive> additivesQuery = ParseQuery.getQuery(Additive.class);
         additivesQuery.setLimit(50);
-        additivesQuery.addDescendingOrder(Additive.USES_KEY);
+        additivesQuery.addDescendingOrder(Additive.ADDITIVE_USES_KEY);
         additivesQuery.findInBackground((objects, e) -> {
             if(e != null){
                 Log.e(TAG, "Error querying for most common additives: " + e);
@@ -95,6 +94,7 @@ public class CachedLists{
                 for(int i = 0; i < objects.size(); i++){
                     popularAdditives.put(objects.get(i).getAdditiveKey(), objects.get(i).getAdditiveValue());
                 }
+                Log.i(TAG, popularAdditives.toString());
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
                 bufferedWriter.write(popularAdditives.toString());
                 bufferedWriter.close();
@@ -116,20 +116,22 @@ public class CachedLists{
             if(additiveFromCache != null){
                 additivesInProduct.add(additiveFromCache);
             }
+            else{
+                ParseQuery<Additive> additiveQuery = new ParseQuery<>(Additive.class);
+                additiveQuery.whereEqualTo(Additive.ADDITIVE_KEY, productAdditiveTags.get(i));
+                additiveQuery.findInBackground((objects, e) -> {
+                    for(Additive additive: objects){
+                        additivesInProduct.add(additive.getAdditiveValue());
+                    }
+                });
+            }
         }
         return additivesInProduct;
     }
 
-    public ArrayList<String> itemsNotInUser(ArrayList<String> userItems, FragmentSwitch fragmentSwitch, Context context) throws JSONException, IOException{
-        Collection<String> allValues;
-        if(fragmentSwitch.equals(FragmentSwitch.ALLERGEN_SEARCH)){
-            allValues = CachedLists.getInstance().getAllergens(context).values();
-        }
-        else{
-            allValues = CachedLists.getInstance().getAdditives(context).values();
-        }
-        ArrayList<String> additivesNotInUser = new ArrayList<>(allValues);
-        additivesNotInUser.removeAll(userItems);
-        return additivesNotInUser;
+    public ArrayList<String> itemsNotInUser(ArrayList<String> userItems, Collection<String> warnings) throws JSONException, IOException{
+        ArrayList<String> warningsNotInUser = new ArrayList<>(warnings);
+        warningsNotInUser.removeAll(userItems);
+        return warningsNotInUser;
     }
 }

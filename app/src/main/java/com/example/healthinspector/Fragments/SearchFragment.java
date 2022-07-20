@@ -33,6 +33,7 @@ import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -54,6 +55,8 @@ public class SearchFragment extends Fragment {
     private static final String TAG = "SearchFragment";
     private ItemAdapter itemAdapter;
     private FragmentSwitch signupSwitch;
+    private Collection<String> warnings;
+    private ArrayList<String> userWarnings;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -96,12 +99,28 @@ public class SearchFragment extends Fragment {
             binding.searchPromptTextView.setBackground(requireContext().getDrawable(R.drawable.textview_button_style));
             binding.searchPromptTextView.setText(getString(R.string.search_ingredients_prompt));
             if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
+                try {
+                    warnings = CachedLists.getAdditives(requireContext()).values();
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Error retrieving allergens for search: " + e);
+                    Toast.makeText(requireContext(), getString(R.string.error_searching), Toast.LENGTH_SHORT).show();
+                }
+                userWarnings = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_WARNINGS);
                 setupSearch(Constants.PARSE_USER_WARNINGS, fragmentSwitch);
-                setupSearchBarTextWatcher(Constants.PARSE_USER_WARNINGS, fragmentSwitch);
+                setupSearchBarTextWatcher(fragmentSwitch);
             }
             else if(fragmentSwitch.equals(FragmentSwitch.ALLERGEN_SEARCH)){
-               setupSearch(Constants.PARSE_USER_ALLERGIES, fragmentSwitch);
-               setupSearchBarTextWatcher(Constants.PARSE_USER_ALLERGIES, fragmentSwitch);
+                try {
+                    warnings = CachedLists.getAllergens(requireContext()).values();
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Error retrieving allergens for search: " + e);
+                    Toast.makeText(requireContext(), getString(R.string.error_searching), Toast.LENGTH_SHORT).show();
+                }
+                userWarnings = (ArrayList) ParseUser.getCurrentUser().get(Constants.PARSE_USER_ALLERGIES);
+                setupSearch(Constants.PARSE_USER_ALLERGIES, fragmentSwitch);
+                setupSearchBarTextWatcher(fragmentSwitch);
             }
             binding.searchItemsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         }
@@ -130,7 +149,7 @@ public class SearchFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-    public void setupSearchBarTextWatcher(String warningType, FragmentSwitch fragmentSwitch){
+    public void setupSearchBarTextWatcher(FragmentSwitch fragmentSwitch){
         //creating TextWatcher for edit text to act as a search bar
         binding.editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -139,7 +158,7 @@ public class SearchFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
                     filter(binding.editTextSearch.getText().toString(),
-                            CachedLists.getInstance().itemsNotInUser((ArrayList) ParseUser.getCurrentUser().get(warningType), fragmentSwitch, requireContext()), fragmentSwitch);
+                            CachedLists.getInstance().itemsNotInUser(userWarnings, warnings), fragmentSwitch);
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();
                     Toast.makeText(requireContext(), getString(R.string.error_searching), Toast.LENGTH_SHORT).show();
@@ -158,8 +177,14 @@ public class SearchFragment extends Fragment {
                 filteredList.add(item);
             }
         }
+        //if search text is not contained within local cache, check database
         if (filteredList.isEmpty()) {
-            Toast.makeText(requireContext(), getString(R.string.no_item_found), Toast.LENGTH_SHORT).show();
+            if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
+                checkDatabaseForAdditives(filteredList, text);
+            }
+            else{
+                //create checkDatabaseForAllergens function
+            }
         } else {
             itemAdapter.filterList(filteredList);
         }
@@ -167,19 +192,20 @@ public class SearchFragment extends Fragment {
 
     public void setupSearch(String parseKey, FragmentSwitch fragmentSwitch){
         try {
-            ArrayList<String> userAllergies = (ArrayList) ParseUser.getCurrentUser().get(parseKey);
             itemAdapter = new ItemAdapter(requireContext(),
-                    CachedLists.getInstance().itemsNotInUser(userAllergies, fragmentSwitch, requireContext()), fragmentSwitch);
+                    CachedLists.getInstance().itemsNotInUser(userWarnings, warnings), fragmentSwitch);
             binding.searchItemsRecyclerView.setAdapter(itemAdapter);
 
             ItemAdapter finalItemAdapter = itemAdapter;
             binding.searchPromptTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    userAllergies.add(finalItemAdapter.getAddedItem());
+                    String addedItem = finalItemAdapter.getAddedItem();
+                    userWarnings.add(addedItem);
                     ParseUser user = ParseUser.getCurrentUser();
-                    user.put(parseKey, userAllergies);
+                    user.put(parseKey, userWarnings);
                     user.saveInBackground();
+                    updateAddedItemInDatabase(addedItem, fragmentSwitch, 1);
                     if(signupSwitch != null && signupSwitch.equals(FragmentSwitch.SIGN_UP)){
                         UserProfileFragment userProfileFragment = new UserProfileFragment();
                         FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
@@ -199,6 +225,47 @@ public class SearchFragment extends Fragment {
         } catch (JSONException | IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Error setting up search: " + e);
+        }
+    }
+
+    public void checkDatabaseForAdditives(ArrayList<String> filteredList, String text){
+        ParseQuery<Additive> additiveQuery = ParseQuery.getQuery(Additive.class);
+        additiveQuery.whereMatches(Additive.ADDITIVE_VALUE, "("+text+")", "i");
+        additiveQuery.findInBackground((objects, e) -> {
+            for(Additive additive: objects){
+                String additiveValue = additive.getAdditiveValue();
+                if(!userWarnings.contains(additiveValue)){
+                    filteredList.add(additive.getAdditiveValue());
+                }
+            }
+            if(filteredList.isEmpty()){
+                itemAdapter.filterList(filteredList);
+                Toast.makeText(requireContext(), getString(R.string.no_item_found), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(e == null){
+                itemAdapter.filterList(filteredList);
+            }
+        });
+    }
+
+    public static void updateAddedItemInDatabase(String addedItem, FragmentSwitch fragmentSwitch, int usage){
+        if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH) || fragmentSwitch.equals(FragmentSwitch.USER_WARNINGS)){
+            ParseQuery<Additive> additiveQuery = ParseQuery.getQuery(Additive.class);
+            additiveQuery.whereEqualTo(Additive.ADDITIVE_VALUE, addedItem);
+            additiveQuery.findInBackground((objects, e) -> {
+                if(e == null){
+                    Additive addedAdditive = objects.get(0);
+                    addedAdditive.setAdditiveUsage(addedAdditive.getAdditiveUsage() + usage);
+                    addedAdditive.saveInBackground();
+                }
+                else{
+                    Log.e(TAG, "Error updating additive user added to their profile: " + e);
+                }
+            });
+        }
+        else{
+            //handle Allergen caching
         }
     }
 }
