@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.healthinspector.Cache.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Fragments.CartFragment;
@@ -47,19 +46,6 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-            if (isGranted) {
-                startLocationService();
-            } else {
-                Toast.makeText(this, getString(R.string.location_permissions_toast), Toast.LENGTH_SHORT).show();
-            }
-        });
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            startLocationService();
-        }
-        else {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
         binding.bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -97,8 +83,22 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (isGranted) {
+                startLocationService();
+            } else {
+                Toast.makeText(this, getString(R.string.location_permissions_toast), Toast.LENGTH_SHORT).show();
+            }
+            binding.bottomNavigation.setSelectedItemId(R.id.miHome);
+        });
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            startLocationService();
+            binding.bottomNavigation.setSelectedItemId(R.id.miHome);
+        }
+        else {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
         //setting the selected item for the nav bar as defaulting to the "home" page
-        binding.bottomNavigation.setSelectedItemId(R.id.miHome);
         binding.cartImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

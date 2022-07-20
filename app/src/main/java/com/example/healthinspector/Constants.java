@@ -49,4 +49,5 @@ public class Constants {
     public static final String NAME = "name";
     public static final String CHANNEL_ID = "HealthInspector";
     public static final String QUIT_ACTION = "close_app";
+    public static final int QUERY_LIMIT = 50;
 }

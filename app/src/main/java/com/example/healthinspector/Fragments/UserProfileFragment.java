@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +22,14 @@ import com.example.healthinspector.Adapters.ItemAdapter;
 import com.example.healthinspector.Cache.CachedLists;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
+import com.example.healthinspector.Models.Additive;
+import com.example.healthinspector.Models.Allergen;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentUserProfileBinding;
 import com.google.android.material.snackbar.Snackbar;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,14 +39,17 @@ public class UserProfileFragment extends Fragment {
     private FragmentUserProfileBinding binding;
     private SearchFragment searchFragment;
     private FragmentSwitch fragmentSwitch;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentUserProfileBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        CachedLists.loadMostPopularAdditives(requireContext());
+        CachedLists.loadMostPopularWarnings(requireContext(), Constants.ADDITIVES_FILE_NAME, Additive.ADDITIVE_USES_KEY, Constants.QUERY_LIMIT, Additive.class);
+        CachedLists.loadMostPopularWarnings(requireContext(), Constants.ALLERGENS_FILE_NAME, Allergen.ALLERGEN_POPULARITY_SCORE, Constants.QUERY_LIMIT, Allergen.class);
         try {
-            CachedLists.setAdditives(CachedLists.readJsonFromFile(requireContext(), Constants.ADDITIVES_FILE_NAME));
-        } catch (IOException e) {
+            CachedLists.getAdditives(requireContext());
+            CachedLists.getAllergens(requireContext());
+        } catch (IOException | JSONException e) {
            e.printStackTrace();
         }
         //if the user is currently in signup flow, configure the done button
@@ -58,7 +64,6 @@ public class UserProfileFragment extends Fragment {
                 });
             }
         }
-
         binding.btnLogout.setOnClickListener(v -> {
             //logout parse user
             ParseUser.logOut();

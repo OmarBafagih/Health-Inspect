@@ -5,9 +5,11 @@ import android.util.Log;
 
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.Models.Additive;
+import com.example.healthinspector.Models.Allergen;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONException;
@@ -32,7 +34,7 @@ public class CachedLists{
     private ArrayList<RecommendedProduct> homeRecommendedProducts = null;
     public static final String TAG = "CachedLists";
 
-    private CachedLists() throws JSONException, JsonProcessingException {}
+    private CachedLists(){}
     public static CachedLists getInstance() throws JSONException, JsonProcessingException {
         if (cachedLists == null){
             cachedLists = new CachedLists();
@@ -79,22 +81,26 @@ public class CachedLists{
         return new ObjectMapper().readValue(jsonString, LinkedHashMap.class);
     }
 
-    public static void loadMostPopularAdditives(Context context){
-        File file = new File(context.getFilesDir(),Constants.ADDITIVES_FILE_NAME);
-        ParseQuery<Additive> additivesQuery = ParseQuery.getQuery(Additive.class);
-        additivesQuery.setLimit(50);
-        additivesQuery.addDescendingOrder(Additive.ADDITIVE_USES_KEY);
-        additivesQuery.findInBackground((objects, e) -> {
+    public static void loadMostPopularWarnings(Context context, String filename, String filter, int queryLimit, Class c){
+        File file = new File(context.getFilesDir(), filename);
+        ParseQuery<ParseObject> allergensQuery = ParseQuery.getQuery(c);
+        allergensQuery.setLimit(queryLimit);
+        allergensQuery.addDescendingOrder(filter);
+        allergensQuery.findInBackground((objects, e) -> {
             if(e != null){
-                Log.e(TAG, "Error querying for most common additives: " + e);
+                Log.e(TAG, "Error querying for most common allergens: " + e);
                 return;
             }
             JSONObject popularAdditives = new JSONObject();
             try{
                 for(int i = 0; i < objects.size(); i++){
-                    popularAdditives.put(objects.get(i).getAdditiveKey(), objects.get(i).getAdditiveValue());
+                    if(c.equals(Additive.class)){
+                        popularAdditives.put(String.valueOf(objects.get(i).get(Additive.ADDITIVE_KEY)), objects.get(i).get(Additive.ADDITIVE_VALUE));
+                    }
+                    else{
+                        popularAdditives.put(String.valueOf(objects.get(i).get(Allergen.ALLERGEN_KEY)), objects.get(i).get(Allergen.ALLERGEN_VALUE));
+                    }
                 }
-                Log.i(TAG, popularAdditives.toString());
                 BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
                 bufferedWriter.write(popularAdditives.toString());
                 bufferedWriter.close();
