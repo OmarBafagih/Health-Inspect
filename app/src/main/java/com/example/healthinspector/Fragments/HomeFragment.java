@@ -31,6 +31,8 @@ import com.example.healthinspector.Adapters.KrogerLocationAdapter;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.CreateRecommendations;
 import com.example.healthinspector.FragmentSwitch;
+import com.example.healthinspector.Models.Additive;
+import com.example.healthinspector.Models.Allergen;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.Services.LocationService;
@@ -46,13 +48,20 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
@@ -105,13 +114,11 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             Log.e(TAG,"JSON Exception trying to retrieve recommendedProducts: " + e);
         }
         final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                try {
-                    notifyClosestStore();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        handler.postDelayed(() -> {
+            try {
+                notifyClosestStore();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }, Constants.DELAY_SLOW);
     }

@@ -31,9 +31,6 @@ import com.example.healthinspector.Models.Additive;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -42,7 +39,6 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 
 public class SearchFragment extends Fragment {
