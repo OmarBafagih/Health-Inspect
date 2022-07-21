@@ -77,9 +77,7 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.addToBackStack(null);
                         fragmentTransaction.commit();
                         return true;
-
                 }
-
                 return false;
             }
         });
@@ -138,12 +136,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (this.getSupportFragmentManager().getBackStackEntryCount() > 0){
+        if (this.getSupportFragmentManager().getBackStackEntryCount() > 1){
             this.getSupportFragmentManager().popBackStack();
-        }
-        else{
-            openFragment(new HomeFragment());
-            binding.bottomNavigation.setSelectedItemId(R.id.miHome);
         }
     }
 

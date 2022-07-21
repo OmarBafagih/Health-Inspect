@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.bumptech.glide.Glide;
 import com.example.healthinspector.Cache.CachedLists;
 import com.example.healthinspector.Constants;
+import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Models.ScannedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentProductDetailsBinding;
@@ -66,7 +67,7 @@ public class ProductDetailsFragment extends Fragment {
 
         try {
             ArrayAdapter harmfulIngredientsAdapter = new ArrayAdapter<String>(requireContext(),
-                    android.R.layout.simple_list_item_1,CachedLists.getInstance().additivesInProduct(scannedProduct.getProductAdditives(), requireContext()));
+                    android.R.layout.simple_list_item_1,CachedLists.getInstance().warningsInProduct(scannedProduct.getProductAdditives(), requireContext(), FragmentSwitch.ADDITIVE_SEARCH));
             binding.additivesListView.setAdapter(harmfulIngredientsAdapter);
         } catch (JSONException | IOException e) {
             e.printStackTrace();

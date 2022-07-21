@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.healthinspector.Constants;
+import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Models.Additive;
 import com.example.healthinspector.Models.Allergen;
 import com.example.healthinspector.Models.RecommendedProduct;
@@ -81,9 +82,9 @@ public class CachedLists{
         return new ObjectMapper().readValue(jsonString, LinkedHashMap.class);
     }
 
-    public static void loadMostPopularWarnings(Context context, String filename, String filter, int queryLimit, Class c){
+    public static void loadMostPopularWarnings(Context context, String filename, String filter, int queryLimit, Class warningClass){
         File file = new File(context.getFilesDir(), filename);
-        ParseQuery<ParseObject> allergensQuery = ParseQuery.getQuery(c);
+        ParseQuery<ParseObject> allergensQuery = ParseQuery.getQuery(warningClass);
         allergensQuery.setLimit(queryLimit);
         allergensQuery.addDescendingOrder(filter);
         allergensQuery.findInBackground((objects, e) -> {
@@ -94,7 +95,7 @@ public class CachedLists{
             JSONObject popularAdditives = new JSONObject();
             try{
                 for(int i = 0; i < objects.size(); i++){
-                    if(c.equals(Additive.class)){
+                    if(warningClass.equals(Additive.class)){
                         popularAdditives.put(String.valueOf(objects.get(i).get(Additive.ADDITIVE_KEY)), objects.get(i).get(Additive.ADDITIVE_VALUE));
                     }
                     else{
@@ -111,28 +112,43 @@ public class CachedLists{
         });
     }
 
-    public ArrayList<String> additivesInProduct(ArrayList<String> productAdditiveTags, Context context) throws JSONException, IOException {
-        ArrayList<String> additivesInProduct = new ArrayList<>();
-        if(productAdditiveTags.size() == 0){
-            return additivesInProduct;
+    public ArrayList<String> warningsInProduct(ArrayList<String> productWarningTags, Context context, FragmentSwitch fragmentSwitch) throws JSONException, IOException {
+        ArrayList<String> warningsInProduct = new ArrayList<>();
+        if(productWarningTags.size() == 0){
+            return warningsInProduct;
         }
-        for(int i = 0; i < productAdditiveTags.size(); i++){
-            String additiveFromCache = null;
-            additiveFromCache = getAdditives(context).get(productAdditiveTags.get(i));
-            if(additiveFromCache != null){
-                additivesInProduct.add(additiveFromCache);
+        HashMap<String, String> warnings;
+        Class warningClass;
+        if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
+            warnings = getAdditives(context);
+            warningClass = Additive.class;
+        }
+        else{
+            warnings = getAllergens(context);
+            warningClass = Allergen.class;
+        }
+        for(int i = 0; i < productWarningTags.size(); i++){
+            String warningFromCache = null;
+            warningFromCache = warnings.get(productWarningTags.get(i));
+            if(warningFromCache != null){
+                warningsInProduct.add(warningFromCache);
             }
             else{
-                ParseQuery<Additive> additiveQuery = new ParseQuery<>(Additive.class);
-                additiveQuery.whereEqualTo(Additive.ADDITIVE_KEY, productAdditiveTags.get(i));
-                additiveQuery.findInBackground((objects, e) -> {
-                    for(Additive additive: objects){
-                        additivesInProduct.add(additive.getAdditiveValue());
+                ParseQuery<ParseObject> warningQuery = new ParseQuery<>(warningClass);
+                warningQuery.whereEqualTo(Additive.ADDITIVE_KEY, productWarningTags.get(i));
+                warningQuery.findInBackground((objects, e) -> {
+                    for(int x = 0; x < objects.size(); x++){
+                        if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
+                            warningsInProduct.add(String.valueOf(objects.get(x).get(Additive.ADDITIVE_VALUE)));
+                        }
+                        else{
+                            warningsInProduct.add(String.valueOf(objects.get(x).get(Allergen.ALLERGEN_VALUE)));
+                        }
                     }
                 });
             }
         }
-        return additivesInProduct;
+        return warningsInProduct;
     }
 
     public ArrayList<String> itemsNotInUser(ArrayList<String> userItems, Collection<String> warnings) throws JSONException, IOException{

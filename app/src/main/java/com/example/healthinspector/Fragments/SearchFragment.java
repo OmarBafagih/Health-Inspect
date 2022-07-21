@@ -28,9 +28,11 @@ import com.example.healthinspector.Constants;
 import com.example.healthinspector.FragmentSwitch;
 import com.example.healthinspector.Fragments.ScanFlow.ScanFragment;
 import com.example.healthinspector.Models.Additive;
+import com.example.healthinspector.Models.Allergen;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -53,6 +55,8 @@ public class SearchFragment extends Fragment {
     private FragmentSwitch signupSwitch;
     private Collection<String> warnings;
     private ArrayList<String> userWarnings;
+    private static final double PRODUCT_COUNT_WEIGHT = 0.01;
+    private static final int USAGE_WEIGHT = 2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -175,12 +179,7 @@ public class SearchFragment extends Fragment {
         }
         //if search text is not contained within local cache, check database
         if (filteredList.isEmpty()) {
-            if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
-                checkDatabaseForAdditives(filteredList, text);
-            }
-            else{
-                //create checkDatabaseForAllergens function
-            }
+            checkDatabaseForWarnings(filteredList, text, fragmentSwitch);
         } else {
             itemAdapter.filterList(filteredList);
         }
@@ -224,14 +223,24 @@ public class SearchFragment extends Fragment {
         }
     }
 
-    public void checkDatabaseForAdditives(ArrayList<String> filteredList, String text){
-        ParseQuery<Additive> additiveQuery = ParseQuery.getQuery(Additive.class);
-        additiveQuery.whereMatches(Additive.ADDITIVE_VALUE, "("+text+")", "i");
+    public void checkDatabaseForWarnings(ArrayList<String> filteredList, String text, FragmentSwitch fragmentSwitch){
+        Class warningClass;
+        String warningValue;
+        if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH) || fragmentSwitch.equals(FragmentSwitch.USER_WARNINGS)){
+            warningClass = Additive.class;
+            warningValue = Additive.ADDITIVE_VALUE;
+        }
+        else{
+            warningClass = Allergen.class;
+            warningValue = Allergen.ALLERGEN_VALUE;
+        }
+        ParseQuery<ParseObject> additiveQuery = ParseQuery.getQuery(warningClass);
+        additiveQuery.whereMatches(warningValue, "("+text+")", "i");
         additiveQuery.findInBackground((objects, e) -> {
-            for(Additive additive: objects){
-                String additiveValue = additive.getAdditiveValue();
+            for(int i = 0; i < objects.size(); i++){
+                String additiveValue = objects.get(i).getString(warningValue);
                 if(!userWarnings.contains(additiveValue)){
-                    filteredList.add(additive.getAdditiveValue());
+                    filteredList.add(additiveValue);
                 }
             }
             if(filteredList.isEmpty()){
@@ -246,22 +255,35 @@ public class SearchFragment extends Fragment {
     }
 
     public static void updateAddedItemInDatabase(String addedItem, FragmentSwitch fragmentSwitch, int usage){
+        String warningValue;
+        Class warningClass;
         if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH) || fragmentSwitch.equals(FragmentSwitch.USER_WARNINGS)){
-            ParseQuery<Additive> additiveQuery = ParseQuery.getQuery(Additive.class);
-            additiveQuery.whereEqualTo(Additive.ADDITIVE_VALUE, addedItem);
-            additiveQuery.findInBackground((objects, e) -> {
-                if(e == null){
-                    Additive addedAdditive = objects.get(0);
-                    addedAdditive.setAdditiveUsage(addedAdditive.getAdditiveUsage() + usage);
-                    addedAdditive.saveInBackground();
-                }
-                else{
-                    Log.e(TAG, "Error updating additive user added to their profile: " + e);
-                }
-            });
+            warningClass = Additive.class;
+            warningValue = Additive.ADDITIVE_VALUE;
         }
         else{
-            //handle Allergen caching
+            warningClass = Allergen.class;
+            warningValue = Allergen.ALLERGEN_VALUE;
         }
+        ParseQuery<ParseObject> additiveQuery = ParseQuery.getQuery(warningClass);
+        additiveQuery.whereEqualTo(warningValue, addedItem);
+        additiveQuery.findInBackground((objects, e) -> {
+            if(e == null){
+                ParseObject updatedWarning = objects.get(0);
+                String usageKey;
+                if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH) || fragmentSwitch.equals(FragmentSwitch.USER_WARNINGS)){
+                    usageKey = Additive.ADDITIVE_USES_KEY;
+                }
+                else{
+                    usageKey = Allergen.ALLERGEN_USES_KEY;
+                    updatedWarning.put(Allergen.ALLERGEN_POPULARITY_SCORE, ((updatedWarning.getInt(usageKey) + usage) * USAGE_WEIGHT) + (updatedWarning.getDouble(Allergen.ALLERGEN_POPULARITY_SCORE) * PRODUCT_COUNT_WEIGHT));
+                }
+                updatedWarning.put(usageKey, updatedWarning.getInt(usageKey) + usage);
+                updatedWarning.saveInBackground();
+            }
+            else{
+                Log.e(TAG, "Error updating additive user added to their profile: " + e);
+            }
+        });
     }
 }
