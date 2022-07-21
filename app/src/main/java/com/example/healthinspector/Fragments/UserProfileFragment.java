@@ -71,8 +71,8 @@ public class UserProfileFragment extends Fragment {
             startActivity(new Intent(requireContext().getApplicationContext(), LoginActivity.class));
         });
 
-        binding.addWarningImageView.setOnClickListener(v -> onImageViewClick(FragmentSwitch.ADDITIVE_SEARCH));
-        binding.addAllergyImageView.setOnClickListener(v -> onImageViewClick(FragmentSwitch.ALLERGEN_SEARCH));
+        binding.addWarningImageView.setOnClickListener(v -> onImageViewClick(FragmentSwitch.ADDITIVE_SEARCH, fragmentSwitch));
+        binding.addAllergyImageView.setOnClickListener(v -> onImageViewClick(FragmentSwitch.ALLERGEN_SEARCH, fragmentSwitch));
         return view;
     }
 
@@ -132,12 +132,12 @@ public class UserProfileFragment extends Fragment {
         }).attachToRecyclerView(recyclerView);
     }
 
-    private void onImageViewClick(FragmentSwitch fragmentSwitch){
+    private void onImageViewClick(FragmentSwitch fragmentSwitch, FragmentSwitch signupSwitch){
         searchFragment = new SearchFragment();
         FragmentTransaction fragmentTransaction = requireActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         Bundle bundle = new Bundle();
-        if(fragmentSwitch != null && fragmentSwitch.equals(FragmentSwitch.SIGN_UP)){
+        if(signupSwitch != null && signupSwitch.equals(FragmentSwitch.SIGN_UP)){
             bundle.putSerializable(Constants.SIGN_UP_FLOW, FragmentSwitch.SIGN_UP);
         }
         bundle.putSerializable(Constants.FRAGMENT_SWITCH, fragmentSwitch);

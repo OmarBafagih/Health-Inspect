@@ -51,32 +51,33 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 binding.bottomNavigation.getMenu().setGroupCheckable(0, true, true);
                 binding.cartImageView.setImageResource(R.drawable.cart_icon);
-                switch (item.getItemId()){
-                    case R.id.miProfile:
-                        if(userProfileFragment == null) {
-                            userProfileFragment = new UserProfileFragment();
-                        }
-                        openFragment(userProfileFragment);
-                        return true;
-                    case R.id.miHome:
-                        if(homeFragment == null) {
-                            homeFragment = new HomeFragment();
-                        }
-                        openFragment(homeFragment);
-                        return true;
-                    case R.id.miSearch:
-                        if(searchFragment == null){
-                            searchFragment = new SearchFragment();
-                        }
-                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Constants.FRAGMENT_SWITCH, FragmentSwitch.MAIN_ACTIVITY);
-                        searchFragment.setArguments(bundle);
-                        fragmentTransaction.replace(R.id.fragment_container, searchFragment);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.commit();
-                        return true;
+                if(this != null){
+                    switch (item.getItemId()){
+                        case R.id.miProfile:
+                            if(userProfileFragment == null) {
+                                userProfileFragment = new UserProfileFragment();
+                            }
+                            openFragment(userProfileFragment);
+                            return true;
+                        case R.id.miHome:
+                            if(homeFragment == null) {
+                                homeFragment = new HomeFragment();
+                            }
+                            openFragment(homeFragment);
+                            return true;
+                        case R.id.miSearch:
+                            if(searchFragment == null){
+                                searchFragment = new SearchFragment();
+                            }
+                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(Constants.FRAGMENT_SWITCH, FragmentSwitch.MAIN_ACTIVITY);
+                            searchFragment.setArguments(bundle);
+                            fragmentTransaction.replace(R.id.fragment_container, searchFragment);
+                            fragmentTransaction.commit();
+                            return true;
+                    }
                 }
                 return false;
             }
@@ -136,16 +137,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (this.getSupportFragmentManager().getBackStackEntryCount() > 1){
-            this.getSupportFragmentManager().popBackStack();
+        this.getSupportFragmentManager().popBackStack();
+        if(this.getSupportFragmentManager().getBackStackEntryCount() == 0){
+            binding.bottomNavigation.setSelectedItemId(R.id.miHome);
         }
     }
 
     public void openFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
         fragmentTransaction.commit();
     }
 
@@ -158,5 +159,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-
 }
