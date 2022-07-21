@@ -151,7 +151,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
             //if the recommended product is not in the cart
             if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS) || fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)){
                 //if the user's cart has already been initialized
-                if(!ParseUser.getCurrentUser().getParseObject(Constants.CART).equals(null)){
+                if(ParseUser.getCurrentUser().has(Constants.CART)){
                     ParseQuery<Cart> parseQuery = ParseQuery.getQuery(Cart.class);
                     try {
                         Cart userCart = parseQuery.get(ParseUser.getCurrentUser().getParseObject(Constants.CART).getObjectId());
