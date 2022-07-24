@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@android:color/white">
+        >
 
 
         <ImageView
@@ -61,11 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:backgroundTint="#fff"
         android:elevation="10dp"
-        app:itemBackground="@color/white"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 

@@ -45,7 +45,7 @@ public class LocationService extends Service {
     private static final int DISTANCE_TRAVELLED_FOR_UPDATE = 1000;
     private static final String CHANNEL_NAME = "location_notification";
     private static final String CHANNEL_DESCRIPTION = "nearby_stores";
-    private static final int DELAY = 10000;
+    private static final int DELAY = 100000;
     private static final int ONGOING_NOTIFICATION_ID = 1;
     private static final int NEARBY_PLACES_RADIUS = 2000;
     private static final String GOOGLE_PLACES_REQUEST_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=grocery+store&location=%f,%f&radius=%d&region=us&type=supermarket&key=%s";

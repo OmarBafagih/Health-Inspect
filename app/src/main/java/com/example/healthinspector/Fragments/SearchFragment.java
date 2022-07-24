@@ -1,7 +1,10 @@
 package com.example.healthinspector.Fragments;
 
 import android.Manifest;
+import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +35,7 @@ import com.example.healthinspector.Models.Allergen;
 import com.example.healthinspector.R;
 import com.example.healthinspector.databinding.FragmentSearchBinding;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.deser.std.NumberDeserializers;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -65,6 +69,12 @@ public class SearchFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentSearchBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        if((getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES){
+            binding.searchPromptTextView.setTextColor(Color.WHITE);
+            binding.orPromptTextView.setTextColor(Color.WHITE);
+            binding.scanPromptTextView.setTextColor(Color.WHITE);
+            binding.scanIconImageView.setColorFilter(Color.WHITE);
+        }
 
         Bundle bundle = getArguments();
         FragmentSwitch fragmentSwitch = (FragmentSwitch) bundle.getSerializable(Constants.FRAGMENT_SWITCH);

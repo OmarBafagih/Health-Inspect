@@ -8,5 +8,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#888888</color>
-    <color name="item_background_color">#BDEDC2</color>
+    <color name="primaryColor">#add681</color>
+    <color name="primaryLightColor">#fffffa</color>
+    <color name="primaryDarkColor">#aabb96</color>
+    <color name="secondaryColor">#dcedc7</color>
+    <color name="secondaryLightColor">#e0ffb1</color>
+    <color name="item_color">#BDEDC2</color>
+    <color name="secondaryDarkColor">#7ca453</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="lightTextColor">#ffff</color>
+    <color name="container_color">#E8F8E9</color>
 </resources>

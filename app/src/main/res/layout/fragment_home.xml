@@ -6,96 +6,111 @@
     android:layout_height="match_parent"
     tools:context=".Fragments.HomeFragment">
 
-    <TextView
-        android:id="@+id/homeRecommendationsTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
-        android:text="Recommendations"
-        android:textAlignment="center"
-        android:textSize="20sp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/homeRecommendationsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="151dp"
-        android:layout_below="@+id/homeRecommendationsTextView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="0dp" />
-
-    <TextView
-        android:id="@+id/homeNearbyStoresTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/homeRecommendationsRecyclerView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
-        android:text="Nearby Grocery Stores"
-        android:textAlignment="center"
-        android:textSize="20sp" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/homeMapContainer"
-        android:layout_width="365dp"
-        android:layout_height="233dp"
-        android:layout_below="@+id/homeNearbyStoresTextView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="9dp"
-        app:cardCornerRadius="40dp">
-
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/homeMap"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </androidx.cardview.widget.CardView>
-
-    <ProgressBar
-        android:id="@+id/homeProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/homeNearbyStoresTextView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="172dp"
-        android:layout_marginEnd="172dp"
-        android:layout_marginBottom="69dp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/nearbyLocationsRecyclerView"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/homeMapContainer"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="20dp" />
+        android:id="@+id/homeRecommendationsContainer"
+        android:background="@drawable/container_background">
+        <TextView
+            android:id="@+id/homeRecommendationsTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:text="Recommendations"
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
-    <ProgressBar
-        android:id="@+id/homeLocationsProgressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="172dp"
-        android:layout_marginEnd="172dp"
-        android:layout_marginBottom="139dp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/homeRecommendationsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="151dp"
+            android:layout_below="@+id/homeRecommendationsTextView"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp" />
+
+        <ProgressBar
+            android:id="@+id/homeProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/homeRecommendationsTextView"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="172dp"
+            android:layout_marginEnd="172dp"
+            android:layout_marginBottom="-98dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/homeLocationsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="519dp"
+        android:layout_below="@+id/homeRecommendationsContainer"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/container_background">
+
+        <TextView
+            android:id="@+id/homeNearbyStoresTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:text="Nearby Grocery Stores"
+            android:textAlignment="center"
+            android:textSize="20sp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/homeMapContainer"
+            android:layout_width="365dp"
+            android:layout_height="233dp"
+            android:layout_below="@+id/homeNearbyStoresTextView"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="9dp"
+            app:cardCornerRadius="30dp">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/homeMap"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/nearbyLocationsRecyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/homeMapContainer"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="20dp" />
+
+        <ProgressBar
+            android:id="@+id/homeLocationsProgressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="172dp"
+            android:layout_marginEnd="172dp"
+            android:layout_marginBottom="111dp" />
+    </RelativeLayout>
+
 </RelativeLayout>

@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/productImageView"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="0dp"
             android:text="Health Inspector Rating"
             android:textAlignment="center"
@@ -40,11 +40,13 @@
             android:id="@+id/ratingBar"
             style="@style/foodRatingBar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="20dp"
             android:layout_below="@+id/healthInspectorScoreTextView"
+            android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_marginStart="143dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="153dp"
+            android:layout_marginEnd="142dp"
             android:isIndicator="true" />
 
         <TextView
@@ -59,7 +61,7 @@
             android:textAlignment="center"
             android:textStyle="bold" />
 
-        <ListView
+        <ExpandableListView
             android:id="@+id/additivesListView"
             android:layout_width="match_parent"
             android:layout_height="156dp"
@@ -80,7 +82,7 @@
             android:textAlignment="center"
             android:textStyle="bold" />
 
-        <ListView
+        <ExpandableListView
             android:id="@+id/warningsListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -101,29 +103,32 @@
             android:layout_marginStart="102dp"
             android:layout_marginEnd="99dp"
             android:layout_marginBottom="19dp"
-            android:text="Recommendations" />
+            android:text="Recommendations"
+            android:textColor="@color/black"/>
 
         <TextView
             android:id="@+id/productNameTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="273dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/productBreakdownTextView"
-            android:layout_marginTop="39dp"
-            android:layout_marginEnd="50dp"
-            android:layout_toStartOf="@+id/productImageView"
-            android:textSize="16sp" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="0dp"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            tools:text="Product Name" />
 
         <ImageView
             android:id="@+id/productImageView"
-            android:layout_width="68dp"
-            android:layout_height="74dp"
+            android:layout_width="87dp"
+            android:layout_height="75dp"
             android:layout_below="@+id/productBreakdownTextView"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="19dp"
-            android:layout_marginEnd="172dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="13dp"
+            android:layout_toStartOf="@+id/productNameTextView"
             tools:src="@tools:sample/avatars" />
 
-
     </RelativeLayout>
-
 </FrameLayout>

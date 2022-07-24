@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <uses-feature
@@ -27,16 +26,10 @@
         android:theme="@style/Theme.HealthInspector"
         tools:targetApi="31">
         <service android:name=".Services.LocationService" />
-        <receiver
-            android:name=".NotificationReceiver"
-            android:process=":remote">
-        </receiver>
-
         <activity
             android:name=".Activities.SignupActivity"
             android:exported="false"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+            android:screenOrientation="portrait"/>
         <!-- Splashscreen Activity -->
         <activity
             android:name=".Activities.SplashScreenActivity"
@@ -58,8 +51,7 @@
         <activity
             android:name=".Activities.MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:screenOrientation="portrait"/>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -67,8 +59,5 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
-
-
     </application>
-
 </manifest>

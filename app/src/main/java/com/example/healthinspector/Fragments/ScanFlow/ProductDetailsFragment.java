@@ -1,10 +1,14 @@
 package com.example.healthinspector.Fragments.ScanFlow;
 
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.SimpleExpandableListAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,7 +52,15 @@ public class ProductDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(Constants.SCANNED_PRODUCT));
-
+        int layoutID = android.R.layout.simple_list_item_1;
+        if((getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES){
+            binding.harmfulIngredientsTextView.setTextColor(Color.WHITE);
+            binding.productNameTextView.setTextColor(Color.WHITE);
+            binding.warningsTextView.setTextColor(Color.WHITE);
+            binding.healthInspectorScoreTextView.setTextColor(Color.WHITE);
+            binding.productBreakdownTextView.setTextColor(Color.WHITE);
+            layoutID = R.layout.text_list_item;
+        }
         binding.productNameTextView.setText(scannedProduct.getProductName());
         Glide.with(requireContext()).load(scannedProduct.getImageUrl()).into(binding.productImageView);
 
@@ -60,14 +72,10 @@ public class ProductDetailsFragment extends Fragment {
         productRatings.put("E", 1);
         productRatings.put("", 0);
         binding.ratingBar.setRating(productRatings.get(scannedProduct.getHealthInspectorScore().toUpperCase(Locale.ROOT)));
-
-        ArrayAdapter warningsAdapter = new ArrayAdapter<String>(requireContext(),
-               android.R.layout.simple_list_item_1,scannedProduct.getNutrientLevels());
-        binding.warningsListView.setAdapter(warningsAdapter);
-
+        //TODO: create expandable list adapters for better experience
         try {
-            ArrayAdapter harmfulIngredientsAdapter = new ArrayAdapter<String>(requireContext(),
-                    android.R.layout.simple_list_item_1,CachedLists.getInstance().warningsInProduct(scannedProduct.getProductAdditives(), requireContext(), FragmentSwitch.ADDITIVE_SEARCH));
+            ArrayAdapter harmfulIngredientsAdapter = new ArrayAdapter<>(requireContext(),
+                    layoutID,CachedLists.getInstance().warningsInProduct(scannedProduct.getProductAdditives(), requireContext(), FragmentSwitch.ADDITIVE_SEARCH));
             binding.additivesListView.setAdapter(harmfulIngredientsAdapter);
         } catch (JSONException | IOException e) {
             e.printStackTrace();
@@ -83,7 +91,6 @@ public class ProductDetailsFragment extends Fragment {
                 bundleSend.putParcelable(Constants.SCANNED_PRODUCT, Parcels.wrap(scannedProduct));
                 recommendProductsFragment.setArguments(bundleSend);
                 fragmentTransaction.replace(R.id.fragment_container, recommendProductsFragment);
-                fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
             }
         });
