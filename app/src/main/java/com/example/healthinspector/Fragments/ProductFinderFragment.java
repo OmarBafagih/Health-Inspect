@@ -92,7 +92,6 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
             }
             locations.add(location);
         }
-
         //API request to check all locations for the recommended product's availability
         checkProductAvailability(recommendedProduct);
         return view;

@@ -15,11 +15,9 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivitySignupBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SignupFragment()).commit();
     }
 }

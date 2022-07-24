@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,12 +48,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public static final String TAG = "HomeFragment";
     private ArrayList<String> categories;
     private static final int CATEGORIES_COUNT = 2;
-    private static final String GEOMETRY = "geometry";
-    private static final String PLACE_ADDRESS = "formatted_address";
-    private static final String PLACE_LATITUDE = "lat";
-    private static final String PLACE_LONGITUDE = "lng";
     private LatLngBounds.Builder builder;
-    private ArrayList<JSONObject> locations;
+    private Location currentLocation;
+    private ArrayList<JSONObject> nearbyGroceryLocations;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +60,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.homeMap);
         mapFragment.getMapAsync(this);
         builder = new LatLngBounds.Builder();
-        locations = new ArrayList<>();
         return view;
     }
 
@@ -96,47 +93,55 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         googleMap.clear();
-        if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            googleMap.setMyLocationEnabled(true);
-            final Handler handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Location currentLocation = LocationService.getLastLocation();
-                    if(currentLocation != null){
-                        builder = new LatLngBounds.Builder();
-                        builder.include(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-                        ArrayList<JSONObject> nearbyGroceryLocations = LocationService.getNearbyGroceryLocations();
-                        if(nearbyGroceryLocations.size() > 0){
-                            for(int i = 0; i < nearbyGroceryLocations.size(); i++){
-                                JSONObject nearbyGroceryStore = nearbyGroceryLocations.get(i);
-                                try {
-                                    LatLng storeLocation = new LatLng(nearbyGroceryStore.getDouble(Constants.LATITUDE), nearbyGroceryStore.getDouble(Constants.LONGITUDE));
-                                    builder.include(storeLocation);
-                                    googleMap.addMarker(new MarkerOptions().position(storeLocation).title(nearbyGroceryStore.getString(Constants.STORE_NAME))).showInfoWindow();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            populateLocations(googleMap, nearbyGroceryLocations, builder);
-                        }
-                        return;
+        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                if(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    googleMap.setMyLocationEnabled(true);
+                    if(nearbyGroceryLocations != null && nearbyGroceryLocations.size() > 0 && nearbyGroceryLocations.equals(LocationService.getNearbyGroceryLocations())){
+                        populateLocations(googleMap);
                     }
+
+                    final Handler handler = new Handler(Looper.getMainLooper());
+                    handler.postDelayed(() -> {
+                        currentLocation = LocationService.getLastLocation();
+                        populateLocations(googleMap);
+                    }, Constants.DELAY_SLOW);
                 }
-            }, Constants.DELAY_SLOW);
-        }
+            }
+        });
     }
 
-    public void populateLocations(@NonNull GoogleMap googleMap, ArrayList<JSONObject> locations, LatLngBounds.Builder builder){
-        if(!binding.homeLocationsProgressBar.equals(null)){
-           binding.homeLocationsProgressBar.setVisibility(View.GONE);
+    public void populateLocations(@NonNull GoogleMap googleMap){
+        if(this.binding != null){
+            if(currentLocation != null){
+                builder = new LatLngBounds.Builder();
+                builder.include(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+                nearbyGroceryLocations = LocationService.getNearbyGroceryLocations();
+                if(nearbyGroceryLocations.size() > 0){
+                    for(int i = 0; i < nearbyGroceryLocations.size(); i++){
+                        JSONObject nearbyGroceryStore = nearbyGroceryLocations.get(i);
+                        try {
+                            LatLng storeLocation = new LatLng(nearbyGroceryStore.getDouble(Constants.LATITUDE), nearbyGroceryStore.getDouble(Constants.LONGITUDE));
+                            builder.include(storeLocation);
+                            googleMap.addMarker(new MarkerOptions().position(storeLocation).title(nearbyGroceryStore.getString(Constants.STORE_NAME))).showInfoWindow();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(binding.homeLocationsProgressBar != null){
+                        binding.homeLocationsProgressBar.setVisibility(View.GONE);
+                    }
+                    LocationService.sortLocations(nearbyGroceryLocations, requireContext());
+                    binding.nearbyLocationsRecyclerView.setAdapter(new KrogerLocationAdapter(requireContext(), nearbyGroceryLocations, FragmentSwitch.HOME_FRAGMENT));
+                    binding.nearbyLocationsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+                    //pin all local locations
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(builder.build(), Constants.MAP_PADDING);
+                    googleMap.animateCamera(cameraUpdate);
+                }
+                return;
+            }
         }
-        LocationService.sortLocations(locations, requireContext());
-        binding.nearbyLocationsRecyclerView.setAdapter(new KrogerLocationAdapter(requireContext(), locations, FragmentSwitch.HOME_FRAGMENT));
-        binding.nearbyLocationsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        //pin all local locations
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(builder.build(), Constants.MAP_PADDING);
-        googleMap.animateCamera(cameraUpdate);
     }
 }
 
