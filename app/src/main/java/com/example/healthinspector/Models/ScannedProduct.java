@@ -39,39 +39,27 @@ public class ScannedProduct implements Serializable {
     public String getProductName() {
         return productName;
     }
-
     public String getHealthInspectorScore() {
         return healthInspectorScore;
     }
-
     public ArrayList<String> getIngredients() {
         return ingredients;
     }
-
     public ArrayList<String> getIngredientsAnalysis() {
         return ingredientsAnalysis;
     }
-
     public String getNovaGroup() {
         return novaGroup;
     }
-
     public ArrayList<String> getNutrientLevels() {
         return nutrientLevels;
     }
-
     public String getImageUrl() {
         return imageUrl;
     }
-
-    public ArrayList<String> getProductAdditives() {
-        return additives;
-    }
-
     public ArrayList<String> getAllergens() {
         return allergens;
     }
-
     public ArrayList<String> getAdditives() {
         return additives;
     }
