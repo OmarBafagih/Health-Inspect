@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.airbnb.lottie.L;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.R;
 
@@ -25,7 +26,7 @@ import okhttp3.Response;
 public class KrogerLocationCacher extends Application{
     private static final String TAG = "KrogerLocationCacher";
     private static KrogerLocationCacher krogerLocationCacher = null;
-    private String token = null;
+    private static String token = null;
     private ArrayList<JSONObject> krogerLocations = null;
     private static final String ACCESS_TOKEN = "access_token";
     private static final String GEOLOCATION = "geolocation";
@@ -94,7 +95,6 @@ public class KrogerLocationCacher extends Application{
     public ArrayList<JSONObject> makeLocationRequest(Double latitude, Double longitude, Context context) {
         ArrayList<JSONObject> locations = new ArrayList<>();
         OkHttpClient locationsRequestClient = new OkHttpClient();
-
         Request requestLocations = new Request.Builder()
                 .url(LOCATION_REQUEST_URL + (latitude) + "," + longitude)
                 .get()
@@ -125,7 +125,6 @@ public class KrogerLocationCacher extends Application{
                             location.put(Constants.LONGITUDE, data.getJSONObject(GEOLOCATION).getDouble(Constants.LONGITUDE));
                             locations.add(location);
                         }
-
                     }
                 } catch (JSONException e) {
                     Log.e(TAG, "Error storing locations: " + e);

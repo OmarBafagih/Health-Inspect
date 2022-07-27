@@ -10,7 +10,7 @@
     <string name="error_finding_locations">Sorry, there was an error finding nearby Kroger locations</string>
     <string name="error_finding_recommendations">Sorry, there was an error finding your recommendations</string>
     <string name="undo">undo</string>
-    <string name="no_camera_permissions">Cannot use scanner without camera permissions</string>
+    <string name="no_camera_permissions">Allow access to camera to use scanner</string>
     <string name="error_searching">Sorry, there was an error finding what you were looking for</string>
     <string name="no_item_found">No item found</string>
     <string name="enter_valid_username">Please enter a valid username</string>
@@ -36,4 +36,6 @@
     <string name="channel_name">location changed</string>
     <string name="notification_quit_button">Quit</string>
     <string name="notification_default_content">app running in background</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.example.healthinspector.Fragments.ScanFlow;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -46,7 +51,7 @@ public class ScanFragment extends Fragment {
     private HashMap<Integer, String> novaGroups = null;
     private String novaGroup;
     private static final int PREFIX_LENGTH = 3;
-
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
     @Override
     public void onStart() {
@@ -59,10 +64,16 @@ public class ScanFragment extends Fragment {
 
         binding = FragmentScanBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+            if (!isGranted) {
+                Toast.makeText(requireContext(), getString(R.string.no_camera_permissions), Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+
         final Activity activity = requireActivity();
         CodeScannerView scannerView = binding.scannerView;
         codeScannerView = new CodeScanner(activity, scannerView);
-
         scannerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -175,8 +186,6 @@ public class ScanFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-
     }
 
     @Override

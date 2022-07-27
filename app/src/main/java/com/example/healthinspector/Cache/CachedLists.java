@@ -119,13 +119,16 @@ public class CachedLists{
         }
         HashMap<String, String> warnings;
         Class warningClass;
+        String warningKey;
         if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
             warnings = getAdditives(context);
             warningClass = Additive.class;
+            warningKey = Additive.ADDITIVE_KEY;
         }
         else{
             warnings = getAllergens(context);
             warningClass = Allergen.class;
+            warningKey = Allergen.ALLERGEN_KEY;
         }
         for(int i = 0; i < productWarningTags.size(); i++){
             String warningFromCache = null;
@@ -135,14 +138,16 @@ public class CachedLists{
             }
             else{
                 ParseQuery<ParseObject> warningQuery = new ParseQuery<>(warningClass);
-                warningQuery.whereEqualTo(Additive.ADDITIVE_KEY, productWarningTags.get(i));
+                warningQuery.whereEqualTo(warningKey, productWarningTags.get(i));
                 warningQuery.findInBackground((objects, e) -> {
-                    for(int x = 0; x < objects.size(); x++){
-                        if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
-                            warningsInProduct.add(String.valueOf(objects.get(x).get(Additive.ADDITIVE_VALUE)));
-                        }
-                        else{
-                            warningsInProduct.add(String.valueOf(objects.get(x).get(Allergen.ALLERGEN_VALUE)));
+                    if(objects != null){
+                        for(int x = 0; x < objects.size(); x++){
+                            if(fragmentSwitch.equals(FragmentSwitch.ADDITIVE_SEARCH)){
+                                warningsInProduct.add(String.valueOf(objects.get(x).get(Additive.ADDITIVE_VALUE)));
+                            }
+                            else{
+                                warningsInProduct.add(String.valueOf(objects.get(x).get(Allergen.ALLERGEN_VALUE)));
+                            }
                         }
                     }
                 });
@@ -152,7 +157,8 @@ public class CachedLists{
     }
 
     public ArrayList<String> itemsNotInUser(ArrayList<String> userItems, Collection<String> warnings) throws JSONException, IOException{
-        ArrayList<String> warningsNotInUser = new ArrayList<>(warnings);
+        ArrayList<String> warningsNotInUser = new ArrayList<>();
+        warningsNotInUser.addAll(warnings);
         warningsNotInUser.removeAll(userItems);
         return warningsNotInUser;
     }

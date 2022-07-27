@@ -23,6 +23,7 @@ public class WarningExpandableAdapter extends BaseExpandableListAdapter {
     private Context context;
     private List<String> expandableListTitle;
     private HashMap<String, List<String>> expandableListDetail;
+    public static final String NONE = "No Warnings";
 
     public WarningExpandableAdapter(Context context, List<String> expandableListTitle,
                                        HashMap<String, List<String>> expandableListDetail) {
@@ -96,14 +97,19 @@ public class WarningExpandableAdapter extends BaseExpandableListAdapter {
         if((context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES) {
             listTitleTextView.setTextColor(Color.WHITE);
         }
-        if(listTitle.equals(Constants.WARNINGS_IN_PRODUCT) && expandableListDetail.get(Constants.WARNINGS_IN_PRODUCT).size() > 0){
+        if(listTitle.equals(Constants.WARNINGS_IN_PRODUCT) && expandableListDetail.get(Constants.WARNINGS_IN_PRODUCT).size() == 0){
+            expandableListDetail.get(Constants.WARNINGS_IN_PRODUCT).add(NONE);
+            warningImageView.setVisibility(View.INVISIBLE);
+        }
+        if(listTitle.equals(Constants.WARNINGS_IN_PRODUCT) && expandableListDetail.get(Constants.WARNINGS_IN_PRODUCT).size() > 0 && !expandableListDetail.get(Constants.WARNINGS_IN_PRODUCT).contains(NONE)){
             warningImageView.setVisibility(View.VISIBLE);
             Glide.with(context).load(R.drawable.warning_gif).into(warningImageView);
         }
+
         else if(!listTitle.equals(Constants.WARNINGS_IN_PRODUCT)){
             warningImageView.setVisibility(View.GONE);
         }
-            listTitleTextView.setTypeface(null, Typeface.BOLD);
+        listTitleTextView.setTypeface(null, Typeface.BOLD);
         listTitleTextView.setText(listTitle);
         return convertView;
     }

@@ -3,9 +3,11 @@ package com.example.healthinspector.Fragments.ScanFlow;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,6 +43,7 @@ public class ProductDetailsFragment extends Fragment {
     LinkedHashMap<String, List<String>> productDetailsList;
     ArrayList<String> additivesInProduct;
     ArrayList<String> allergensInProduct;
+    ArrayList<String> warningsInProduct;
     public static final String NUTRIENT_LEVELS = "Nutrient Levels";
     public static final String ADDITIVES_IN_PRODUCT = "Additives in this product";
     public static final String PRODUCT_INGREDIENTS = "Ingredients";
@@ -59,6 +62,7 @@ public class ProductDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         Bundle bundle = getArguments();
         ScannedProduct scannedProduct = (ScannedProduct) Parcels.unwrap(bundle.getParcelable(Constants.SCANNED_PRODUCT));
+        warningsInProduct = new ArrayList<>();
         productDetailsList = new LinkedHashMap<>();
         productRatings = new HashMap<>();
         productRatings.put("A", 5);
@@ -85,8 +89,9 @@ public class ProductDetailsFragment extends Fragment {
         } catch (JSONException | IOException e) {
             e.printStackTrace();
         }
-        allergensInProduct.addAll(additivesInProduct);
-        productDetailsList.put(Constants.WARNINGS_IN_PRODUCT, userWarningsInProduct(allergensInProduct));
+        warningsInProduct.addAll(allergensInProduct);
+        warningsInProduct.addAll(additivesInProduct);
+        productDetailsList.put(Constants.WARNINGS_IN_PRODUCT, userWarningsInProduct(warningsInProduct));
         productDetailsList.put(NUTRIENT_LEVELS, scannedProduct.getNutrientLevels());
         productDetailsList.put(PRODUCT_INGREDIENTS, scannedProduct.getIngredients());
         productDetailsList.put(INGREDIENTS_ANALYSIS, scannedProduct.getIngredientsAnalysis());

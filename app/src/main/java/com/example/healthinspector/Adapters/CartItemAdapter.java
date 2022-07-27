@@ -105,7 +105,7 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
             String cartItemFacts = String.join("\n", recommendedProduct.getNutrientLevels());
             cartItemFactsTextView.setText(cartItemFacts);
             if(fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS) || fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)){
-                addToCartImageView.setImageResource(R.drawable.add_icon_2);
+                addToCartImageView.setImageResource(R.drawable.add_icon_1);
                 if(fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)){
                     cartItemContainer.setCardElevation(CARD_ELEVATION);
                 }
