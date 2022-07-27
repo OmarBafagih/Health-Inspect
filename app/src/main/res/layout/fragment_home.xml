@@ -36,17 +36,19 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp" />
 
-        <ProgressBar
-            android:id="@+id/homeProgressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/homeRecommendationsTextView"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/homeRecommendationsAnimationView"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
+            android:layout_below="@+id/homeRecommendationsTextView"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="172dp"
-            android:layout_marginEnd="172dp"
-            android:layout_marginBottom="-98dp" />
+            android:layout_marginStart="140dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="140dp"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="recommendations_animation.json"
+            app:lottie_loop="true" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -100,17 +102,20 @@
             android:layout_marginTop="15dp"
             android:layout_marginEnd="20dp" />
 
-        <ProgressBar
-            android:id="@+id/homeLocationsProgressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/locationAnimationView"
+            android:layout_width="100dp"
+            android:layout_height="120dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="172dp"
-            android:layout_marginEnd="172dp"
-            android:layout_marginBottom="111dp" />
+            android:layout_marginStart="140dp"
+            android:layout_marginEnd="140dp"
+            android:layout_marginBottom="56dp"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="location_animation.json"
+            app:lottie_loop="true" />
+
     </RelativeLayout>
 
 </RelativeLayout>

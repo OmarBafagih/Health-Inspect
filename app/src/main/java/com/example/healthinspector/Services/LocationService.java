@@ -24,6 +24,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.healthinspector.Activities.MainActivity;
 import com.example.healthinspector.Cache.KrogerLocationCacher;
 import com.example.healthinspector.Constants;
 import com.example.healthinspector.R;
@@ -77,6 +78,7 @@ public class LocationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         context = this.getBaseContext();
         KrogerLocationCacher.getInstance().getToken(context);
+
         if (intent != null) {
             final String action = intent.getAction();
             if(action != null && action == Constants.PERMISSIONS_GRANTED){
@@ -86,6 +88,13 @@ public class LocationService extends Service {
                         lastLocation = location;
                         findNearbyGroceryStores(context, location);
                     });
+                    final Handler tokenDelayHandler = new Handler();
+                    tokenDelayHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            KrogerLocationCacher.getInstance().getNearbyKrogerLocations(lastLocation.getLatitude(), lastLocation.getLongitude(), context);
+                        }
+                    }, Constants.DELAY_FAST);
                 }
                 handler.postDelayed(new Runnable() {
                     @Override
@@ -140,12 +149,14 @@ public class LocationService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void startForeground() throws JSONException {
         builder = new NotificationCompat.Builder(this, Constants.CHANNEL_ID);
+
+        PendingIntent pendingOpenIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_MUTABLE);
         PendingIntent pendingQuitIntent = PendingIntent.getBroadcast(this, (int) System.currentTimeMillis(), new Intent(Constants.QUIT_ACTION), PendingIntent.FLAG_MUTABLE);
         notification = builder.setContentTitle(getText(R.string.notification_title))
                 .setContentText(getText(R.string.notification_default_content))
                 .setSmallIcon(R.drawable.health_inspector_logo_1)
-                .addAction(R.drawable.health_inspector_logo_1, getText(R.string.notification_quit_button),
-                        pendingQuitIntent)
+                .setContentIntent(pendingOpenIntent)
+                .addAction(R.drawable.health_inspector_logo_1, getText(R.string.notification_quit_button), pendingQuitIntent)
                 .setAutoCancel(true)
                 .build();
         startForeground(ONGOING_NOTIFICATION_ID, notification);
@@ -203,13 +214,11 @@ public class LocationService extends Service {
         }
         nearbyGroceryLocations = new ArrayList<>();
         String url = String.format(GOOGLE_PLACES_REQUEST_URL, location.getLatitude(),  location.getLongitude(), NEARBY_PLACES_RADIUS, context.getString(R.string.maps_key));
-        Log.i(TAG, url);
         RequestQueue queue = Volley.newRequestQueue(context);
         JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
                         JSONArray nearbyLocations = response.getJSONArray(RESULTS);
-                        Log.i(TAG, nearbyLocations.toString());
                         for(int i = 0; i < nearbyLocations.length(); i++){
                             JSONObject place = createNewLocationObject(nearbyLocations.getJSONObject(i));
                             nearbyGroceryLocations.add(place);
@@ -251,12 +260,13 @@ public class LocationService extends Service {
             closestLocation.setLatitude(closestLocationObject.getDouble(Constants.LATITUDE));
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constants.CHANNEL_ID);
             NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            PendingIntent pendingOpenIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_MUTABLE);
             PendingIntent pendingQuitIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(), new Intent(Constants.QUIT_ACTION), PendingIntent.FLAG_MUTABLE);
             mNotificationManager.notify(1, builder.setContentTitle(getText(R.string.notification_title))
                     .setContentText(String.format(NOTIFICATION_MESSAGE, closestLocationObject.getString(Constants.STORE_NAME), lastLocation.distanceTo(closestLocation)))
                     .setSmallIcon(R.drawable.health_inspector_logo_1)
-                    .addAction(R.drawable.health_inspector_logo_1, getText(R.string.notification_quit_button),
-                            pendingQuitIntent)
+                    .setContentIntent(pendingOpenIntent)
+                    .addAction(R.drawable.health_inspector_logo_1, getText(R.string.notification_quit_button), pendingQuitIntent)
                     .setAutoCancel(true)
                     .setOnlyAlertOnce(true)
                     .build());

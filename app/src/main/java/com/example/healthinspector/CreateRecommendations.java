@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -43,14 +44,14 @@ public class CreateRecommendations extends Application {
     private static final Integer MAX_TRIES = 3;
     private static final String BRAND = "brands";
     private static final String KEYWORDS = "_keywords";
-    private static ProgressBar progressBar;
+    private static LottieAnimationView lottieAnimationView;
 
     public static void getRecommendedProducts(ScannedProduct scannedProduct, String url, Context context, FragmentSwitch fragmentSwitch, View v) throws JSONException, JsonProcessingException, ParseException {
         ArrayList<RecommendedProduct> homeRecommendedProducts = CachedLists.getInstance().getHomeRecommendedProducts();
         if (homeRecommendedProducts != null && fragmentSwitch.equals(FragmentSwitch.HOME_FRAGMENT)) {
             loadRecommendationsIntoView(homeRecommendedProducts, fragmentSwitch, v, context, scannedProduct);
-            progressBar = v.findViewById(R.id.homeProgressBar);
-            progressBar.setVisibility(View.GONE);
+            lottieAnimationView = v.findViewById(R.id.homeRecommendationsAnimationView);
+            lottieAnimationView.setVisibility(View.GONE);
             return;
         }
         ArrayList<RecommendedProduct> recommendedProducts = new ArrayList<>();
@@ -112,11 +113,11 @@ public class CreateRecommendations extends Application {
                     }
 
                     if (fragmentSwitch.equals(FragmentSwitch.RECOMMENDATIONS)) {
-                        progressBar = v.findViewById(R.id.progressBar);
+                        lottieAnimationView = v.findViewById(R.id.recommendationsAnimationView);
                     } else {
-                        progressBar = v.findViewById(R.id.homeProgressBar);
+                        lottieAnimationView = v.findViewById(R.id.homeRecommendationsAnimationView);
                     }
-                    progressBar.setVisibility(View.GONE);
+                    lottieAnimationView.setVisibility(View.GONE);
                     try {
                         CachedLists.getInstance().setHomeRecommendedProducts(recommendedProducts);
                         loadRecommendationsIntoView(recommendedProducts, fragmentSwitch, v, context, scannedProduct);

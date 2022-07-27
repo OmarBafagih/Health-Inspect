@@ -1,6 +1,8 @@
 package com.example.healthinspector.Fragments;
 
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.healthinspector.Activities.LoginActivity;
 import com.example.healthinspector.Activities.MainActivity;
 import com.example.healthinspector.Adapters.ItemAdapter;
@@ -64,13 +67,12 @@ public class UserProfileFragment extends Fragment {
                 });
             }
         }
-        binding.btnLogout.setOnClickListener(v -> {
-            //logout parse user
-            ParseUser.logOut();
-            ParseUser currentUser = ParseUser.getCurrentUser();
-            startActivity(new Intent(requireContext().getApplicationContext(), LoginActivity.class));
-        });
-
+        Glide.with(requireContext()).load(R.drawable.add_icon_1).override(30,30).into(binding.addAllergyImageView);
+        Glide.with(requireContext()).load(R.drawable.add_icon_1).override(30,30).into(binding.addWarningImageView);
+        if((getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES){
+            binding.addAllergyImageView.setColorFilter(Color.WHITE);
+            binding.addWarningImageView.setColorFilter(Color.WHITE);
+        }
         binding.addWarningImageView.setOnClickListener(v -> onImageViewClick(FragmentSwitch.ADDITIVE_SEARCH, fragmentSwitch));
         binding.addAllergyImageView.setOnClickListener(v -> onImageViewClick(FragmentSwitch.ALLERGEN_SEARCH, fragmentSwitch));
         return view;

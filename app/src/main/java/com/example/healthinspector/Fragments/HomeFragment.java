@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -129,8 +128,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             e.printStackTrace();
                         }
                     }
-                    if(binding.homeLocationsProgressBar != null){
-                        binding.homeLocationsProgressBar.setVisibility(View.GONE);
+                    if(binding.locationAnimationView != null){
+                        binding.locationAnimationView.setVisibility(View.GONE);
                     }
                     LocationService.sortLocations(nearbyGroceryLocations, requireContext());
                     binding.nearbyLocationsRecyclerView.setAdapter(new KrogerLocationAdapter(requireContext(), nearbyGroceryLocations, FragmentSwitch.HOME_FRAGMENT));

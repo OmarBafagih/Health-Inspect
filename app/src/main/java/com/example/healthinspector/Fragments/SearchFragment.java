@@ -286,7 +286,7 @@ public class SearchFragment extends Fragment {
                 }
                 else{
                     usageKey = Allergen.ALLERGEN_USES_KEY;
-                    updatedWarning.put(Allergen.ALLERGEN_POPULARITY_SCORE, ((updatedWarning.getInt(usageKey) + usage) * USAGE_WEIGHT) + (updatedWarning.getDouble(Allergen.ALLERGEN_POPULARITY_SCORE) * PRODUCT_COUNT_WEIGHT));
+                    updatedWarning.put(Allergen.ALLERGEN_POPULARITY_SCORE, ((updatedWarning.getInt(usageKey) + usage) * USAGE_WEIGHT) + (updatedWarning.getDouble(Allergen.ALLERGEN_PRODUCT_COUNT) * PRODUCT_COUNT_WEIGHT));
                 }
                 updatedWarning.put(usageKey, updatedWarning.getInt(usageKey) + usage);
                 updatedWarning.saveInBackground();
