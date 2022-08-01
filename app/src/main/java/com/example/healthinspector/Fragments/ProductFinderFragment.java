@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.healthinspector.Adapters.KrogerLocationAdapter;
 import com.example.healthinspector.Cache.KrogerLocationCacher;
 import com.example.healthinspector.Constants;
+import com.example.healthinspector.Models.Cart;
 import com.example.healthinspector.Models.RecommendedProduct;
 import com.example.healthinspector.R;
 import com.example.healthinspector.Services.LocationService;
@@ -34,7 +35,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
@@ -92,6 +98,52 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
             }
             locations.add(location);
         }
+        binding.btnAddToCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //creating new json object to save to cart JsonArray
+                JSONObject newCartItem = new JSONObject();
+                try {
+                    newCartItem.put(Constants.KEYWORDS, recommendedProduct.getKeyWords());
+                    newCartItem.put(Constants.BRAND, recommendedProduct.getBrand());
+                    newCartItem.put(Constants.PRODUCT_IMAGE_URL, recommendedProduct.getProductImageUrl());
+                    newCartItem.put(Constants.PRODUCT_NAME, recommendedProduct.getProductName());
+                    newCartItem.put(Constants.NUTRIENT_LEVELS, recommendedProduct.getNutrientLevels());
+
+                } catch (JSONException err) {
+                    Toast.makeText(requireContext(), requireContext().getString(R.string.error_saving_cart), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error creating user's cart " + err);
+                }
+
+                if(ParseUser.getCurrentUser().has(Constants.CART)){
+                    ParseQuery<Cart> parseQuery = ParseQuery.getQuery(Cart.class);
+                    try {
+                        Cart userCart = parseQuery.get(ParseUser.getCurrentUser().getParseObject(Constants.CART).getObjectId());
+                        userCart.setCartItems(userCart.getCartItems().put(newCartItem));
+                        userCart.saveInBackground(e -> Toast.makeText(requireContext(), requireContext().getString(R.string.saved_item), Toast.LENGTH_SHORT).show());
+                    } catch (ParseException e) {
+                        Toast.makeText(requireContext(), requireContext().getString(R.string.error_saving_cart), Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "Error saving user's cart " + e);
+                    }
+                }
+                else{
+                    Cart newCart = new Cart();
+                    JSONArray newCartItems = new JSONArray();
+                    newCartItems.put(newCartItem);
+                    newCart.setCartItems(newCartItems);
+                    newCart.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if(e == null){
+                                Toast.makeText(requireContext(), requireContext().getString(R.string.saved_item), Toast.LENGTH_SHORT).show();
+                                ParseUser.getCurrentUser().put(Constants.CART, newCart);
+                                ParseUser.getCurrentUser().saveInBackground();
+                            }
+                        }
+                    });
+                }
+            }
+        });
         //API request to check all locations for the recommended product's availability
         checkProductAvailability(recommendedProduct);
         return view;
@@ -137,7 +189,13 @@ public class ProductFinderFragment extends Fragment implements OnMapReadyCallbac
         }
         LatLngBounds bounds = builder.build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, Constants.MAP_PADDING);
-        googleMap.animateCamera(cameraUpdate);
+        googleMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                googleMap.animateCamera(cameraUpdate);
+            }
+        });
+
     }
 
     public void checkProductAvailability(RecommendedProduct recommendedProduct){

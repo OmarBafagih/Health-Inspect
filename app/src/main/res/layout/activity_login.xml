@@ -5,8 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.LoginActivity"
-    android:background="@color/white">
+    tools:context=".Activities.LoginActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,9 +13,7 @@
         android:gravity="center"
         android:paddingStart="28dp"
         android:paddingEnd="28dp"
-        android:layout_centerInParent="true"
-        android:background="@color/white">
-
+        android:layout_centerInParent="true">
 
         <ImageView
             android:layout_width="200dp"

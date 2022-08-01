@@ -102,12 +102,10 @@ public class MainActivity extends AppCompatActivity {
                                 scanFragment = new ScanFragment();
                             }
                             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-//                            Bundle bundle = new Bundle();
-//                            bundle.putSerializable(Constants.FRAGMENT_SWITCH, FragmentSwitch.MAIN_ACTIVITY);
-//                            scanFragment.setArguments(bundle);
+                            fragmentTransaction.setCustomAnimations(R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit, R.anim.fragment_slide_left_enter, R.anim.fragment_slide_left_exit);
                             fragmentTransaction.replace(R.id.fragment_container, scanFragment);
                             fragmentTransaction.commit();
+                           // openFragment(scanFragment);
                             return true;
                     }
                 }
@@ -208,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void openFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.setCustomAnimations(R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit, R.anim.fragment_slide_right_enter, R.anim.fragment_slide_right_exit);
         fragmentTransaction.replace(R.id.fragment_container, fragment, fragment.getClass().getSimpleName());
         fragmentTransaction.commit();
     }
