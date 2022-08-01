@@ -23,15 +23,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/locationsRecyclerView"
         android:layout_width="wrap_content"
-        android:layout_height="462dp"
+        android:layout_height="308dp"
         android:layout_below="@+id/productFinderMapContainer"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="40dp" />
+        android:layout_marginEnd="9dp"
+        android:layout_marginBottom="123dp" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/productFinderMapContainer"
@@ -51,8 +51,6 @@
             android:layout_height="match_parent" />
     </androidx.cardview.widget.CardView>
 
-
-
     <ProgressBar
         android:id="@+id/productFinderProgressBar"
         style="?android:attr/progressBarStyle"
@@ -62,6 +60,16 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="183dp"
         android:layout_marginBottom="207dp" />
-
-
+    <Button
+        android:id="@+id/btnAddToCart"
+        android:layout_width="155dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="122dp"
+        android:layout_marginEnd="122dp"
+        android:layout_marginBottom="44dp"
+        android:text="Add To Cart"
+        android:textColor="@color/black"/>
 </RelativeLayout>

@@ -70,7 +70,6 @@ public class RecommendProductsFragment extends Fragment {
         Toast.makeText(requireContext(), getString(R.string.no_recommendations), Toast.LENGTH_SHORT).show();
         FragmentTransaction fragmentTransaction =  requireActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
         ProductDetailsFragment productDetailsFragment = new ProductDetailsFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(Constants.SCANNED_PRODUCT, Parcels.wrap(scannedProduct));

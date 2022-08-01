@@ -1,12 +1,4 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/splash_background</item>
-        <item name="colorPrimary">#e67d20</item>
-        <item name="colorPrimaryDark">#ff1b49</item>
-        <item name="colorAccent">#fff</item>
-        <item name="android:statusBarColor">#e67d20</item>
-    </style>
-
     <style name="foodRatingBar" parent="@android:style/Widget.RatingBar">
         <item name="android:progressDrawable">@drawable/ratingstars</item>
         <item name="android:minHeight">22dip</item>
@@ -20,7 +12,7 @@
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryColor</item>
         <item name="colorOnSecondary">@color/secondaryColor</item>
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">#000000</item>
         <item name="android:textColor">@color/primaryTextColor</item>
     </style>
 </resources>

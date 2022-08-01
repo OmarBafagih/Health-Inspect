@@ -121,7 +121,6 @@ public class CartItemAdapter extends RecyclerView.Adapter<CartItemAdapter.ViewHo
                     FragmentManager fragmentManager = ((FragmentActivity) v.getContext()).getSupportFragmentManager();
                     FragmentTransaction fragmentTransaction =  fragmentManager.beginTransaction();
                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-
                     ProductFinderFragment productFinderFragment = new ProductFinderFragment();
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(Constants.RECOMMENDED_PRODUCT, Parcels.wrap(recommendedProduct));
